@@ -1,6 +1,6 @@
 package de.webtwob.mbma.common.tileentity;
 
-import de.webtwob.mbma.MBMA_NBTKeys;
+import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import de.webtwob.mbma.api.MBMAProperties;
 import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.MBMAPacketHandler;

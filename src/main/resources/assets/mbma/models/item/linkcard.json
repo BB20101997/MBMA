@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "mbma:items/link_card_unlinked"
+    }
+}

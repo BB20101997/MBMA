@@ -1,1 +1,9 @@
-tile.mbma.psib.name=Permanent Storage Interface
+#block localisation
+tile.mbma:psi.name=Permanent Storage Interface
+tile.mbma:queuestack.name=Queue Stack
+#creativetab localisation
+itemGroup.mbma=Multiblock Maschine Automation
+#item localisation
+item.mbma:linkcard.name=Link Card
+item.mbma:linkcard.linked.name=Linked Link Card
+item.mbma:linkcard.unlinked.name=Unlinked Link Card

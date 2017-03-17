@@ -3,9 +3,9 @@
   "defaults": {
     "model": "cube_bottom_top",
     "textures": {
-      "bottom": "mbma:blocks/psib_error_base",
-      "top": "mbma:blocks/psib_error_point",
-      "side": "mbma:blocks/psib_error_arrow"
+      "bottom": "mbma:blocks/psi_error_base",
+      "top": "mbma:blocks/psi_error_point",
+      "side": "mbma:blocks/psi_error_arrow"
     }
   },
   "variants": {
@@ -39,9 +39,9 @@
     "connected": {
       "true": {
         "textures": {
-          "bottom": "mbma:blocks/psib_connected_base",
-          "top": "mbma:blocks/psib_connected_point",
-          "side": "mbma:blocks/psib_connected_arrow"
+          "bottom": "mbma:blocks/psi_connected_base",
+          "top": "mbma:blocks/psi_connected_point",
+          "side": "mbma:blocks/psi_connected_arrow"
         }
       },
       "false": {

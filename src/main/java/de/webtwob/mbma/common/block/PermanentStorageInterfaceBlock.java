@@ -2,6 +2,8 @@ package de.webtwob.mbma.common.block;
 
 import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.api.MBMAProperties;
+import de.webtwob.mbma.common.creativetab.MBMACreativeTab;
+import de.webtwob.mbma.common.references.UnlocalizedNames;
 import de.webtwob.mbma.common.tileentity.PSITileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -27,8 +29,8 @@ public class PermanentStorageInterfaceBlock extends Block {
 
     public PermanentStorageInterfaceBlock() {
         super(Material.IRON);
-        setUnlocalizedName(MultiblockMaschineAutomation.MODID + ".psib");
-        setCreativeTab(CreativeTabs.MISC);
+        setUnlocalizedName(UnlocalizedNames.PSI_NAME);
+        setCreativeTab(MBMACreativeTab.MBMATab);
         setDefaultState(this.blockState.getBaseState().withProperty(MBMAProperties.FACING, EnumFacing.UP)
                                        .withProperty(MBMAProperties.CONNECTED, false));
     }
