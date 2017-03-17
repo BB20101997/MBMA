@@ -1,17 +1,12 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "cube_bottom_top",
-    "textures": {
-      "bottom": "mbma:blocks/psi_error_base",
-      "top": "mbma:blocks/psi_error_point",
-      "side": "mbma:blocks/psi_error_arrow"
-    }
+    "model": "mbma:psi"
   },
   "variants": {
-    "inventory": [{
-
-    }],
+    "inventory": {
+        "model":"mbma:psi"
+    },
     "facing": {
       "up": {
         "x": 0
@@ -38,11 +33,7 @@
     },
     "connected": {
       "true": {
-        "textures": {
-          "bottom": "mbma:blocks/psi_connected_base",
-          "top": "mbma:blocks/psi_connected_point",
-          "side": "mbma:blocks/psi_connected_arrow"
-        }
+        "model":"mbma:psi_connected"
       },
       "false": {
       }

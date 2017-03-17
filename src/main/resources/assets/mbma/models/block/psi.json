@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "bottom": "mbma:blocks/psi_error_base",
+    "top": "mbma:blocks/psi_error_point",
+    "side": "mbma:blocks/psi_error_arrow"
+  }
+}

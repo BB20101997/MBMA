@@ -1,0 +1,32 @@
+Multi Block Maschine Automation (MBMA)
+
+	Main Maschine Interface (MMI):
+		Connects to a maschine to interface with it,
+		it will be addressed in the RB to respond for a receipe,
+		it will have a link to all MI that correspond to the same maschine
+	
+	Maschine Interface (MI):
+		A simple maschine Input or Output
+		will be specified to either input a specific item in a recipie
+		or return the result
+	
+	Receipe Bank (RP):
+		Stores a List of all known Receips and which MMI's may handle the request
+	
+	Tempory Storage Interface (TSI):
+		Stores intermediate, spares or not yet used items while a request is handeld
+
+	Permanent Storage Interface (PSI):
+		The source and destination for crafting requests
+	
+	Queue Stack (QS):
+		Takes blank Tokens form the system and scheduels Maschine Crafting Operations to forfill the
+		request when done returns a blank token.
+	
+	Token Generator (TG):
+		Can automatically generate Tokens,
+		which in turn can be used to schedule Crafting Jobs
+	
+	Player Token Generator (PTG):
+		Displays a List of available Rceipes in the RB's
+		Can be used by a player to create tokens.

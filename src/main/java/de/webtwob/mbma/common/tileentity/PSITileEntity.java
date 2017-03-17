@@ -1,10 +1,10 @@
 package de.webtwob.mbma.common.tileentity;
 
-import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import de.webtwob.mbma.api.MBMAProperties;
 import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.MBMAPacketHandler;
 import de.webtwob.mbma.common.packet.PSIBStatePacket;
+import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -13,7 +13,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 
@@ -30,13 +29,13 @@ public class PSITileEntity extends TileEntity {
 
     public void setConnected(boolean connected) {
 
-        getTileData().setBoolean(MBMA_NBTKeys.PSIConnected,connected);
+        getTileData().setBoolean(MBMA_NBTKeys.PSIConnected, connected);
         if(hasWorld()) {
             if(!getWorld().isRemote) {
                 MBMAPacketHandler.INSTANCE.sendToDimension(new PSIBStatePacket(pos, connected), getWorld().provider
                                                                                                         .getDimension
                                                                                                                  ());
-            }else{
+            } else {
                 getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
@@ -65,9 +64,9 @@ public class PSITileEntity extends TileEntity {
                 BlockPos   dest        = pos.offset(orientation);
                 TileEntity te          = world.getTileEntity(dest);
                 if(te != null) {
-                    IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                                                               orientation.getOpposite());
-                    setConnected(capability != null);
+                    setConnected(te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation
+                                                                                                         .getOpposite
+                                                                                                                  ()));
                 } else {
                     setConnected(false);
                 }
