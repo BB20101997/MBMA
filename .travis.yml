@@ -2,8 +2,8 @@ language: java
 jdk:
 - oraclejdk8
 install:
-- gradle setupCiWorkspace
-- gradle assemble
+- gradlew setupCiWorkspace
+- gradlew assemble
 
 script:
-- gradle check
+- gradlew check
