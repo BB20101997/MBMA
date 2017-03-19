@@ -5,7 +5,7 @@
   },
   "variants": {
     "inventory": {
-        "model":"mbma:psi"
+      "model": "mbma:psi"
     },
     "facing": {
       "up": {
@@ -33,7 +33,7 @@
     },
     "connected": {
       "true": {
-        "model":"mbma:psi_connected"
+        "model": "mbma:psi_connected"
       },
       "false": {
       }

@@ -10,16 +10,16 @@ import net.minecraftforge.items.IItemHandler;
 /**
  * Created by BB20101997 on 17. Mär. 2017.
  */
-public class ItemHandlerSlot extends Slot{
+public class ItemHandlerSlot extends Slot {
 
     public ItemHandlerSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-        super(new ItemHandlerInventor(itemHandler,index), 0, xPosition, yPosition);
+        super(new ItemHandlerInventor(itemHandler, index), 0, xPosition, yPosition);
     }
 
     private static class ItemHandlerInventor implements IInventory {
 
         final IItemHandler itemHandler;
-        final int slot;
+        final int          slot;
 
         @Override
         public int getSizeInventory() {
@@ -38,17 +38,17 @@ public class ItemHandlerSlot extends Slot{
 
         @Override
         public ItemStack decrStackSize(int index, int count) {
-            return itemHandler.extractItem(slot,count,false);
+            return itemHandler.extractItem(slot, count, false);
         }
 
         @Override
         public ItemStack removeStackFromSlot(int index) {
-            return itemHandler.extractItem(slot,getStackInSlot(slot).getCount(),false);
+            return itemHandler.extractItem(slot, getStackInSlot(slot).getCount(), false);
         }
 
         @Override
         public void setInventorySlotContents(int index, ItemStack stack) {
-            itemHandler.insertItem(slot,stack,false);
+            itemHandler.insertItem(slot, stack, false);
         }
 
         @Override
@@ -78,7 +78,8 @@ public class ItemHandlerSlot extends Slot{
 
         @Override
         public boolean isItemValidForSlot(int index, ItemStack stack) {
-            return itemHandler.getStackInSlot(slot).getItem()==null||itemHandler.getStackInSlot(slot).getItem()==stack.getItem();
+            return itemHandler.getStackInSlot(slot).getItem() == null || itemHandler.getStackInSlot(slot).getItem()
+                                                                                 == stack.getItem();
         }
 
         @Override
@@ -116,7 +117,7 @@ public class ItemHandlerSlot extends Slot{
             return null;
         }
 
-        public ItemHandlerInventor(IItemHandler itemHandler,int slot) {
+        public ItemHandlerInventor(IItemHandler itemHandler, int slot) {
             this.itemHandler = itemHandler;
             this.slot = slot;
         }

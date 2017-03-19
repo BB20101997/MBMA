@@ -55,13 +55,12 @@ public class PSIBStatePacket implements IMessage {
                 if(message.blockPos != null) {
                     Minecraft.getMinecraft().addScheduledTask(() -> {
                         EntityPlayerSP playerSP = Minecraft.getMinecraft().player;
-                        if(playerSP==null)
-                            return;
+                        if(playerSP == null) { return; }
                         TileEntity tileEntity = playerSP.getEntityWorld().getTileEntity(message.blockPos);
                         if(tileEntity instanceof PSITileEntity) {
-                            ((PSITileEntity)tileEntity).setConnected(message.connected);
+                            ((PSITileEntity) tileEntity).setConnected(message.connected);
                             tileEntity.markDirty();
-                        }else{
+                        } else {
                             System.out.println("Wrong TileEntity");
                         }
                     });

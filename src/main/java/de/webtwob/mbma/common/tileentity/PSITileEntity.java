@@ -24,12 +24,12 @@ public class PSITileEntity extends TileEntity {
     public PSITileEntity() {}
 
     public boolean isConnected() {
-        return getTileData().getBoolean(MBMA_NBTKeys.PSIConnected);
+        return getTileData().getBoolean(MBMA_NBTKeys.PSI_CONNECTED);
     }
 
     public void setConnected(boolean connected) {
 
-        getTileData().setBoolean(MBMA_NBTKeys.PSIConnected, connected);
+        getTileData().setBoolean(MBMA_NBTKeys.PSI_CONNECTED, connected);
         if(hasWorld()) {
             if(!getWorld().isRemote) {
                 MBMAPacketHandler.INSTANCE.sendToDimension(new PSIBStatePacket(pos, connected), getWorld().provider

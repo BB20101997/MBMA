@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  */
 public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
-    private final        NonNullList<ItemStack> stacks     = NonNullList.withSize(getSlots(), ITEM_STACK);
+    private final        NonNullList<ItemStack> stacks = NonNullList.withSize(getSlots(), ITEM_STACK);
     private final        ItemStack[]            itemStacks = new ItemStack[getSlots()];
     private static final ItemStack              ITEM_STACK = new ItemStack(MBMAItemList.LINKCARD, 0);
 
@@ -37,7 +37,10 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if(stacks.get(slot).getCount() < 1 && stack.getItem() == MBMAItemList.LINKCARD) {
-            if(!simulate) { stacks.get(slot).grow(1); tileEntity.markDirty();}
+            if(!simulate) {
+                stacks.get(slot).grow(1);
+                tileEntity.markDirty();
+            }
             ItemStack ret = stack.copy();
             ret.shrink(1);
             return ret;
@@ -46,15 +49,18 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-      if(stacks.get(slot).getCount()>0){
-          if(!simulate){
-              stacks.get(slot).shrink(1);
-              tileEntity.markDirty();
-          }
-          return new ItemStack(MBMAItemList.LINKCARD,1);
-      } else{
-          return ItemStack.EMPTY;
-      }
+        if(stacks.get(slot).getCount() > 0) {
+            ItemStack stack = stacks.get(slot).copy();
+            stack.setCount(1);
+            if(!simulate) {
+                stacks.get(slot).shrink(1);
+                tileEntity.markDirty();
+            }
+            return stack;
+
+        } else {
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -64,10 +70,10 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if(!stack.isEmpty()){
-            stacks.set(slot,stack);
-        }else{
-            stacks.set(slot,ITEM_STACK);
+        if(!stack.isEmpty()) {
+            stacks.set(slot, stack);
+        } else {
+            stacks.set(slot, ITEM_STACK);
         }
         tileEntity.markDirty();
     }

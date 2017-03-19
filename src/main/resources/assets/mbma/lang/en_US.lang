@@ -7,3 +7,5 @@ itemGroup.mbma=Multiblock Maschine Automation
 item.mbma:linkcard.name=Link Card
 item.mbma:linkcard.linked.name=Linked Link Card
 item.mbma:linkcard.unlinked.name=Unlinked Link Card
+item.mbma:token.name=Token
+item.mbma:recipePattern.name=Recipe Pattern

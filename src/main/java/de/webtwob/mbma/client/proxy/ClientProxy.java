@@ -22,7 +22,8 @@ public class ClientProxy extends CommonProxy {
 
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
         if(tileEntity != null && tileEntity instanceof QSTileEntity) {
-            return new QSGui(player.inventory, tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,null));
+            return new QSGui(player.inventory, tileEntity.getCapability(CapabilityItemHandler
+                                                                                .ITEM_HANDLER_CAPABILITY, null));
         }
         return null;
     }

@@ -11,13 +11,15 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class MBMAPacketHandler {
 
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(MultiblockMaschineAutomation.MODID);
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel
+                                                                                         (MultiblockMaschineAutomation.MODID);
 
     private static int id = 0;
+
     static {
+        MBMALog.debug("Registering PacketHandler");
         INSTANCE.registerMessage(PSIBStatePacket.PSIBStatePacketHandler.class, PSIBStatePacket.class, id++, Side.CLIENT);
     }
 
-    public static void init(){};
-
+    public static void init() {/*Just here to make the static block run!*/}
 }

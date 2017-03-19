@@ -29,7 +29,7 @@ public class QSContainer extends Container {
     private void layoutQSInventory(IItemHandler qsInventory) {
         for(int col = 0; col < 3; col++) {
             for(int row = 0; row < 6; ++row) {
-                addSlotToContainer(new SlotItemHandler(qsInventory, row+col*6, 8 + col * 18, 18 + 18 * row));
+                addSlotToContainer(new SlotItemHandler(qsInventory, row + col * 6, 8 + col * 18, 18 + 18 * row));
             }
         }
     }

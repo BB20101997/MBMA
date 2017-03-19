@@ -1,11 +1,13 @@
 package de.webtwob.mbma.common.block;
 
 import de.webtwob.mbma.MultiblockMaschineAutomation;
+import de.webtwob.mbma.api.MBMAProperties;
+import de.webtwob.mbma.api.enums.MaschineState;
 import de.webtwob.mbma.common.creativetab.MBMACreativeTab;
-import de.webtwob.mbma.common.references.UnlocalizedNames;
 import de.webtwob.mbma.common.tileentity.QSTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -19,23 +21,34 @@ import javax.annotation.Nullable;
 /**
  * Created by bennet on 17.03.17.
  */
-public class QueueStackBlock extends Block{
+public class QueueStackBlock extends Block {
 
     public QueueStackBlock() {
         super(Material.IRON);
         setCreativeTab(MBMACreativeTab.MBMATab);
-        setUnlocalizedName(UnlocalizedNames.QUEUESTACK_NAME);
+
+        setDefaultState(blockState.getBaseState().withProperty(MBMAProperties.STATE, MaschineState.IDLE));
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
     }
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if(worldIn.isRemote){
+        if(worldIn.isRemote) {
             return true;
-        }else{
-            playerIn.openGui(MultiblockMaschineAutomation.INSTANCE,0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        } else {
+            playerIn.openGui(MultiblockMaschineAutomation.INSTANCE, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
             return true;
         }
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, MBMAProperties.STATE);
     }
 
     @Override

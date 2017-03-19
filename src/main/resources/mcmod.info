@@ -1,12 +1,16 @@
-[{
-  "modid": "mbma",
-  "name": "Multiblock Maschine Automation",
-  "description": "Let's you easily automate Multiblock Maschines!",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "logoFile": "assets/mbma/textures/logo.png",
-  "url": "minecraftforge.net/",
-  "updateJSON": "minecraftforge.net/versions.json",
-  "authorList": ["BB20101997"],
-  "credits": "Credits to all that were an inspiration!"
-}]
+[
+  {
+    "modid": "mbma",
+    "name": "Multiblock Maschine Automation",
+    "description": "Let's you easily automate Multiblock Maschines!",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "logoFile": "assets/mbma/textures/logo.png",
+    "url": "minecraftforge.net/",
+    "updateJSON": "https://github.com/BB20101997/MBMA/blob/master/update.json",
+    "authorList": [
+      "BB20101997"
+    ],
+    "credits": "Credits to all that were an inspiration!"
+  }
+]

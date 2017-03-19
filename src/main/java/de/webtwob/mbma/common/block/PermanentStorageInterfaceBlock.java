@@ -1,15 +1,12 @@
 package de.webtwob.mbma.common.block;
 
-import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.api.MBMAProperties;
 import de.webtwob.mbma.common.creativetab.MBMACreativeTab;
-import de.webtwob.mbma.common.references.UnlocalizedNames;
 import de.webtwob.mbma.common.tileentity.PSITileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -29,26 +26,50 @@ public class PermanentStorageInterfaceBlock extends Block {
 
     public PermanentStorageInterfaceBlock() {
         super(Material.IRON);
-        setUnlocalizedName(UnlocalizedNames.PSI_NAME);
+
         setCreativeTab(MBMACreativeTab.MBMATab);
         setDefaultState(this.blockState.getBaseState().withProperty(MBMAProperties.FACING, EnumFacing.UP)
                                        .withProperty(MBMAProperties.CONNECTED, false));
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        TileEntity tileEntity;
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(MBMAProperties.FACING, EnumFacing.values()[meta]);
+    }
 
-        if(worldIn instanceof ChunkCache) {
-            ChunkCache world = (ChunkCache) worldIn;
-            tileEntity = world.getTileEntity(pos);
-        } else {
-            tileEntity = worldIn.getTileEntity(pos);
-        }
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(MBMAProperties.FACING).ordinal();
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        return getExtendedState(state, worldIn, pos);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
         if(tileEntity instanceof PSITileEntity) {
-            state = state.withProperty(MBMAProperties.CONNECTED, ((PSITileEntity) tileEntity).isConnected());
+            ((PSITileEntity) tileEntity).update();
         }
-        return state;
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, MBMAProperties.FACING, MBMAProperties.CONNECTED);
+    }
+
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new PSITileEntity();
     }
 
     @Override
@@ -70,18 +91,19 @@ public class PermanentStorageInterfaceBlock extends Block {
     }
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, MBMAProperties.FACING, MBMAProperties.CONNECTED);
-    }
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tileEntity;
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(MBMAProperties.FACING).ordinal();
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(MBMAProperties.FACING, EnumFacing.values()[meta]);
+        if(world instanceof ChunkCache) {
+            ChunkCache chunk = (ChunkCache) world;
+            tileEntity = chunk.getTileEntity(pos);
+        } else {
+            tileEntity = world.getTileEntity(pos);
+        }
+        if(tileEntity instanceof PSITileEntity) {
+            state = state.withProperty(MBMAProperties.CONNECTED, ((PSITileEntity) tileEntity).isConnected());
+        }
+        return state;
     }
 
     @Override
@@ -89,25 +111,5 @@ public class PermanentStorageInterfaceBlock extends Block {
                                             float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
         return getActualState(getDefaultState().withProperty(MBMAProperties.FACING, EnumFacing
                                                                                             .getDirectionFromEntityLiving(pos, placer)), world, pos);
-    }
-
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if(tileEntity instanceof PSITileEntity) {
-            ((PSITileEntity) tileEntity).update();
-        }
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    }
-
-    @Override
-    public boolean hasTileEntity(IBlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        return new PSITileEntity();
     }
 }
