@@ -3,6 +3,7 @@ package de.webtwob.mbma.common.tileentity;
 import de.webtwob.mbma.api.MBMAProperties;
 import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.MBMAPacketHandler;
+import de.webtwob.mbma.common.interfaces.IConnectable;
 import de.webtwob.mbma.common.packet.PSIBStatePacket;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
-public class PSITileEntity extends TileEntity {
+public class PSITileEntity extends TileEntity implements IConnectable{
 
     public PSITileEntity() {}
 

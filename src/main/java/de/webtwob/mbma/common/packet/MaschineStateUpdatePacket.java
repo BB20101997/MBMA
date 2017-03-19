@@ -1,7 +1,8 @@
 package de.webtwob.mbma.common.packet;
 
+import de.webtwob.mbma.api.enums.MaschineState;
 import de.webtwob.mbma.common.MBMALog;
-import de.webtwob.mbma.common.interfaces.IConnectable;
+import de.webtwob.mbma.common.interfaces.IMaschineState;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -14,29 +15,29 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 /**
- * Created by BB20101997 on 16. Mär. 2017.
+ * Created by BB20101997 on 19. Mär. 2017.
  */
-public class PSIBStatePacket implements IMessage {
+public class MaschineStateUpdatePacket implements IMessage {
 
-    public PSIBStatePacket() {}
+    private MaschineState maschineState = MaschineState.IDLE;
+    private BlockPos      blockPos      = new BlockPos(0, 0, 0);
 
-    BlockPos blockPos;
-    boolean  connected;
+    public MaschineStateUpdatePacket() {}
 
-    public PSIBStatePacket(BlockPos pos, boolean connected) {
+    public MaschineStateUpdatePacket(BlockPos pos, MaschineState state) {
         blockPos = pos;
-        this.connected = connected;
+        maschineState = state;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        connected = buf.readBoolean();
+        maschineState = MaschineState.values()[buf.readInt()];
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(connected);
+        buf.writeInt(maschineState.ordinal());
         if(blockPos != null) {
             buf.writeInt(blockPos.getX());
             buf.writeInt(blockPos.getY());
@@ -46,21 +47,23 @@ public class PSIBStatePacket implements IMessage {
         }
     }
 
-    public static class PSIBStatePacketHandler implements IMessageHandler<PSIBStatePacket, IMessage> {
+    public static class MaschineStateUpdatePacketHandler implements IMessageHandler<MaschineStateUpdatePacket,
+                                                                                           IMessage> {
 
         @Override
-        public IMessage onMessage(PSIBStatePacket message, MessageContext ctx) {
+        public IMessage onMessage(MaschineStateUpdatePacket message, MessageContext ctx) {
             if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 if(message.blockPos != null) {
                     Minecraft.getMinecraft().addScheduledTask(() -> {
                         EntityPlayerSP playerSP = Minecraft.getMinecraft().player;
                         if(playerSP == null) { return; }
                         TileEntity tileEntity = playerSP.getEntityWorld().getTileEntity(message.blockPos);
-                        if(tileEntity instanceof IConnectable) {
-                            ((IConnectable) tileEntity).setConnected(message.connected);
+                        if(tileEntity instanceof IMaschineState) {
+                            ((IMaschineState) tileEntity).setMaschineState(message.maschineState);
                             tileEntity.markDirty();
                         } else {
-                            MBMALog.warn("Received PSIStatePacket for Block at {} {} {}, but TileEntity was not of the right type!",message.blockPos.getX(),message.blockPos.getY(),message.blockPos.getZ());
+                            MBMALog.warn("Received MaschineStateUpdatePacket for Block at {} {} {}, but TileEntity " +
+                                                 "didn't support it!", message.blockPos.getX(), message.blockPos.getY(), message.blockPos.getZ());
                         }
                     });
                 }

@@ -14,6 +14,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -28,6 +30,27 @@ public class QueueStackBlock extends Block {
         setCreativeTab(MBMACreativeTab.MBMATab);
 
         setDefaultState(blockState.getBaseState().withProperty(MBMAProperties.STATE, MaschineState.IDLE));
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        return getExtendedState(state, worldIn,pos);
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+      TileEntity tileEntity;
+      if(world instanceof ChunkCache){
+          ChunkCache chunkCache = (ChunkCache) world;
+          tileEntity = chunkCache.getTileEntity(pos);
+      }
+      else{
+          tileEntity = world.getTileEntity(pos);
+      }
+      if(tileEntity instanceof QSTileEntity){
+          return state.withProperty(MBMAProperties.STATE,((QSTileEntity) tileEntity).getMaschineState());
+      }
+      return state;
     }
 
     @Override
