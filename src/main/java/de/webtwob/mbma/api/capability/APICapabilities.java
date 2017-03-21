@@ -25,6 +25,7 @@ public class APICapabilities {
 
     public static void register() {
         if(!registered) {
+            registered = true;
             MBMAAPILog.debug("Registering Capabilities");
             CapabilityManager.INSTANCE.register(IBlockPosProvider.class, new BlockPosStorage(), new BlockPosFactory());
             CapabilityManager.INSTANCE.register(ICraftingRequest.class, new CraftingRequestStorage(), new CraftingRequestFactory());

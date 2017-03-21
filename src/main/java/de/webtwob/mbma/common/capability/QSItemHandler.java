@@ -17,7 +17,6 @@ import javax.annotation.Nonnull;
 public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(getSlots(), ITEM_STACK);
-    private final ItemStack[] itemStacks = new ItemStack[getSlots()];
     private static final ItemStack ITEM_STACK = new ItemStack(MBMAItemList.LINKCARD, 0);
 
     private final QSTileEntity tileEntity;
@@ -31,11 +30,13 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
         return 3 * 6;
     }
 
+    @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
         return stacks.get(slot).copy();
     }
 
+    @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stacks.get(slot).getCount() < 1 && stack.getItem() == MBMAItemList.LINKCARD) {
@@ -53,6 +54,7 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
         return stack;
     }
 
+    @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (stacks.get(slot).getCount() > 0) {

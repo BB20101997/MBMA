@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by BB20101997 on 17. Mär. 2017.
  */
@@ -31,23 +33,26 @@ public class ItemHandlerSlot extends Slot {
             return itemHandler.getStackInSlot(slot).isEmpty();
         }
 
+        @Nonnull
         @Override
         public ItemStack getStackInSlot(int index) {
             return itemHandler.getStackInSlot(slot);
         }
 
+        @Nonnull
         @Override
         public ItemStack decrStackSize(int index, int count) {
             return itemHandler.extractItem(slot, count, false);
         }
 
+        @Nonnull
         @Override
         public ItemStack removeStackFromSlot(int index) {
             return itemHandler.extractItem(slot, getStackInSlot(slot).getCount(), false);
         }
 
         @Override
-        public void setInventorySlotContents(int index, ItemStack stack) {
+        public void setInventorySlotContents(int index, @Nonnull ItemStack stack) {
             itemHandler.insertItem(slot, stack, false);
         }
 
@@ -62,22 +67,22 @@ public class ItemHandlerSlot extends Slot {
         }
 
         @Override
-        public boolean isUsableByPlayer(EntityPlayer player) {
+        public boolean isUsableByPlayer(@Nonnull EntityPlayer player) {
             return true;
         }
 
         @Override
-        public void openInventory(EntityPlayer player) {
+        public void openInventory(@Nonnull EntityPlayer player) {
 
         }
 
         @Override
-        public void closeInventory(EntityPlayer player) {
+        public void closeInventory(@Nonnull EntityPlayer player) {
 
         }
 
         @Override
-        public boolean isItemValidForSlot(int index, ItemStack stack) {
+        public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
             return itemHandler.getStackInSlot(slot).getItem() == stack.getItem();
         }
 
@@ -101,6 +106,7 @@ public class ItemHandlerSlot extends Slot {
 
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return "";
@@ -111,6 +117,7 @@ public class ItemHandlerSlot extends Slot {
             return false;
         }
 
+        @Nonnull
         @Override
         public ITextComponent getDisplayName() {
             return null;

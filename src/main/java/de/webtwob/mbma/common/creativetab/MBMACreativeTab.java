@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by bennet on 17.03.17.
  */
@@ -17,6 +19,7 @@ public class MBMACreativeTab extends CreativeTabs {
         super("mbma");
     }
 
+    @Nonnull
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {

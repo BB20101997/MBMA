@@ -7,7 +7,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -16,6 +15,8 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by BB20101997 on 16. Mär. 2017.
@@ -33,6 +34,7 @@ public class PermanentStorageInterfaceBlock extends Block {
         setDefaultState(state);
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(MBMAProperties.FACING, EnumFacing.values()[meta >> 1]).withProperty(MBMAProperties.CONNECTED, !((meta & 1) == 0));
@@ -43,6 +45,7 @@ public class PermanentStorageInterfaceBlock extends Block {
         return (state.getValue(MBMAProperties.FACING).ordinal() << 1) | (state.getValue(MBMAProperties.CONNECTED) ? 1 : 0);
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, MBMAProperties.FACING, MBMAProperties.CONNECTED);
@@ -57,9 +60,10 @@ public class PermanentStorageInterfaceBlock extends Block {
         }
     }
 
+    @Nonnull
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing clickedFacing, float hitX, float hitY,
-                                            float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedFacing, float hitX, float hitY,
+                                            float hitZ, int meta, @Nonnull EntityLivingBase placer, EnumHand hand) {
         IBlockState state = getDefaultState();
         EnumFacing blockFacing = EnumFacing.getDirectionFromEntityLiving(pos, placer);
         state = state.withProperty(MBMAProperties.FACING, blockFacing);

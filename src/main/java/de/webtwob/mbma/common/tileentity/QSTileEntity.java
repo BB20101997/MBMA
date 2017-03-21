@@ -39,11 +39,11 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @CapabilityInject(IItemHandler.class)
     private static Capability<IItemHandler> ITEM_HANDLER = null;
 
-    private final QSItemHandler itemHandler   = new QSItemHandler(this);
+    private final QSItemHandler itemHandler = new QSItemHandler(this);
     @Nonnull
-    private       ItemStack     token         = ItemStack.EMPTY;
-    private       int           idleTimer     = 0;
-    private       MaschineState maschineState = MaschineState.IDLE;
+    private ItemStack token = ItemStack.EMPTY;
+    private int idleTimer = 0;
+    private MaschineState maschineState = MaschineState.IDLE;
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
@@ -57,9 +57,11 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        NBTTagCompound td          = getTileData();
-        NBTBase        itemHandler = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, this.itemHandler, null);
-        if(itemHandler != null) { td.setTag(MBMA_NBTKeys.QS_ITEM_HANDLER, itemHandler); }
+        NBTTagCompound td = getTileData();
+        NBTBase itemHandler = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, this.itemHandler, null);
+        if (itemHandler != null) {
+            td.setTag(MBMA_NBTKeys.QS_ITEM_HANDLER, itemHandler);
+        }
         td.setTag(QS_TOKEN, token.serializeNBT());
         td.setInteger(QS_STATE, maschineState.ordinal());
         compound = super.writeToNBT(compound);
@@ -87,7 +89,7 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if(ITEM_HANDLER != null && capability == ITEM_HANDLER) {
+        if (ITEM_HANDLER != null && capability == ITEM_HANDLER) {
             return (T) itemHandler;
         }
         return super.getCapability(capability, facing);
@@ -95,8 +97,8 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     @Override
     public void update() {
-        if(!world.isRemote) {
-            switch(getMaschineState()) {
+        if (!world.isRemote && idleTimer < 0) {
+            switch (getMaschineState()) {
                 case IDLE:
                     runIdleTasks();
                     break;
@@ -104,30 +106,36 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
                     runRunningTask();
                     break;
                 case WAITING:
+                    runWaitingTask();
                     break;
                 case PROBLEM:
+                    runProblemTask();
                     break;
             }
         }
+    }
 
+    private void runIdleTasks() {
+        findNewToken();
+        if (!token.isEmpty()) {
+            setMaschineState(MaschineState.RUNNING);
+        }
+        idleTimer = 20;
     }
 
     private void runRunningTask() {
 
     }
 
-    private void runIdleTasks() {
-        if(idleTimer > 0) {
-            idleTimer--;
-            return;
-        }
-        findNewToken();
-        if(!token.isEmpty()) {
-            setMaschineState(MaschineState.RUNNING);
-            return;
-        }
-        idleTimer = 20;
-    }    @Nonnull
+    private void runWaitingTask() {
+
+    }
+
+    private void runProblemTask() {
+
+    }
+
+    @Nonnull
     public MaschineState getMaschineState() {
         return maschineState;
     }
@@ -138,33 +146,33 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     }
 
     private void findNewToken() {
-        if(!world.isRemote) {
-            BlockPos     pos;
-            EnumFacing   dir;
-            TileEntity   tileEntity;
-            IBlockState  state;
+        if (!world.isRemote) {
+            BlockPos pos;
+            EnumFacing dir;
+            TileEntity tileEntity;
+            IBlockState state;
             IItemHandler items;
             //itterate over the Linkcard for Permanent Storage Interfaces
-            for(int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++) {
 
                 //when a card is present
                 pos = getLinkFromItemStack(itemHandler.getStackInSlot(i));
-                if(pos != null) {
+                if (pos != null) {
                     state = getWorld().getBlockState(pos);
                     state = state.getBlock().getActualState(state, world, pos);
 
                     //check if PSI is connected (ATM not checking if it is actually a PSI)
-                    if(state.getPropertyKeys().contains(MBMAProperties.CONNECTED) && state.getValue(MBMAProperties
-                                                                                                            .CONNECTED)) {
+                    if (state.getPropertyKeys().contains(MBMAProperties.CONNECTED) && state.getValue(MBMAProperties
+                            .CONNECTED)) {
                         dir = state.getValue(MBMAProperties.FACING);
                         pos = pos.offset(dir);
                         tileEntity = getWorld().getTileEntity(pos);
 
                         //check and get the ItemHandler Capibility
-                        if(tileEntity != null && null != (items = tileEntity.getCapability(CapabilityItemHandler
-                                                                                                   .ITEM_HANDLER_CAPABILITY, dir.getOpposite()))) {
+                        if (tileEntity != null && null != (items = tileEntity.getCapability(CapabilityItemHandler
+                                .ITEM_HANDLER_CAPABILITY, dir.getOpposite()))) {
                             //search for a token in the IItemHandlers Slots
-                            if(findTokenInItemHandler(items)) {
+                            if (findTokenInItemHandler(items)) {
                                 return;
                             }
                         }
@@ -181,14 +189,14 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     private boolean findTokenInItemHandler(IItemHandler items) {
         final int slotCount = items.getSlots();
         ItemStack itemStack;
-        for(int i = 0; i < slotCount; i++) {
+        for (int i = 0; i < slotCount; i++) {
             itemStack = items.getStackInSlot(i);
             ICraftingRequest craftingRequest;
-            if((!itemStack.isEmpty()) && (craftingRequest = itemStack.getCapability(APICapabilities
-                                                                                            .CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-                if(!craftingRequest.isCompleted()) {
+            if ((!itemStack.isEmpty()) && (craftingRequest = itemStack.getCapability(APICapabilities
+                    .CAPABILITY_CRAFTING_REQUEST, null)) != null) {
+                if (!craftingRequest.isCompleted()) {
                     itemStack = items.extractItem(i, 1, false);
-                    if(!itemStack.isEmpty()) {
+                    if (!itemStack.isEmpty()) {
                         token = itemStack.copy();
                         return true;
                     }
@@ -200,8 +208,8 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     public void setMaschineState(@Nonnull MaschineState state) {
         maschineState = state;
-        if(hasWorld()) {
-            if(!getWorld().isRemote) {
+        if (hasWorld()) {
+            if (!getWorld().isRemote) {
                 //send update to client
                 MBMAPacketHandler.INSTANCE.sendToDimension(new MaschineStateUpdatePacket(getPos(), state), world.provider.getDimension());
             } else {
@@ -210,10 +218,6 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         }
         markDirty();
     }
-
-
-
-
 
 
 }
