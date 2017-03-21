@@ -18,6 +18,7 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -32,13 +33,15 @@ public class QueueStackBlock extends Block {
         setDefaultState(blockState.getBaseState().withProperty(MBMAProperties.STATE, MaschineState.IDLE));
     }
 
+    @Nonnull
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         return getExtendedState(state, worldIn,pos);
     }
 
+    @Nonnull
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getExtendedState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
       TileEntity tileEntity;
       if(world instanceof ChunkCache){
           ChunkCache chunkCache = (ChunkCache) world;
@@ -69,6 +72,7 @@ public class QueueStackBlock extends Block {
         }
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, MBMAProperties.STATE);
@@ -81,7 +85,7 @@ public class QueueStackBlock extends Block {
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new QSTileEntity();
     }
 }
