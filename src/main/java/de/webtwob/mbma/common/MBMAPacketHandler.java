@@ -2,6 +2,7 @@ package de.webtwob.mbma.common;
 
 import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
+import de.webtwob.mbma.common.packet.TokenUpdatePacket;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,14 +13,21 @@ import net.minecraftforge.fml.relauncher.Side;
 public class MBMAPacketHandler {
 
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel
-                                                                                         (MultiblockMaschineAutomation.MODID);
+            (MultiblockMaschineAutomation.MODID);
 
     private static int id = 0;
+    private static boolean registered;
 
-    static {
-        MBMALog.debug("Registering PacketHandler");
-        INSTANCE.registerMessage(MaschineStateUpdatePacket.MaschineStateUpdatePacketHandler.class,MaschineStateUpdatePacket.class,id++,Side.CLIENT);
+    public static int getNextID(){
+        return id++;
     }
 
-    public static void init() {/*Just here to make the static block run!*/}
+    public static void init() {
+        if (!registered) {
+            registered = true;
+            MBMALog.debug("Registering PacketHandler");
+            INSTANCE.registerMessage(MaschineStateUpdatePacket.MaschineStateUpdatePacketHandler.class, MaschineStateUpdatePacket.class, getNextID(), Side.CLIENT);
+            INSTANCE.registerMessage(TokenUpdatePacket.TokenUpdatePacketHandler.class, TokenUpdatePacket.class, getNextID(), Side.SERVER);
+        }
+    }
 }

@@ -1,10 +1,12 @@
 package de.webtwob.mbma.client.proxy;
 
 import de.webtwob.mbma.client.gui.QSGui;
+import de.webtwob.mbma.client.gui.TokenGui;
 import de.webtwob.mbma.common.proxy.CommonProxy;
 import de.webtwob.mbma.common.tileentity.QSTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -19,11 +21,19 @@ public class ClientProxy extends CommonProxy {
     @Nullable
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-
-        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-        if(tileEntity != null && tileEntity instanceof QSTileEntity) {
-            return new QSGui(player.inventory, tileEntity.getCapability(CapabilityItemHandler
-                                                                                .ITEM_HANDLER_CAPABILITY, null));
+        switch (ID) {
+            case 0: {
+                TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+                if (tileEntity != null && tileEntity instanceof QSTileEntity) {
+                    return new QSGui(player.inventory, tileEntity.getCapability(CapabilityItemHandler
+                            .ITEM_HANDLER_CAPABILITY, null));
+                }
+                break;
+            }
+            case 1:
+            case 2:{
+                return  new TokenGui(player.getHeldItem(EnumHand.values()[ID-1]),player);
+            }
         }
         return null;
     }

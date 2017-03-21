@@ -29,7 +29,6 @@ public class QueueStackBlock extends Block {
     public QueueStackBlock() {
         super(Material.IRON);
         setCreativeTab(MBMACreativeTab.MBMATab);
-
         setDefaultState(blockState.getBaseState().withProperty(MBMAProperties.STATE, MaschineState.IDLE));
     }
 
