@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -19,6 +20,34 @@ public class QSContainer extends Container {
     public boolean canInteractWith(EntityPlayer playerIn) {
 
         return true;
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+
+        ItemStack ret = ItemStack.EMPTY;
+        Slot slot = inventorySlots.get(index);
+        if(slot!=null&&slot.getHasStack()){
+
+            ItemStack inSlot = slot.getStack();
+            ret = inSlot.copy();
+
+            //from player inventory
+            if(index < 4*9 ){
+                if(!mergeItemStack(inSlot,4*9,this.inventorySlots.size(),false)){
+                    return ItemStack.EMPTY;
+                }
+            }else if(!mergeItemStack(inSlot,0,4*9,true)){
+                return  ItemStack.EMPTY;
+            }
+            if(inSlot.isEmpty()){
+                slot.putStack(ItemStack.EMPTY);
+            }else{
+                slot.onSlotChanged();
+            }
+
+        }
+        return ret;
     }
 
     public QSContainer(InventoryPlayer playerInv, IItemHandler qsInventory, EntityPlayer player) {
