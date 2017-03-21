@@ -1,5 +1,7 @@
 package de.webtwob.mbma.common.capability;
 
+import de.webtwob.mbma.api.capability.APICapabilities;
+import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
 import de.webtwob.mbma.common.item.MBMAItemList;
 import de.webtwob.mbma.common.tileentity.QSTileEntity;
 import net.minecraft.item.ItemStack;
@@ -14,9 +16,9 @@ import javax.annotation.Nonnull;
  */
 public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
-    private final        NonNullList<ItemStack> stacks = NonNullList.withSize(getSlots(), ITEM_STACK);
-    private final        ItemStack[]            itemStacks = new ItemStack[getSlots()];
-    private static final ItemStack              ITEM_STACK = new ItemStack(MBMAItemList.LINKCARD, 0);
+    private final NonNullList<ItemStack> stacks = NonNullList.withSize(getSlots(), ITEM_STACK);
+    private final ItemStack[] itemStacks = new ItemStack[getSlots()];
+    private static final ItemStack ITEM_STACK = new ItemStack(MBMAItemList.LINKCARD, 0);
 
     private final QSTileEntity tileEntity;
 
@@ -36,23 +38,27 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if(stacks.get(slot).getCount() < 1 && stack.getItem() == MBMAItemList.LINKCARD) {
-            if(!simulate) {
-                stacks.get(slot).grow(1);
-                tileEntity.markDirty();
+        if (stacks.get(slot).getCount() < 1 && stack.getItem() == MBMAItemList.LINKCARD) {
+            IBlockPosProvider posProvider = stack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null);
+            if (posProvider!=null&&posProvider.getBlockPos()!=null) {
+                if (!simulate) {
+                    stacks.get(slot).grow(1);
+                    tileEntity.markDirty();
+                }
+                ItemStack ret = stack.copy();
+                ret.shrink(1);
+                return ret;
             }
-            ItemStack ret = stack.copy();
-            ret.shrink(1);
-            return ret;
-        } else { return stack; }
+        }
+        return stack;
     }
 
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if(stacks.get(slot).getCount() > 0) {
+        if (stacks.get(slot).getCount() > 0) {
             ItemStack stack = stacks.get(slot).copy();
             stack.setCount(1);
-            if(!simulate) {
+            if (!simulate) {
                 stacks.get(slot).shrink(1);
                 tileEntity.markDirty();
             }
@@ -70,7 +76,7 @@ public class QSItemHandler implements IItemHandler, IItemHandlerModifiable {
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if(!stack.isEmpty()) {
+        if (!stack.isEmpty()) {
             stacks.set(slot, stack);
         } else {
             stacks.set(slot, ITEM_STACK);

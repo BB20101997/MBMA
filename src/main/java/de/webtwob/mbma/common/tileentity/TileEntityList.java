@@ -10,7 +10,6 @@ public class TileEntityList {
 
     public static void registerTileEntities() {
         MBMALog.debug("Registering TileEntities");
-        GameRegistry.registerTileEntity(PSITileEntity.class, "mbma:psi");
         GameRegistry.registerTileEntity(QSTileEntity.class, "mbma:queuestack");
     }
 }

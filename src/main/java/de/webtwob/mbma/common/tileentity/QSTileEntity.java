@@ -58,8 +58,8 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound td          = getTileData();
-        NBTBase        itemhandler = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, itemHandler, null);
-        if(itemhandler != null) { td.setTag(MBMA_NBTKeys.QS_ITEM_HANDLER, itemhandler); }
+        NBTBase        itemHandler = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, this.itemHandler, null);
+        if(itemHandler != null) { td.setTag(MBMA_NBTKeys.QS_ITEM_HANDLER, itemHandler); }
         td.setTag(QS_TOKEN, token.serializeNBT());
         td.setInteger(QS_STATE, maschineState.ordinal());
         compound = super.writeToNBT(compound);

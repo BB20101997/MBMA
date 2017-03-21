@@ -78,8 +78,7 @@ public class ItemHandlerSlot extends Slot {
 
         @Override
         public boolean isItemValidForSlot(int index, ItemStack stack) {
-            return itemHandler.getStackInSlot(slot).getItem() == null || itemHandler.getStackInSlot(slot).getItem()
-                                                                                 == stack.getItem();
+            return itemHandler.getStackInSlot(slot).getItem() == stack.getItem();
         }
 
         @Override
@@ -104,7 +103,7 @@ public class ItemHandlerSlot extends Slot {
 
         @Override
         public String getName() {
-            return null;
+            return "";
         }
 
         @Override
