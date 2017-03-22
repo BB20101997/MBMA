@@ -2,6 +2,7 @@ package de.webtwob.mbma.common.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -15,7 +16,10 @@ public class TokenContainer extends Container {
         this.stack = stack;
     }
 
-
+    @Override
+    public Slot addSlotToContainer(Slot slotIn) {
+        return super.addSlotToContainer(slotIn);
+    }
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
