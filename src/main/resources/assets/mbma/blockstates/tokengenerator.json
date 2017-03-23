@@ -1,0 +1,10 @@
+{
+   "forge_marker": 1,
+  "defaults": {
+    "model": "mbma:tokengenerator"
+  },
+  "variants": {
+    "inventory": [{}],
+    "normal":[{}]
+  }
+}

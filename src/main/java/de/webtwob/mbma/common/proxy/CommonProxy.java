@@ -27,6 +27,10 @@ public class CommonProxy implements IGuiHandler {
         NetworkRegistry.INSTANCE.registerGuiHandler(MultiblockMaschineAutomation.INSTANCE, this);
     }
 
+    public void initModel(){
+
+    }
+
     @Nullable
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {

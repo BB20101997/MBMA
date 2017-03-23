@@ -31,6 +31,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.webtwob.mbma.common.references.MBMA_NBTKeys.QS_STATE;
@@ -46,7 +47,7 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     private final QSItemHandler itemHandler = new QSItemHandler(this);
     @Nonnull
-    private List<String> errorMessage;
+    private List<String> errorMessage = new ArrayList<>();
     private ItemStack token = ItemStack.EMPTY;
     private int idleTimer = 0;
     private MaschineState maschineState = MaschineState.PROBLEM;

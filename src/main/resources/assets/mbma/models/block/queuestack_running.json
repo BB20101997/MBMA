@@ -1,0 +1,8 @@
+{
+  "parent":"mbma:block/queuestack",
+  "textures":{
+    "top": "mbma:blocks/qs/qs_running_top",
+    "side": "mbma:blocks/qs/qs_running_side",
+    "bottom": "mbma:blocks/qs/qs_running_side"
+  }
+}

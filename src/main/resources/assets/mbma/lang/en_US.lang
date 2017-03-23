@@ -1,8 +1,12 @@
 #block localisation
 tile.mbma:storageinterface.name=Storage Interface
 tile.mbma:queuestack.name=Queue Stack
+tile.mbma:tokengenerator.name=Maschine Token Generator
+tile.mbma:playertokengenerator.name=Player Token Generator
+
 #creativetab localisation
 itemGroup.mbma=Multiblock Maschine Automation
+
 #item localisation
 item.mbma:linkcard.name=Link Card
 item.mbma:linkcard.linked.name=Linked Link Card

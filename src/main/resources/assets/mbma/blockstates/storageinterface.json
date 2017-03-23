@@ -4,9 +4,8 @@
     "model": "mbma:psi"
   },
   "variants": {
-    "inventory": {
-      "model": "mbma:psi"
-    },
+    "inventory": [{}],
+    "normal":[{}],
     "facing": {
       "up": {
         "x": 0

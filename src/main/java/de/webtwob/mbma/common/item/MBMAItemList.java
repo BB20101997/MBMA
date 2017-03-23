@@ -1,16 +1,21 @@
 package de.webtwob.mbma.common.item;
 
+import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.api.capability.provider.BlockPosProvider;
 import de.webtwob.mbma.api.capability.provider.CraftingRecipeProvider;
 import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.block.MBMABlockList;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static de.webtwob.mbma.common.references.MBMAResources.*;
 
@@ -51,6 +56,7 @@ public class MBMAItemList {
 
         //register items
         registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN,TOKEN_GENERATOR_ITEM);
+        MultiblockMaschineAutomation.proxy.initModel();
     }
 
     @SubscribeEvent
@@ -64,4 +70,16 @@ public class MBMAItemList {
     }
 
 
+    @SideOnly(Side.CLIENT)
+    public static void initModels() {
+        //ItemBlocks
+        ModelLoader.setCustomModelResourceLocation(STORAGE_INTERFACE_ITEM,0,new ModelResourceLocation(INTERFACE_REGISTRY_NAME,"inventory"));
+        ModelLoader.setCustomModelResourceLocation(QUEUE_STACK_ITEM,0,new ModelResourceLocation(QUEUESTACK_REGISTRY_NAME,"inventory"));
+        ModelLoader.setCustomModelResourceLocation(TOKEN_GENERATOR_ITEM,0,new ModelResourceLocation(TOKEN_GENERATOR_REGISTRY_NAME,"inventory"));
+
+        //Items
+        ModelLoader.setCustomModelResourceLocation(LINKCARD,0,new ModelResourceLocation(LINKCARD_REGISTRY_NAME,"inventory"));
+        ModelLoader.setCustomModelResourceLocation(TOKEN,0,new ModelResourceLocation(TOKEN_REGISTRY_NAME,"inventory"));
+        ModelLoader.setCustomModelResourceLocation(RECIPE_PATTERN,0,new ModelResourceLocation(RECIPE_PATTERN_REGISTRY_NAME,"inventory"));
+    }
 }

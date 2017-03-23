@@ -1,41 +1,28 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "mbma:queuestack",
-    "textures": {
-      "top": "mbma:blocks/qs_idle_top",
-      "side": "mbma:blocks/qs_idle_side",
-      "bottom": "mbma:blocks/qs_idle_side"
-    }
+    "model": "mbma:queuestack_idle"
   },
   "variants": {
-    "inventory": {
-      "model": "mbma:queuestack"
-    },
+    "inventory": [
+      {}
+    ],
+    "normal": [
+      {}
+    ],
     "state": {
       "idle": {
       },
       "running": {
-        "textures": {
-          "top": "mbma:blocks/qs_running_top",
-          "side": "mbma:blocks/qs_running_side",
-          "bottom": "mbma:blocks/qs_idle_side"
-        }
+        "model": "mbma:queuestack_running"
       },
       "waiting": {
-        "textures": {
-          "top": "mbma:blocks/qs_waiting_top",
-          "side": "mbma:blocks/qs_waiting_side",
-          "bottom": "mbma:blocks/qs_idle_side"
-        }
+        "model": "mbma:queuestack_waiting"
       },
       "problem": {
-        "textures": {
-          "top": "mbma:blocks/qs_problem_top",
-          "side": "mbma:blocks/qs_problem_side",
-          "bottom": "mbma:blocks/qs_idle_side"
-        }
+        "model": "mbma:queuestack_problem"
       }
     }
   }
 }
+

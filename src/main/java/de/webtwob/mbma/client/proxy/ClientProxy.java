@@ -2,6 +2,7 @@ package de.webtwob.mbma.client.proxy;
 
 import de.webtwob.mbma.client.gui.QSGui;
 import de.webtwob.mbma.client.gui.TokenGui;
+import de.webtwob.mbma.common.item.MBMAItemList;
 import de.webtwob.mbma.common.proxy.CommonProxy;
 import de.webtwob.mbma.common.tileentity.QSTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,5 +37,10 @@ public class ClientProxy extends CommonProxy {
             }
         }
         return null;
+    }
+
+    @Override
+    public void initModel() {
+        MBMAItemList.initModels();
     }
 }
