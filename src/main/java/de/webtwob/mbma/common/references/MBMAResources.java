@@ -18,9 +18,9 @@ public class MBMAResources {
     public static final ResourceLocation TOKEN_GUI = new ResourceLocation(MODID, "textures/gui/token.png");
 
     //Blocks
-    public static final ResourceLocation PSI_REGISTRY_NAME = new ResourceLocation(MODID, "psi");
-
+    public static final ResourceLocation INTERFACE_REGISTRY_NAME = new ResourceLocation(MODID, "storageInterface");
     public static final ResourceLocation QUEUESTACK_REGISTRY_NAME = new ResourceLocation(MODID, "queuestack");
+
     //Items
     public static final ResourceLocation TOKEN_REGISTRY_NAME = new ResourceLocation(MODID, "token");
     public static final ResourceLocation LINKCARD_REGISTRY_NAME = new ResourceLocation(MODID, "linkcard");

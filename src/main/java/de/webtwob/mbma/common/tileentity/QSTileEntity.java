@@ -5,12 +5,14 @@ import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
 import de.webtwob.mbma.api.capability.interfaces.ICraftingRequest;
 import de.webtwob.mbma.api.enums.MaschineState;
+import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.MBMAPacketHandler;
 import de.webtwob.mbma.common.capability.QSItemHandler;
 import de.webtwob.mbma.common.interfaces.IMaschineState;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -43,7 +46,7 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @Nonnull
     private ItemStack token = ItemStack.EMPTY;
     private int idleTimer = 0;
-    private MaschineState maschineState = MaschineState.IDLE;
+    private MaschineState maschineState = MaschineState.PROBLEM;
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
@@ -97,22 +100,25 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     @Override
     public void update() {
-        if (!world.isRemote && idleTimer < 0) {
-            switch (getMaschineState()) {
-                case IDLE:
-                    runIdleTasks();
-                    break;
-                case RUNNING:
-                    runRunningTask();
-                    break;
-                case WAITING:
-                    runWaitingTask();
-                    break;
-                case PROBLEM:
-                    runProblemTask();
-                    break;
+        if (!world.isRemote)
+            if (idleTimer < 0) {
+                switch (getMaschineState()) {
+                    case IDLE:
+                        runIdleTasks();
+                        break;
+                    case RUNNING:
+                        runRunningTask();
+                        break;
+                    case WAITING:
+                        runWaitingTask();
+                        break;
+                    case PROBLEM:
+                        runProblemTask();
+                        break;
+                }
+            } else {
+                idleTimer--;
             }
-        }
     }
 
     private void runIdleTasks() {
@@ -124,7 +130,10 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     }
 
     private void runRunningTask() {
-
+        if (token.isEmpty()) {
+            setMaschineState(MaschineState.IDLE);
+        }
+        //work on the current token
     }
 
     private void runWaitingTask() {
@@ -132,7 +141,25 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     }
 
     private void runProblemTask() {
-
+        boolean noPermanentStorage = true;
+        //TODO set to true once implemented
+        boolean noTemporaryStorage = false;
+        boolean noRecipeBank = false;
+        for (int i = 0; (noTemporaryStorage || noRecipeBank || noPermanentStorage) && i < 6; i++) {
+            if (!itemHandler.getStackInSlot(i).isEmpty()) {
+                noPermanentStorage = false;
+            }
+            if (!itemHandler.getStackInSlot(i + 6).isEmpty()) {
+                noTemporaryStorage = false;
+            }
+            if (!itemHandler.getStackInSlot(i + 12).isEmpty()) {
+                noRecipeBank = false;
+            }
+        }
+        if (!(noPermanentStorage || noTemporaryStorage || noRecipeBank)) {
+            setMaschineState(MaschineState.IDLE);
+        }
+        idleTimer = 20;
     }
 
     @Nonnull
@@ -140,7 +167,7 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         return maschineState;
     }
 
-    private BlockPos getLinkFromItemStack(ItemStack itemStack) {
+    private static BlockPos getLinkFromItemStack(ItemStack itemStack) {
         IBlockPosProvider bpp = itemStack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null);
         return bpp != null ? bpp.getBlockPos() : null;
     }
@@ -152,12 +179,14 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
             TileEntity tileEntity;
             IBlockState state;
             IItemHandler items;
-            //itterate over the Linkcard for Permanent Storage Interfaces
+            boolean noLink = true;
+            //iterate over the Linkcard for Permanent Storage Interfaces
             for (int i = 0; i < 6; i++) {
 
                 //when a card is present
                 pos = getLinkFromItemStack(itemHandler.getStackInSlot(i));
                 if (pos != null) {
+                    noLink = false;
                     state = getWorld().getBlockState(pos);
                     state = state.getBlock().getActualState(state, world, pos);
 
@@ -179,6 +208,10 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
                     }
                 }
 
+            }
+            if (noLink) {
+                //we don't have any linkcard to a permanenet inventory
+                setMaschineState(MaschineState.PROBLEM);
             }
         }
     }
@@ -220,4 +253,11 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     }
 
 
+    public void destroyed() {
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            if (!itemHandler.getStackInSlot(i).isEmpty())
+                getWorld().spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), itemHandler.getStackInSlot(i).copy()));
+        }
+        //TODO empty TSI storage's and drop token
+    }
 }

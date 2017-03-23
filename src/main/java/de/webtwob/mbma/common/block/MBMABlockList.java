@@ -15,24 +15,24 @@ import net.minecraftforge.fml.common.registry.IForgeRegistry;
 @Mod.EventBusSubscriber
 public class MBMABlockList {
 
-    public static final PermanentStorageInterfaceBlock PSI_BLOCK         = new PermanentStorageInterfaceBlock();
-    public static final QueueStackBlock                QUEUE_STACK_BLOCK = new QueueStackBlock();
+    public static final StorageInterfaceBlock STORAGE_INTERFACE_BLOCK = new StorageInterfaceBlock();
+    public static final QueueStackBlock QUEUE_STACK_BLOCK = new QueueStackBlock();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         MBMALog.info("Registering Blocks");
 
         //set register names
-        PSI_BLOCK.setRegistryName(MBMAResources.PSI_REGISTRY_NAME);
+        STORAGE_INTERFACE_BLOCK.setRegistryName(MBMAResources.INTERFACE_REGISTRY_NAME);
         QUEUE_STACK_BLOCK.setRegistryName(MBMAResources.QUEUESTACK_REGISTRY_NAME);
 
         //set Unlocalized names
-        PSI_BLOCK.setUnlocalizedName(MBMAResources.PSI_REGISTRY_NAME.toString());
+        STORAGE_INTERFACE_BLOCK.setUnlocalizedName(MBMAResources.INTERFACE_REGISTRY_NAME.toString());
         QUEUE_STACK_BLOCK.setUnlocalizedName(MBMAResources.QUEUESTACK_REGISTRY_NAME.toString());
 
         IForgeRegistry<Block> registry = event.getRegistry();
 
         //register blocks
-        registry.registerAll(PSI_BLOCK, QUEUE_STACK_BLOCK);
+        registry.registerAll(STORAGE_INTERFACE_BLOCK, QUEUE_STACK_BLOCK);
     }
 }

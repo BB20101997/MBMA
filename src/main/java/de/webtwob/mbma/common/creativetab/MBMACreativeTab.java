@@ -23,6 +23,6 @@ public class MBMACreativeTab extends CreativeTabs {
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {
-        return new ItemStack(MBMABlockList.PSI_BLOCK);
+        return new ItemStack(MBMABlockList.STORAGE_INTERFACE_BLOCK);
     }
 }

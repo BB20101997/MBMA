@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,13 +30,22 @@ public class QueueStackBlock extends Block {
     public QueueStackBlock() {
         super(Material.IRON);
         setCreativeTab(MBMACreativeTab.MBMATab);
-        setDefaultState(blockState.getBaseState().withProperty(MBMAProperties.STATE, MaschineState.IDLE));
+        setDefaultState(blockState.getBaseState().withProperty(MBMAProperties.STATE, MaschineState.PROBLEM));
     }
 
     @Nonnull
     @Override
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         return getExtendedState(state, worldIn,pos);
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(te instanceof QSTileEntity){
+            ((QSTileEntity)te).destroyed();
+        }
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Nonnull

@@ -21,8 +21,8 @@ import static de.webtwob.mbma.common.references.MBMAResources.*;
 public class MBMAItemList {
 
     //ItemBlocks
-    public static final ItemBlock PSIItem        = new ItemBlock(MBMABlockList.PSI_BLOCK);
-    public static final ItemBlock QueueStackItem = new ItemBlock(MBMABlockList.QUEUE_STACK_BLOCK);
+    public static final ItemBlock STORAGE_INTERFACE_ITEM = new ItemBlock(MBMABlockList.STORAGE_INTERFACE_BLOCK);
+    public static final ItemBlock QUEUE_STACK_ITEM = new ItemBlock(MBMABlockList.QUEUE_STACK_BLOCK);
 
     //Items
     public static final Item LINKCARD       = new LinkCardItem();
@@ -34,9 +34,9 @@ public class MBMAItemList {
         MBMALog.info("Registering Items");
 
         //set Register names
-        PSIItem.setRegistryName(PSI_REGISTRY_NAME);
+        STORAGE_INTERFACE_ITEM.setRegistryName(INTERFACE_REGISTRY_NAME);
         LINKCARD.setRegistryName(LINKCARD_REGISTRY_NAME);
-        QueueStackItem.setRegistryName(QUEUESTACK_REGISTRY_NAME);
+        QUEUE_STACK_ITEM.setRegistryName(QUEUESTACK_REGISTRY_NAME);
         TOKEN.setRegistryName(TOKEN_REGISTRY_NAME);
         RECIPE_PATTERN.setRegistryName(RECIPE_PATTERN_REGISTRY_NAME);
 
@@ -48,7 +48,7 @@ public class MBMAItemList {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         //register items
-        registry.registerAll(PSIItem, LINKCARD, QueueStackItem, TOKEN, RECIPE_PATTERN);
+        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN);
     }
 
     @SubscribeEvent

@@ -21,9 +21,9 @@ import javax.annotation.Nonnull;
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
-public class PermanentStorageInterfaceBlock extends Block {
+public class StorageInterfaceBlock extends Block {
 
-    public PermanentStorageInterfaceBlock() {
+    public StorageInterfaceBlock() {
         super(Material.IRON);
         setCreativeTab(MBMACreativeTab.MBMATab);
 

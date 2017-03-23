@@ -1,5 +1,5 @@
 #block localisation
-tile.mbma:psi.name=Permanent Storage Interface
+tile.mbma:storageInterface.name=Storage Interface
 tile.mbma:queuestack.name=Queue Stack
 #creativetab localisation
 itemGroup.mbma=Multiblock Maschine Automation
