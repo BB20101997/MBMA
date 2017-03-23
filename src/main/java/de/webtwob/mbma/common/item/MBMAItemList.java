@@ -23,6 +23,7 @@ public class MBMAItemList {
     //ItemBlocks
     public static final ItemBlock STORAGE_INTERFACE_ITEM = new ItemBlock(MBMABlockList.STORAGE_INTERFACE_BLOCK);
     public static final ItemBlock QUEUE_STACK_ITEM = new ItemBlock(MBMABlockList.QUEUE_STACK_BLOCK);
+    public static final ItemBlock TOKEN_GENERATOR_ITEM = new ItemBlock(MBMABlockList.TOKEN_GENERATOR_BLOCK);
 
     //Items
     public static final Item LINKCARD       = new LinkCardItem();
@@ -39,6 +40,7 @@ public class MBMAItemList {
         QUEUE_STACK_ITEM.setRegistryName(QUEUESTACK_REGISTRY_NAME);
         TOKEN.setRegistryName(TOKEN_REGISTRY_NAME);
         RECIPE_PATTERN.setRegistryName(RECIPE_PATTERN_REGISTRY_NAME);
+        TOKEN_GENERATOR_ITEM.setRegistryName(TOKEN_GENERATOR_REGISTRY_NAME);
 
         //set Unlocalized names
         TOKEN.setUnlocalizedName(TOKEN_REGISTRY_NAME.toString());
@@ -48,7 +50,7 @@ public class MBMAItemList {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         //register items
-        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN);
+        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN,TOKEN_GENERATOR_ITEM);
     }
 
     @SubscribeEvent

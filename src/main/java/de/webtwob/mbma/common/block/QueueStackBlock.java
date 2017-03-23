@@ -22,6 +22,8 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static de.webtwob.mbma.api.enums.MaschineState.IDLE;
+
 /**
  * Created by bennet on 17.03.17.
  */
@@ -68,6 +70,11 @@ public class QueueStackBlock extends Block {
     @Override
     public int getMetaFromState(IBlockState state) {
         return 0;
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return state.getValue(MBMAProperties.STATE)==IDLE?0:10;
     }
 
     @Override

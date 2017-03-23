@@ -19,6 +19,7 @@ public class MBMAResources {
 
     //Blocks
     public static final ResourceLocation INTERFACE_REGISTRY_NAME = new ResourceLocation(MODID, "storageInterface");
+    public static final ResourceLocation TOKEN_GENERATOR_REGISTRY_NAME = new ResourceLocation(MODID,"tokengenerator");
     public static final ResourceLocation QUEUESTACK_REGISTRY_NAME = new ResourceLocation(MODID, "queuestack");
 
     //Items

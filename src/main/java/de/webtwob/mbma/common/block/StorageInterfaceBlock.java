@@ -34,6 +34,11 @@ public class StorageInterfaceBlock extends Block {
         setDefaultState(state);
     }
 
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return state.getValue(MBMAProperties.CONNECTED) ? 10 : 0;
+    }
+
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {

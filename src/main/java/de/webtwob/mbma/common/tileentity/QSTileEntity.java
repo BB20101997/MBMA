@@ -31,6 +31,8 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static de.webtwob.mbma.common.references.MBMA_NBTKeys.QS_STATE;
 import static de.webtwob.mbma.common.references.MBMA_NBTKeys.QS_TOKEN;
 
@@ -44,9 +46,74 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     private final QSItemHandler itemHandler = new QSItemHandler(this);
     @Nonnull
+    private List<String> errorMessage;
     private ItemStack token = ItemStack.EMPTY;
     private int idleTimer = 0;
     private MaschineState maschineState = MaschineState.PROBLEM;
+
+    public List<String> getErrorMessages() {
+        return errorMessage;
+    }
+
+    /**
+     * Moves a specified amount of an ItemStack from Permanent Storage to Tempory Storage
+     *
+     * @param linkId   the linkcard that points to the permanent inventory
+     * @param permSlot the slot in the permanent inventory
+     * @param amount   the amount to move
+     */
+    private boolean moveStackToTemp(int linkId, int permSlot, int amount, boolean simulate) {
+        if (!simulate && !moveStackToTemp(linkId, permSlot, amount, true)) {
+            return false;
+        }
+        ItemStack link = itemHandler.getStackInSlot(linkId);
+        IItemHandler permInventory = getInventoryFromLink(link);
+        boolean success = true;
+        if (permInventory != null) {
+            ItemStack itemStack = permInventory.extractItem(permSlot, amount, simulate);
+            if (itemStack.getCount() != amount) {
+                success = false;
+            }
+            IItemHandler tempInventory;
+            for (int i = 0; i < 6 && !itemStack.isEmpty(); i++) {
+                tempInventory = getInventoryFromLink(itemHandler.getStackInSlot(i + 6));
+                if (tempInventory == null) {
+                    continue;
+                }
+                for (int slot = 0; slot < tempInventory.getSlots() && !itemStack.isEmpty(); slot++) {
+                    itemStack = tempInventory.insertItem(slot, itemStack, simulate);
+                }
+            }
+            if (itemStack.isEmpty()) {
+                return success;
+            }else{
+                itemStack = permInventory.insertItem(permSlot,itemStack,simulate);
+                if(!itemStack.isEmpty()){
+                    world.spawnEntity(new EntityItem(world,getPos().getX(),getPos().getY(),getPos().getZ(),itemStack));
+                }
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    @Nullable
+    private IItemHandler getInventoryFromLink(ItemStack itemStack) {
+        BlockPos pos = getLinkFromItemStack(itemStack);
+        World world = getWorld();
+        if (pos != null) {
+            IBlockState state = world.getBlockState(pos);
+            if (state.getValue(MBMAProperties.CONNECTED)) {
+                EnumFacing dir = state.getValue(MBMAProperties.FACING);
+                TileEntity te = world.getTileEntity(pos.offset(dir));
+                if (te != null) {
+                    return te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite());
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
@@ -132,7 +199,9 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     private void runRunningTask() {
         if (token.isEmpty()) {
             setMaschineState(MaschineState.IDLE);
+            return;
         }
+
         //work on the current token
     }
 
@@ -142,8 +211,8 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     private void runProblemTask() {
         boolean noPermanentStorage = true;
+        boolean noTemporaryStorage = true;
         //TODO set to true once implemented
-        boolean noTemporaryStorage = false;
         boolean noRecipeBank = false;
         for (int i = 0; (noTemporaryStorage || noRecipeBank || noPermanentStorage) && i < 6; i++) {
             if (!itemHandler.getStackInSlot(i).isEmpty()) {
@@ -158,6 +227,10 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         }
         if (!(noPermanentStorage || noTemporaryStorage || noRecipeBank)) {
             setMaschineState(MaschineState.IDLE);
+        } else {
+            if (noPermanentStorage) errorMessage.add("text.mbma:qs.error.permmissing");
+            if (noTemporaryStorage) errorMessage.add("text.mbma:qs.error.tempmissing");
+            if (noRecipeBank) errorMessage.add("text.mbma:qs.error.recipebank");
         }
         idleTimer = 20;
     }
@@ -174,40 +247,16 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     private void findNewToken() {
         if (!world.isRemote) {
-            BlockPos pos;
-            EnumFacing dir;
-            TileEntity tileEntity;
-            IBlockState state;
-            IItemHandler items;
             boolean noLink = true;
             //iterate over the Linkcard for Permanent Storage Interfaces
             for (int i = 0; i < 6; i++) {
-
-                //when a card is present
-                pos = getLinkFromItemStack(itemHandler.getStackInSlot(i));
-                if (pos != null) {
+                IItemHandler inventory = getInventoryFromLink(itemHandler.getStackInSlot(i));
+                if (inventory != null) {
                     noLink = false;
-                    state = getWorld().getBlockState(pos);
-                    state = state.getBlock().getActualState(state, world, pos);
-
-                    //check if PSI is connected (ATM not checking if it is actually a PSI)
-                    if (state.getPropertyKeys().contains(MBMAProperties.CONNECTED) && state.getValue(MBMAProperties
-                            .CONNECTED)) {
-                        dir = state.getValue(MBMAProperties.FACING);
-                        pos = pos.offset(dir);
-                        tileEntity = getWorld().getTileEntity(pos);
-
-                        //check and get the ItemHandler Capibility
-                        if (tileEntity != null && null != (items = tileEntity.getCapability(CapabilityItemHandler
-                                .ITEM_HANDLER_CAPABILITY, dir.getOpposite()))) {
-                            //search for a token in the IItemHandlers Slots
-                            if (findTokenInItemHandler(items)) {
-                                return;
-                            }
-                        }
+                    if (findTokenInItemHandler(inventory)) {
+                        return;
                     }
                 }
-
             }
             if (noLink) {
                 //we don't have any linkcard to a permanenet inventory

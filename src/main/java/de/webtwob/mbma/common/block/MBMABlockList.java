@@ -17,6 +17,7 @@ public class MBMABlockList {
 
     public static final StorageInterfaceBlock STORAGE_INTERFACE_BLOCK = new StorageInterfaceBlock();
     public static final QueueStackBlock QUEUE_STACK_BLOCK = new QueueStackBlock();
+    public static final TokenGenerator TOKEN_GENERATOR_BLOCK = new TokenGenerator();
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -25,14 +26,16 @@ public class MBMABlockList {
         //set register names
         STORAGE_INTERFACE_BLOCK.setRegistryName(MBMAResources.INTERFACE_REGISTRY_NAME);
         QUEUE_STACK_BLOCK.setRegistryName(MBMAResources.QUEUESTACK_REGISTRY_NAME);
+        TOKEN_GENERATOR_BLOCK.setRegistryName(MBMAResources.TOKEN_GENERATOR_REGISTRY_NAME);
 
         //set Unlocalized names
+        TOKEN_GENERATOR_BLOCK.setUnlocalizedName(MBMAResources.TOKEN_GENERATOR_REGISTRY_NAME.toString());
         STORAGE_INTERFACE_BLOCK.setUnlocalizedName(MBMAResources.INTERFACE_REGISTRY_NAME.toString());
         QUEUE_STACK_BLOCK.setUnlocalizedName(MBMAResources.QUEUESTACK_REGISTRY_NAME.toString());
 
         IForgeRegistry<Block> registry = event.getRegistry();
 
         //register blocks
-        registry.registerAll(STORAGE_INTERFACE_BLOCK, QUEUE_STACK_BLOCK);
+        registry.registerAll(STORAGE_INTERFACE_BLOCK, QUEUE_STACK_BLOCK,TOKEN_GENERATOR_BLOCK);
     }
 }
