@@ -2,7 +2,7 @@
   "parent": "block/cube_bottom_top",
   "textures":{
     "top":"mbma:blocks/tokengenerator_top",
-    "bottom":"mbma:blocks/tokengenerator_bottom",
-    "side":"mbma:blocks/tokengenerator_side"
+    "bottom":"mbma:blocks/tokengenerator_top",
+    "side":"mbma:blocks/tokengenerator_top"
   }
 }
