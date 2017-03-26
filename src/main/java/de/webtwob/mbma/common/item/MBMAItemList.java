@@ -8,6 +8,7 @@ import de.webtwob.mbma.common.block.MBMABlockList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -31,8 +32,8 @@ public class MBMAItemList {
     public static final ItemBlock TOKEN_GENERATOR_ITEM = new ItemBlock(MBMABlockList.TOKEN_GENERATOR_BLOCK);
 
     //Items
-    public static final Item LINKCARD       = new LinkCardItem();
-    public static final Item TOKEN          = new Token();
+    public static final Item LINKCARD = new LinkCardItem();
+    public static final Item TOKEN = new Token();
     public static final Item RECIPE_PATTERN = new RecipePattern();
 
     @SubscribeEvent
@@ -55,17 +56,17 @@ public class MBMAItemList {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         //register items
-        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN,TOKEN_GENERATOR_ITEM);
+        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN, TOKEN_GENERATOR_ITEM);
         MultiblockMaschineAutomation.proxy.initModel();
     }
 
     @SubscribeEvent
-    public static void attacheBlockPosProvider(AttachCapabilitiesEvent<Item> event) {
-        if(event.getObject() == LINKCARD) {
-            event.addCapability(CAP_BLOCK_POSITION, new BlockPosProvider());
+    public static void attacheCapabilityProvider(AttachCapabilitiesEvent<ItemStack> event) {
+        if (event.getObject().getItem() == LINKCARD) {
+            event.addCapability(CAP_BLOCK_POSITION, new BlockPosProvider(event.getObject()));
         }
-        if(event.getObject() == TOKEN){
-            event.addCapability(CAP_CRAFTING_REQUEST, new CraftingRecipeProvider());
+        if (event.getObject().getItem() == TOKEN) {
+            event.addCapability(CAP_CRAFTING_REQUEST, new CraftingRecipeProvider(event.getObject()));
         }
     }
 
@@ -73,13 +74,13 @@ public class MBMAItemList {
     @SideOnly(Side.CLIENT)
     public static void initModels() {
         //ItemBlocks
-        ModelLoader.setCustomModelResourceLocation(STORAGE_INTERFACE_ITEM,0,new ModelResourceLocation(INTERFACE_REGISTRY_NAME,"inventory"));
-        ModelLoader.setCustomModelResourceLocation(QUEUE_STACK_ITEM,0,new ModelResourceLocation(QUEUESTACK_REGISTRY_NAME,"inventory"));
-        ModelLoader.setCustomModelResourceLocation(TOKEN_GENERATOR_ITEM,0,new ModelResourceLocation(TOKEN_GENERATOR_REGISTRY_NAME,"inventory"));
+        ModelLoader.setCustomModelResourceLocation(STORAGE_INTERFACE_ITEM, 0, new ModelResourceLocation(INTERFACE_REGISTRY_NAME, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(QUEUE_STACK_ITEM, 0, new ModelResourceLocation(QUEUESTACK_REGISTRY_NAME, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(TOKEN_GENERATOR_ITEM, 0, new ModelResourceLocation(TOKEN_GENERATOR_REGISTRY_NAME, "inventory"));
 
         //Items
-        ModelLoader.setCustomModelResourceLocation(LINKCARD,0,new ModelResourceLocation(LINKCARD_REGISTRY_NAME,"inventory"));
-        ModelLoader.setCustomModelResourceLocation(TOKEN,0,new ModelResourceLocation(TOKEN_REGISTRY_NAME,"inventory"));
-        ModelLoader.setCustomModelResourceLocation(RECIPE_PATTERN,0,new ModelResourceLocation(RECIPE_PATTERN_REGISTRY_NAME,"inventory"));
+        ModelLoader.setCustomModelResourceLocation(LINKCARD, 0, new ModelResourceLocation(LINKCARD_REGISTRY_NAME, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(TOKEN, 0, new ModelResourceLocation(TOKEN_REGISTRY_NAME, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(RECIPE_PATTERN, 0, new ModelResourceLocation(RECIPE_PATTERN_REGISTRY_NAME, "inventory"));
     }
 }

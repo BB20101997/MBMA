@@ -1,8 +1,13 @@
 package de.webtwob.mbma.api.capability.provider;
 
 import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
+import de.webtwob.mbma.common.MBMALog;
+import de.webtwob.mbma.common.references.MBMA_NBTKeys;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -16,7 +21,37 @@ import static de.webtwob.mbma.api.capability.APICapabilities.CAPABILITY_BLOCK_PO
  */
 public class BlockPosProvider implements ICapabilitySerializable {
 
-    private IBlockPosProvider provider = CAPABILITY_BLOCK_POS.getDefaultInstance();
+    private IBlockPosProvider provider = new IBlockPosProvider() {
+
+        @Override
+        public BlockPos getBlockPos() {
+            NBTTagCompound compound = item.getTagCompound();
+            if (compound == null) return null;
+            int[] posA = compound.getIntArray(MBMA_NBTKeys.LINK_SHARE_POS);
+            if (posA.length >= 3) {
+                return new BlockPos(posA[0], posA[1], posA[2]);
+            }
+            return null;
+        }
+
+        @Override
+        public void setBlockPos(BlockPos pos) {
+            NBTTagCompound compound = item.getTagCompound();
+            if (compound == null) compound = new NBTTagCompound();
+            if (pos != null) {
+                compound.setIntArray(MBMA_NBTKeys.LINK_SHARE_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
+            } else {
+                compound.removeTag(MBMA_NBTKeys.LINK_SHARE_POS);
+            }
+            item.setTagCompound(compound);
+        }
+    };
+
+    private ItemStack item;
+
+    public BlockPosProvider(ItemStack stack) {
+        item = stack;
+    }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
@@ -26,7 +61,7 @@ public class BlockPosProvider implements ICapabilitySerializable {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if(hasCapability(capability,facing)) {
+        if (hasCapability(capability, facing)) {
             return (T) provider;
         }
         return null;
@@ -35,12 +70,12 @@ public class BlockPosProvider implements ICapabilitySerializable {
     @Override
     public NBTBase serializeNBT() {
         return CAPABILITY_BLOCK_POS.getStorage().writeNBT(CAPABILITY_BLOCK_POS,
-                                                          provider, null);
+                provider, null);
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
         CAPABILITY_BLOCK_POS.getStorage().readNBT(CAPABILITY_BLOCK_POS, provider,
-                                                  null, nbt);
+                null, nbt);
     }
 }

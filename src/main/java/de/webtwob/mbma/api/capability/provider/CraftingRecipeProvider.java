@@ -1,7 +1,10 @@
 package de.webtwob.mbma.api.capability.provider;
 
 import de.webtwob.mbma.api.capability.interfaces.ICraftingRequest;
+import de.webtwob.mbma.common.references.MBMA_NBTKeys;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -16,7 +19,29 @@ import static de.webtwob.mbma.api.capability.APICapabilities.CAPABILITY_CRAFTING
  */
 public class CraftingRecipeProvider implements ICapabilitySerializable {
 
-    private ICraftingRequest provider = CAPABILITY_CRAFTING_REQUEST.getDefaultInstance();
+    private ICraftingRequest provider = new ICraftingRequest() {
+        @Nonnull
+        @Override
+        public ItemStack getRequest() {
+            NBTTagCompound compound = item.getTagCompound();
+            if(compound == null)return ItemStack.EMPTY;
+            return new ItemStack((NBTTagCompound) compound.getTag(MBMA_NBTKeys.TOKEN_SHARE_REQUEST));
+        }
+
+        @Override
+        public void setRequest(@Nonnull ItemStack stack) {
+           NBTTagCompound compound = item.getTagCompound();
+           if(compound==null)compound = new NBTTagCompound();
+           compound.setTag(MBMA_NBTKeys.TOKEN_SHARE_REQUEST,stack.serializeNBT());
+           item.setTagCompound(compound);
+        }
+    };
+
+    private ItemStack item;
+
+    public CraftingRecipeProvider(ItemStack stack){
+        item = stack;
+    }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

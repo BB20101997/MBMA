@@ -1,0 +1,6 @@
+{
+  "parent":"mbma:item/linkcard",
+  "textures":{
+    "layer0":"mbma:items/linkcard_linked"
+  }
+}

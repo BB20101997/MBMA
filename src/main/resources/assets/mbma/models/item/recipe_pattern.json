@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mbma:items/token"
+    "layer0": "mbma:items/recipe_pattern"
   }
 }

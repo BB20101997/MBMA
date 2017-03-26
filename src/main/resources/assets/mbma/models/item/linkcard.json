@@ -1,6 +1,14 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mbma:items/linkcard"
-  }
+    "layer0": "mbma:items/linkcard_unlinked"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "mbma:islinked": 1
+      },
+     "model":"mbma:item/linkcard_linked"
+    }
+  ]
 }

@@ -2,22 +2,19 @@ package de.webtwob.mbma.common.item;
 
 import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
+import de.webtwob.mbma.api.property.IsLinkedItemPropertyGetter;
 import de.webtwob.mbma.common.creativetab.MBMACreativeTab;
+import de.webtwob.mbma.common.references.MBMAResources;
 import de.webtwob.mbma.common.references.MBMAUnlocalizedNames;
-import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -28,16 +25,10 @@ public class LinkCardItem extends Item {
     public LinkCardItem() {
         super();
         setCreativeTab(MBMACreativeTab.MBMATab);
+        addPropertyOverride(MBMAResources.LINKED, IsLinkedItemPropertyGetter.INSTANCE);
     }
 
-    private BlockPos getLinked(ItemStack stack, boolean client_side) {
-        if (client_side) {
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound != null && compound.hasKey(MBMA_NBTKeys.LINK_SHARE_POS)) {
-                int[] pos = compound.getIntArray(MBMA_NBTKeys.LINK_SHARE_POS);
-                return new BlockPos(pos[0], pos[1], pos[2]);
-            }
-        }
+    private BlockPos getLinked(ItemStack stack) {
         IBlockPosProvider ibpp;
         if ((ibpp = stack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null)) != null) {
             return ibpp.getBlockPos();
@@ -87,7 +78,7 @@ public class LinkCardItem extends Item {
     @SuppressWarnings("StringConcatenationMissingWhitespace")
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        if (getLinked(stack, true) != null) {
+        if (getLinked(stack) != null) {
             return getUnlocalizedName() + MBMAUnlocalizedNames.LINKED_SUFIX;
         } else {
             return getUnlocalizedName() + MBMAUnlocalizedNames.UNLINKED_SUFIX;
@@ -97,31 +88,17 @@ public class LinkCardItem extends Item {
     @Override
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, playerIn, tooltip, advanced);
-        BlockPos link = getLinked(stack, true);
+        BlockPos link = getLinked(stack);
         if (link != null) {
             tooltip.add(String.format("Linked to Block at: X:%d Y:%d Z:%d", link.getX(), link.getY(), link.getZ()));
         }
     }
 
-
-    @Nullable
     @Override
-    public NBTTagCompound getNBTShareTag(ItemStack stack) {
-        NBTTagCompound compound = super.getNBTShareTag(stack);
-        if (compound == null) {
-            compound = new NBTTagCompound();
-        }
-        IBlockPosProvider posProvider;
-        if ((posProvider = stack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null)) != null) {
-            BlockPos pos = posProvider.getBlockPos();
-            if (pos != null) {
-                compound.setIntArray(MBMA_NBTKeys.LINK_SHARE_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
-            } else {
-                compound.removeTag(MBMA_NBTKeys.LINK_SHARE_POS);
-            }
-        }
-        return compound;
+    public boolean updateItemStackNBT(NBTTagCompound nbt) {
+        return true;
     }
+
 
     @Override
     public int getItemStackLimit(ItemStack stack) {

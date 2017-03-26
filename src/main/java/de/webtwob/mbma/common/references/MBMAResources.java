@@ -26,4 +26,5 @@ public class MBMAResources {
     public static final ResourceLocation TOKEN_REGISTRY_NAME = new ResourceLocation(MODID, "token");
     public static final ResourceLocation LINKCARD_REGISTRY_NAME = new ResourceLocation(MODID, "linkcard");
     public static final ResourceLocation RECIPE_PATTERN_REGISTRY_NAME = new ResourceLocation(MODID, "recipe_pattern");
+    public static final ResourceLocation LINKED = new ResourceLocation(MODID,"islinked");
 }

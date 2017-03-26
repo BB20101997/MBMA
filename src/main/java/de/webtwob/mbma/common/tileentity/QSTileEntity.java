@@ -9,6 +9,7 @@ import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.MBMAPacketHandler;
 import de.webtwob.mbma.common.capability.QSItemHandler;
 import de.webtwob.mbma.common.interfaces.IMaschineState;
+import de.webtwob.mbma.common.item.MBMAItemList;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.block.state.IBlockState;
@@ -87,10 +88,10 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
             }
             if (itemStack.isEmpty()) {
                 return success;
-            }else{
-                itemStack = permInventory.insertItem(permSlot,itemStack,simulate);
-                if(!itemStack.isEmpty()){
-                    world.spawnEntity(new EntityItem(world,getPos().getX(),getPos().getY(),getPos().getZ(),itemStack));
+            } else {
+                itemStack = permInventory.insertItem(permSlot, itemStack, simulate);
+                if (!itemStack.isEmpty()) {
+                    world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), itemStack));
                 }
                 return false;
             }
@@ -200,7 +201,25 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     private void runRunningTask() {
         if (token.isEmpty()) {
             setMaschineState(MaschineState.IDLE);
-            return;
+        } else {
+            ICraftingRequest request = getRequestFromToken(token);
+            if (request == null || request.isCompleted()) {
+                //TODO clear Temp inventory content
+                ItemStack token = new ItemStack(MBMAItemList.TOKEN, 1);
+                for (int i = 0; i < 6 && !token.isEmpty(); i++) {
+                    IItemHandler inv = getInventoryFromLink(itemHandler.getStackInSlot(i));
+                    if (inv == null) continue;
+                    for (int slot = 0; slot < inv.getSlots(); slot++) {
+                        inv.insertItem(slot, token, false);
+                    }
+                }
+                if (token.isEmpty()) {
+                    this.token = ItemStack.EMPTY;
+                }
+            } else {
+                //TODO handle request
+
+            }
         }
 
         //work on the current token
@@ -274,26 +293,27 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         ItemStack itemStack;
         for (int i = 0; i < slotCount; i++) {
             itemStack = items.getStackInSlot(i);
-            ICraftingRequest craftingRequest;
-            if ((!itemStack.isEmpty()) && (craftingRequest = itemStack.getCapability(APICapabilities
-                    .CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-                if (!craftingRequest.isCompleted()) {
-                    itemStack = items.extractItem(i, 1, false);
-                    if (!itemStack.isEmpty()) {
-                        token = itemStack.copy();
-                        return true;
-                    }
+            ICraftingRequest craftingRequest = getRequestFromToken(itemStack);
+            if (craftingRequest != null && !craftingRequest.isCompleted()) {
+                ItemStack tokenExtract = items.extractItem(i, 1, false);
+                if (!tokenExtract.isEmpty()) {
+                    token = tokenExtract.copy();
+                    return true;
                 }
             }
         }
         return false;
     }
 
+    @Nullable
+    private ICraftingRequest getRequestFromToken(@Nullable ItemStack stack) {
+        return !(stack == null || stack.isEmpty()) ? stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null) : null;
+    }
+
     public void setMaschineState(@Nonnull MaschineState state) {
         maschineState = state;
         if (hasWorld()) {
             if (!getWorld().isRemote) {
-                //send update to client
                 MBMAPacketHandler.INSTANCE.sendToDimension(new MaschineStateUpdatePacket(getPos(), state), world.provider.getDimension());
             } else {
                 getWorld().markBlockRangeForRenderUpdate(pos, pos);
@@ -304,10 +324,15 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
 
     public void destroyed() {
+        //drop linkcards
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             if (!itemHandler.getStackInSlot(i).isEmpty())
                 getWorld().spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), itemHandler.getStackInSlot(i).copy()));
         }
-        //TODO empty TSI storage's and drop token
+        //drop token
+        if(token!=null&&!token.isEmpty()){
+            getWorld().spawnEntity(new EntityItem(world,getPos().getX(),getPos().getY(),getPos().getZ(),token.copy()));
+        }
+        //TODO maybe empty TSI storage's
     }
 }
