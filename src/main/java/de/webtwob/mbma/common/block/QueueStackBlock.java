@@ -3,6 +3,7 @@ package de.webtwob.mbma.common.block;
 import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.api.MBMAProperties;
 import de.webtwob.mbma.api.enums.MaschineState;
+import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.creativetab.MBMACreativeTab;
 import de.webtwob.mbma.common.tileentity.QSTileEntity;
 import net.minecraft.block.Block;
@@ -83,7 +84,15 @@ public class QueueStackBlock extends Block {
         if(worldIn.isRemote) {
             return true;
         } else {
-            playerIn.openGui(MultiblockMaschineAutomation.INSTANCE, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            if(playerIn.isSneaking()&&playerIn.isCreative()){
+                TileEntity te = worldIn.getTileEntity(pos);
+                if(te instanceof QSTileEntity){
+                    MBMALog.info("{} creative completed a crafting request at {}",playerIn.getName(),pos);
+                    ((QSTileEntity) te).creativeComplete();
+                }
+            }else {
+                playerIn.openGui(MultiblockMaschineAutomation.INSTANCE, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            }
             return true;
         }
     }

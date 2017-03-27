@@ -5,10 +5,12 @@ import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
 import de.webtwob.mbma.api.capability.interfaces.ICraftingRequest;
 import de.webtwob.mbma.api.enums.MaschineState;
-import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.MBMAPacketHandler;
-import de.webtwob.mbma.common.capability.QSItemHandler;
+import de.webtwob.mbma.common.capability.CombinedItemHandler;
+import de.webtwob.mbma.common.capability.FilteredItemHandler;
+import de.webtwob.mbma.common.interfaces.ICondition;
 import de.webtwob.mbma.common.interfaces.IMaschineState;
+import de.webtwob.mbma.common.interfaces.IStackFilter;
 import de.webtwob.mbma.common.item.MBMAItemList;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
@@ -22,12 +24,14 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,58 +50,76 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @CapabilityInject(IItemHandler.class)
     private static Capability<IItemHandler> ITEM_HANDLER = null;
 
-    private final QSItemHandler itemHandler = new QSItemHandler(this);
+    private static final IStackFilter linkFilter = stack -> stack.hasCapability(APICapabilities.CAPABILITY_BLOCK_POS, null);
+
+    private final ICondition IS_LINKED = new ICondition() {
+        @Override
+        public boolean checkCondition() {
+
+            boolean noPermanentStorage = true;
+            boolean noTemporaryStorage = true;
+            boolean noRecipeBank = true;
+            for (int i = 0; (noTemporaryStorage || noRecipeBank || noPermanentStorage) && i < 6; i++) {
+                if (!combinedLinks.getStackInSlot(i).isEmpty()) {
+                    noPermanentStorage = false;
+                }
+                if (!combinedLinks.getStackInSlot(i + 6).isEmpty()) {
+                    noTemporaryStorage = false;
+                }
+                if (!combinedLinks.getStackInSlot(i + 12).isEmpty()) {
+                    noRecipeBank = false;
+                }
+            }
+
+            if (noPermanentStorage) errorMessage.add("text.mbma:qs.error.permmissing");
+            if (noTemporaryStorage) errorMessage.add("text.mbma:qs.error.tempmissing");
+            if (noRecipeBank) errorMessage.add("text.mbma:qs.error.recipebank");
+
+            return noPermanentStorage || noTemporaryStorage || noRecipeBank;
+
+        }
+    };
+
+    private final NonNullList<ItemStack> permLinkList = NonNullList.withSize(6, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> tempLinkList = NonNullList.withSize(6, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> recipeList = NonNullList.withSize(6, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> internalList = NonNullList.withSize(9, ItemStack.EMPTY);
+
+    private final ItemStackHandler permanentLinks = new FilteredItemHandler(permLinkList, linkFilter, 1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+    };
+    private final ItemStackHandler temporaryLinks = new FilteredItemHandler(tempLinkList, linkFilter, 1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+    };
+    private final ItemStackHandler recipeLinks = new FilteredItemHandler(recipeList, linkFilter, 1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+    };
+
+    private final ItemStackHandler internalInventory = new ItemStackHandler(internalList);
+
+    private final CombinedItemHandler combinedLinks = new CombinedItemHandler(permanentLinks, temporaryLinks, recipeLinks);
+
+    @Nonnull
+    private ItemStack token = ItemStack.EMPTY;
+    @Nonnull
+    private MaschineState maschineState = MaschineState.PROBLEM;
     @Nonnull
     private List<String> errorMessage = new ArrayList<>();
-    private ItemStack token = ItemStack.EMPTY;
+    private ICondition errorCondition = () -> false;
     private int idleTimer = 0;
-    private MaschineState maschineState = MaschineState.PROBLEM;
 
+    @Nonnull
     public List<String> getErrorMessages() {
         return errorMessage;
-    }
-
-    /**
-     * Moves a specified amount of an ItemStack from Permanent Storage to Tempory Storage
-     *
-     * @param linkId   the linkcard that points to the permanent inventory
-     * @param permSlot the slot in the permanent inventory
-     * @param amount   the amount to move
-     */
-    private boolean moveStackToTemp(int linkId, int permSlot, int amount, boolean simulate) {
-        if (!simulate && !moveStackToTemp(linkId, permSlot, amount, true)) {
-            return false;
-        }
-        ItemStack link = itemHandler.getStackInSlot(linkId);
-        IItemHandler permInventory = getInventoryFromLink(link);
-        boolean success = true;
-        if (permInventory != null) {
-            ItemStack itemStack = permInventory.extractItem(permSlot, amount, simulate);
-            if (itemStack.getCount() != amount) {
-                success = false;
-            }
-            IItemHandler tempInventory;
-            for (int i = 0; i < 6 && !itemStack.isEmpty(); i++) {
-                tempInventory = getInventoryFromLink(itemHandler.getStackInSlot(i + 6));
-                if (tempInventory == null) {
-                    continue;
-                }
-                for (int slot = 0; slot < tempInventory.getSlots() && !itemStack.isEmpty(); slot++) {
-                    itemStack = tempInventory.insertItem(slot, itemStack, simulate);
-                }
-            }
-            if (itemStack.isEmpty()) {
-                return success;
-            } else {
-                itemStack = permInventory.insertItem(permSlot, itemStack, simulate);
-                if (!itemStack.isEmpty()) {
-                    world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), itemStack));
-                }
-                return false;
-            }
-        }
-
-        return false;
     }
 
     @Nullable
@@ -122,7 +144,8 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         super.readFromNBT(compound);
         NBTTagCompound td = getTileData();
         token = new ItemStack(td.getCompoundTag(QS_TOKEN));
-        ITEM_HANDLER.getStorage().readNBT(ITEM_HANDLER, itemHandler, null, td.getTag(MBMA_NBTKeys.QS_ITEM_HANDLER));
+        ITEM_HANDLER.getStorage().readNBT(ITEM_HANDLER, combinedLinks, null, td.getTag(MBMA_NBTKeys.QS_ITEM_HANDLER));
+        ITEM_HANDLER.getStorage().readNBT(ITEM_HANDLER, internalInventory, null, td.getTag(MBMA_NBTKeys.QS_ITEM_HANDLER_INTERN));
         setMaschineState(MaschineState.values()[td.getInteger(QS_STATE)]);
     }
 
@@ -130,9 +153,13 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound td = getTileData();
-        NBTBase itemHandler = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, this.itemHandler, null);
+        NBTBase itemHandler = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, this.combinedLinks, null);
+        NBTBase itemHandlerIntern = ITEM_HANDLER.getStorage().writeNBT(ITEM_HANDLER, this.internalInventory, null);
         if (itemHandler != null) {
             td.setTag(MBMA_NBTKeys.QS_ITEM_HANDLER, itemHandler);
+        }
+        if (itemHandlerIntern != null) {
+            td.setTag(MBMA_NBTKeys.QS_ITEM_HANDLER_INTERN, itemHandlerIntern);
         }
         td.setTag(QS_TOKEN, token.serializeNBT());
         td.setInteger(QS_STATE, maschineState.ordinal());
@@ -162,7 +189,7 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (ITEM_HANDLER != null && capability == ITEM_HANDLER) {
-            return (T) itemHandler;
+            return (T) combinedLinks;
         }
         return super.getCapability(capability, facing);
     }
@@ -199,30 +226,21 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     }
 
     private void runRunningTask() {
-        if (token.isEmpty()) {
-            setMaschineState(MaschineState.IDLE);
-        } else {
-            ICraftingRequest request = getRequestFromToken(token);
-            if (request == null || request.isCompleted()) {
-                //TODO clear Temp inventory content
-                ItemStack token = new ItemStack(MBMAItemList.TOKEN, 1);
-                for (int i = 0; i < 6 && !token.isEmpty(); i++) {
-                    IItemHandler inv = getInventoryFromLink(itemHandler.getStackInSlot(i));
-                    if (inv == null) continue;
-                    for (int slot = 0; slot < inv.getSlots(); slot++) {
-                        inv.insertItem(slot, token, false);
-                    }
-                }
-                if (token.isEmpty()) {
-                    this.token = ItemStack.EMPTY;
-                }
-            } else {
-                //TODO handle request
-
+        ICraftingRequest request = getRequestFromToken(token);
+        if (request == null || request.isCompleted()) {
+            //TODO clear Temp inventory content
+            for (int slot = 0; slot < internalList.size(); slot++) {
+                internalList.set(slot, moveStackToPermanent(internalList.get(slot)));
             }
-        }
 
-        //work on the current token
+            returnEmptyToken();
+            if (token.isEmpty() && isInternalEmpty()) {
+                setMaschineState(MaschineState.IDLE);
+            }
+        } else {
+            //TODO handle request
+            //work on the current token
+        }
     }
 
     private void runWaitingTask() {
@@ -230,29 +248,47 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     }
 
     private void runProblemTask() {
-        boolean noPermanentStorage = true;
-        boolean noTemporaryStorage = true;
-        //TODO set to true once implemented
-        boolean noRecipeBank = false;
-        for (int i = 0; (noTemporaryStorage || noRecipeBank || noPermanentStorage) && i < 6; i++) {
-            if (!itemHandler.getStackInSlot(i).isEmpty()) {
-                noPermanentStorage = false;
-            }
-            if (!itemHandler.getStackInSlot(i + 6).isEmpty()) {
-                noTemporaryStorage = false;
-            }
-            if (!itemHandler.getStackInSlot(i + 12).isEmpty()) {
-                noRecipeBank = false;
-            }
-        }
-        if (!(noPermanentStorage || noTemporaryStorage || noRecipeBank)) {
-            setMaschineState(MaschineState.IDLE);
+
+        /* check if error still persists if that is the case wait else continue */
+        if (errorCondition.checkCondition()) {
+            idleTimer = 20;
         } else {
-            if (noPermanentStorage) errorMessage.add("text.mbma:qs.error.permmissing");
-            if (noTemporaryStorage) errorMessage.add("text.mbma:qs.error.tempmissing");
-            if (noRecipeBank) errorMessage.add("text.mbma:qs.error.recipebank");
+            setMaschineState(MaschineState.IDLE);
         }
-        idleTimer = 20;
+    }
+
+    public boolean isInternalEmpty() {
+        for (ItemStack itemStack : internalList) {
+            if (!itemStack.isEmpty()) return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return what could not be moved or ItemStack.EMPTY
+     */
+    private ItemStack moveStackToPermanent(ItemStack itemStack) {
+        IItemHandler inv;
+        for (int linkID = 0; linkID < permanentLinks.getSlots(); linkID++) {
+            inv = getInventoryFromLink(permanentLinks.getStackInSlot(linkID));
+            if (inv != null) {
+                itemStack = moveStackToInventory(itemStack, inv);
+            }
+            if (itemStack.isEmpty()) break;
+        }
+        return itemStack;
+    }
+
+    /**
+     * @return what could not be moved or ItemStack.EMPTY
+     */
+    @Nonnull
+    private ItemStack moveStackToInventory(@Nonnull ItemStack stack, @Nonnull IItemHandler inv) {
+        for (int slot = 0; slot < inv.getSlots(); slot++) {
+            stack = inv.insertItem(slot, stack, false);
+            if (stack.isEmpty()) break;
+        }
+        return stack;
     }
 
     @Nonnull
@@ -267,20 +303,25 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     private void findNewToken() {
         if (!world.isRemote) {
-            boolean noLink = true;
-            //iterate over the Linkcard for Permanent Storage Interfaces
-            for (int i = 0; i < 6; i++) {
-                IItemHandler inventory = getInventoryFromLink(itemHandler.getStackInSlot(i));
-                if (inventory != null) {
-                    noLink = false;
-                    if (findTokenInItemHandler(inventory)) {
-                        return;
+            if (token.isEmpty()) {
+                boolean noLink = true;
+                //iterate over the Linkcard for Permanent Storage Interfaces
+                for (int i = 0; i < permanentLinks.getSlots(); i++) {
+                    IItemHandler inventory = getInventoryFromLink(permanentLinks.getStackInSlot(i));
+                    if (inventory != null) {
+                        noLink = false;
+                        if (findTokenInItemHandler(inventory)) {
+                            return;
+                        }
                     }
                 }
-            }
-            if (noLink) {
-                //we don't have any linkcard to a permanenet inventory
-                setMaschineState(MaschineState.PROBLEM);
+                if (noLink) {
+                    //we don't have any linkcard to a permanenet inventory
+                    setMaschineState(MaschineState.PROBLEM);
+                    errorCondition = IS_LINKED;
+                }
+            } else {
+                setMaschineState(MaschineState.RUNNING);
             }
         }
     }
@@ -325,14 +366,34 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
 
     public void destroyed() {
         //drop linkcards
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            if (!itemHandler.getStackInSlot(i).isEmpty())
-                getWorld().spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), itemHandler.getStackInSlot(i).copy()));
+        for (int i = 0; i < combinedLinks.getSlots(); i++) {
+            if (!combinedLinks.getStackInSlot(i).isEmpty())
+                getWorld().spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), combinedLinks.getStackInSlot(i).copy()));
         }
         //drop token
-        if(token!=null&&!token.isEmpty()){
-            getWorld().spawnEntity(new EntityItem(world,getPos().getX(),getPos().getY(),getPos().getZ(),token.copy()));
+        if (!token.isEmpty()) {
+            getWorld().spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), token.copy()));
         }
         //TODO maybe empty TSI storage's
+    }
+
+
+    private void returnEmptyToken() {
+        if (!token.isEmpty()) {
+            ICraftingRequest req = getRequestFromToken(token);
+            if (req != null && !req.isCompleted()) {
+                return;
+            }
+            ItemStack token = new ItemStack(MBMAItemList.TOKEN, 1);
+            if (moveStackToPermanent(token).isEmpty())
+                this.token = ItemStack.EMPTY;
+        }
+    }
+
+    public void creativeComplete() {
+        ICraftingRequest request = getRequestFromToken(token);
+        if (request != null && !request.isCompleted()) {
+            request.setRequest(moveStackToInventory(request.getRequest(), internalInventory));
+        }
     }
 }
