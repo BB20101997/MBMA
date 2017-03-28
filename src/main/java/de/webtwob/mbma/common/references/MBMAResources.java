@@ -16,6 +16,7 @@ public class MBMAResources {
     //Textures
     public static final ResourceLocation QUEUESTACK_GUI = new ResourceLocation(MODID, "textures/gui/queuestack.png");
     public static final ResourceLocation TOKEN_GUI = new ResourceLocation(MODID, "textures/gui/token.png");
+    public static final ResourceLocation TOKEN_GENERATOR_GUI = new ResourceLocation(MODID,"textures/gui/token_generator.png");
 
     //Blocks
     public static final ResourceLocation INTERFACE_REGISTRY_NAME = new ResourceLocation(MODID, "storageInterface");

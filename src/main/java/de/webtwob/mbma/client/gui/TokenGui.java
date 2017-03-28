@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.io.IOException;
 public class TokenGui extends GuiContainer {
 
     private final EntityPlayer player;
-    ItemStack token;
+    private ItemStack token;
     private int amount = 1;
 
     private GuiButton saveButton;
@@ -60,16 +61,19 @@ public class TokenGui extends GuiContainer {
             ItemStack req = icr.getRequest();
             if (!req.isEmpty()) {
                 amount = req.getCount();
-                itemNameTextField.setText(req.getItem().getRegistryName().toString());
+            }
+            ResourceLocation loc = req.getItem().getRegistryName();
+            if(loc!=null){
+                itemNameTextField.setText(loc.toString());
             }
         }
         saveButton = new GuiButton(0, guiLeft + 10, guiTop + ySize + 5, xSize - 20, 20, "Save");
         addButton(saveButton);
 
-        itemCountUp = new GuiButton(1, guiLeft+90, guiTop+29, 10, 10, "+");
-        itemCountDown = new GuiButton(2, guiLeft+90, guiTop+41, 10, 10, "-");
-        itemCountUp10 = new GuiButton(3, guiLeft+68, guiTop+29, 20, 10, "++");
-        itemCountDown10 = new GuiButton(4, guiLeft+68, guiTop+41, 20, 10, "--");
+        itemCountUp = new GuiButton(1, guiLeft + 90, guiTop + 29, 10, 10, "+");
+        itemCountDown = new GuiButton(2, guiLeft + 90, guiTop + 41, 10, 10, "-");
+        itemCountUp10 = new GuiButton(3, guiLeft + 68, guiTop + 29, 20, 10, "++");
+        itemCountDown10 = new GuiButton(4, guiLeft + 68, guiTop + 41, 20, 10, "--");
         addButton(itemCountUp);
         addButton(itemCountDown);
         addButton(itemCountUp10);
@@ -79,15 +83,16 @@ public class TokenGui extends GuiContainer {
     }
 
     private void updateItemStack() {
-        if(amount<1){
+        if (amount < 1) {
             amount = 1;
         }
         Item item = Item.getByNameOrId(itemNameTextField.getText());
-        if (item != null){
+        if (item != null) {
             slot.setItemStack(new ItemStack(item, amount));
-    }else{
+        } else {
             slot.setItemStack(ItemStack.EMPTY);
-        }}
+        }
+    }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
@@ -116,29 +121,30 @@ public class TokenGui extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
-        switch (button.id){
-            case 0:{
+        switch (button.id) {
+            case 0: {
                 MBMALog.debug("Saving Token!");
                 updateToken();
                 break;
             }
-            case 1:{
+            case 1: {
                 amount++;
                 break;
             }
-            case 2:{
+            case 2: {
                 amount--;
                 break;
             }
-            case 3:{
-                if(amount==1){
+            case 3: {
+                if (amount == 1) {
                     amount = 10;
-                }else{
-                    amount+=10;
+                } else {
+                    amount += 10;
                 }
                 break;
-            }case 4:{
-                amount -=10;
+            }
+            case 4: {
+                amount -= 10;
                 break;
             }
         }

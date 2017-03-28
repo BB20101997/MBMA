@@ -53,7 +53,7 @@ public class QSContainer extends Container {
         return ret;
     }
 
-    public QSContainer(InventoryPlayer playerInv, IItemHandler qsInventory, EntityPlayer player) {
+    public QSContainer(InventoryPlayer playerInv, IItemHandler qsInventory) {
         layoutPlayerInventory(playerInv);
         layoutQSInventory(qsInventory);
     }
@@ -66,7 +66,7 @@ public class QSContainer extends Container {
         }
     }
 
-    protected void layoutPlayerInventory(InventoryPlayer player) {
+    private void layoutPlayerInventory(InventoryPlayer player) {
         for(int row = 0; row < 3; row++) {
             for(int col = 0; col < 9; col++) {
                 addSlotToContainer(new Slot(player, col + row * 9 + 9, 8 + col * 18, ySize - 10 - (4 - row) * 18));

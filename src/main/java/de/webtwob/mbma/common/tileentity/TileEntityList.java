@@ -12,5 +12,6 @@ public class TileEntityList {
     public static void registerTileEntities() {
         MBMALog.debug("Registering TileEntities");
         GameRegistry.registerTileEntity(QSTileEntity.class, MBMAResources.QUEUESTACK_REGISTRY_NAME.toString());
+        GameRegistry.registerTileEntity(TokenGeneratorTileEntity.class,MBMAResources.TOKEN_GENERATOR_REGISTRY_NAME.toString());
     }
 }

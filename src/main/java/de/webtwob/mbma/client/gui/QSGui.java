@@ -2,7 +2,6 @@ package de.webtwob.mbma.client.gui;
 
 import de.webtwob.mbma.common.inventory.QSContainer;
 import de.webtwob.mbma.common.references.MBMAResources;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -21,7 +20,7 @@ public class QSGui extends GuiContainer {
     private final IItemHandler qs;
 
     public QSGui(InventoryPlayer playerInv, IItemHandler qsInventory) {
-        super(new QSContainer(playerInv, qsInventory, Minecraft.getMinecraft().player));
+        super(new QSContainer(playerInv, qsInventory));
         xSize = 176;
         ySize = 220;
         player = playerInv;
