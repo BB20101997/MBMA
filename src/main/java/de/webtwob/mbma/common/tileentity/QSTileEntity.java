@@ -10,7 +10,7 @@ import de.webtwob.mbma.common.capability.CombinedItemHandler;
 import de.webtwob.mbma.common.capability.FilteredItemHandler;
 import de.webtwob.mbma.common.interfaces.ICondition;
 import de.webtwob.mbma.common.interfaces.IMaschineState;
-import de.webtwob.mbma.common.interfaces.IStackFilter;
+import de.webtwob.mbma.common.inventory.MBMAFilter;
 import de.webtwob.mbma.common.item.MBMAItemList;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
@@ -50,8 +50,6 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     @CapabilityInject(IItemHandler.class)
     private static Capability<IItemHandler> ITEM_HANDLER = null;
 
-    private static final IStackFilter linkFilter = stack -> stack.hasCapability(APICapabilities.CAPABILITY_BLOCK_POS, null);
-
     private final ICondition IS_LINKED = new ICondition() {
         @Override
         public boolean checkCondition() {
@@ -85,19 +83,19 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     private final NonNullList<ItemStack> recipeList = NonNullList.withSize(6, ItemStack.EMPTY);
     private final NonNullList<ItemStack> internalList = NonNullList.withSize(9, ItemStack.EMPTY);
 
-    private final ItemStackHandler permanentLinks = new FilteredItemHandler(permLinkList, linkFilter, 1) {
+    private final ItemStackHandler permanentLinks = new FilteredItemHandler(permLinkList, MBMAFilter.LINK_FILTER, 1) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
         }
     };
-    private final ItemStackHandler temporaryLinks = new FilteredItemHandler(tempLinkList, linkFilter, 1) {
+    private final ItemStackHandler temporaryLinks = new FilteredItemHandler(tempLinkList, MBMAFilter.LINK_FILTER, 1) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
         }
     };
-    private final ItemStackHandler recipeLinks = new FilteredItemHandler(recipeList, linkFilter, 1) {
+    private final ItemStackHandler recipeLinks = new FilteredItemHandler(recipeList, MBMAFilter.LINK_FILTER, 1) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();

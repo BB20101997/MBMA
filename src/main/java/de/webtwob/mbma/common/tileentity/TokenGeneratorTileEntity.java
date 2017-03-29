@@ -1,10 +1,8 @@
 package de.webtwob.mbma.common.tileentity;
 
-import de.webtwob.mbma.api.capability.APICapabilities;
-import de.webtwob.mbma.api.capability.interfaces.ICraftingRequest;
 import de.webtwob.mbma.common.capability.CombinedItemHandler;
 import de.webtwob.mbma.common.capability.FilteredItemHandler;
-import de.webtwob.mbma.common.interfaces.IStackFilter;
+import de.webtwob.mbma.common.inventory.MBMAFilter;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -28,26 +26,6 @@ import javax.annotation.Nullable;
  */
 public class TokenGeneratorTileEntity extends TileEntity implements ITickable, ISidedInventory {
 
-    private static final IStackFilter OUTPUT_FILTER = (e) -> false;
-    private static final IStackFilter MUSTER_FILTER = (e) -> {
-        ICraftingRequest request;
-        if (e != null && (request = e.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-            if (!request.getRequest().isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    };
-    private static final IStackFilter INPUT_FILTER = (e) -> {
-        ICraftingRequest request;
-        if (e != null && (request = e.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-            if (request.getRequest().isEmpty() || request.isCompleted()) {
-                return true;
-            }
-        }
-        return false;
-    };
-
     private final NonNullList<ItemStack> outputList = NonNullList.withSize(5, ItemStack.EMPTY);
     private final NonNullList<ItemStack> musterList = NonNullList.withSize(5, ItemStack.EMPTY);
     private final NonNullList<ItemStack> upList = NonNullList.withSize(1, ItemStack.EMPTY);
@@ -56,16 +34,17 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
     private final NonNullList<ItemStack> southList = NonNullList.withSize(1, ItemStack.EMPTY);
     private final NonNullList<ItemStack> westList = NonNullList.withSize(1, ItemStack.EMPTY);
 
-    private final ItemStackHandler muster = new FilteredItemHandler(musterList, MUSTER_FILTER, 1);
+    private final ItemStackHandler muster = new FilteredItemHandler(musterList, MBMAFilter.MUSTER_FILTER, 1);
 
-    private final ItemStackHandler output = new FilteredItemHandler(outputList, OUTPUT_FILTER, 1);
-    private final ItemStackHandler up = new FilteredItemHandler(upList, INPUT_FILTER, 1);
-    private final ItemStackHandler north = new FilteredItemHandler(northList, INPUT_FILTER, 1);
-    private final ItemStackHandler east = new FilteredItemHandler(eastList, INPUT_FILTER, 1);
-    private final ItemStackHandler south = new FilteredItemHandler(southList, INPUT_FILTER, 1);
-    private final ItemStackHandler west = new FilteredItemHandler(westList, INPUT_FILTER, 1);
+    private final ItemStackHandler output = new FilteredItemHandler(outputList, MBMAFilter.OUTPUT_FILTER, 1);
+    private final ItemStackHandler up = new FilteredItemHandler(upList, MBMAFilter.INPUT_FILTER, 1);
+    private final ItemStackHandler north = new FilteredItemHandler(northList, MBMAFilter.INPUT_FILTER, 1);
+    private final ItemStackHandler east = new FilteredItemHandler(eastList, MBMAFilter.INPUT_FILTER, 1);
+    private final ItemStackHandler south = new FilteredItemHandler(southList, MBMAFilter.INPUT_FILTER, 1);
+    private final ItemStackHandler west = new FilteredItemHandler(westList, MBMAFilter.INPUT_FILTER, 1);
 
     private final ItemStackHandler combined = new CombinedItemHandler(north, east, south, west, up, output);
+
     private String customName;
 
     public ItemStackHandler getMuster() {
@@ -110,11 +89,11 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            //noinspection unchecked
             return (T) getItemHandlerFromFacing(facing);
         }
         return super.getCapability(capability, facing);
@@ -187,7 +166,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     @Override
     public boolean canInsertItem(int slot, @Nonnull ItemStack itemStack, @Nonnull EnumFacing enumFacing) {
-        boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && INPUT_FILTER.accept(itemStack);
+        boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && MBMAFilter.INPUT_FILTER.accept(itemStack);
         return flag && combined.getStackInSlot(slot).isEmpty();
     }
 
@@ -311,9 +290,9 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
     @Override
     public boolean isItemValidForSlot(int slot, @Nonnull ItemStack itemStack) {
         if (slot > 4) {
-            return OUTPUT_FILTER.accept(itemStack);
+            return MBMAFilter.OUTPUT_FILTER.accept(itemStack);
         } else {
-            return INPUT_FILTER.accept(itemStack);
+            return MBMAFilter.INPUT_FILTER.accept(itemStack);
         }
     }
 
