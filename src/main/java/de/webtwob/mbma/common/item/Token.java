@@ -71,7 +71,7 @@ public class Token extends Item {
     @Override
     public void getSubItems(@Nonnull Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         super.getSubItems(itemIn, tab, subItems);
-        ItemStack stack = new ItemStack(this);
+        ItemStack stack = new ItemStack(itemIn);
         ICraftingRequest icr;
         if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
             icr.setRequest(new ItemStack(Blocks.DIRT, 1));
@@ -95,14 +95,6 @@ public class Token extends Item {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        ICraftingRequest iCraftingRequest;
-        if ((iCraftingRequest = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-            if (iCraftingRequest.getRequest() == ItemStack.EMPTY) {
-                return 64;
-            } else {
-                return 1;
-            }
-        }
-        return super.getItemStackLimit(stack);
+        return 16;
     }
 }

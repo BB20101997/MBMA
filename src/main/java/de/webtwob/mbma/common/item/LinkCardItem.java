@@ -102,6 +102,6 @@ public class LinkCardItem extends Item {
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return 1;
+        return 8;
     }
 }
