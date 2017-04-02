@@ -160,6 +160,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
     private void copyRequest(ICraftingRequest musterRequest, ICraftingRequest request) {
         if(musterRequest != null && request != null) {
             request.setRequest(musterRequest.getRequest());
+            request.setQuantity(musterRequest.getQuantity());
         }
     }
 

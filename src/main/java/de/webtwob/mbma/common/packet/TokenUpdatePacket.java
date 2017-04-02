@@ -20,12 +20,14 @@ import java.io.IOException;
 public class TokenUpdatePacket implements IMessage {
 
     private ItemStack request;
+    private int quantity;
 
     public TokenUpdatePacket() {
     }
 
-    public TokenUpdatePacket(ItemStack request) {
+    public TokenUpdatePacket(ItemStack request,int quantity) {
         this.request = request;
+        this.quantity = quantity;
     }
 
     @Override
@@ -34,8 +36,9 @@ public class TokenUpdatePacket implements IMessage {
         PacketBuffer packetBuffer = new PacketBuffer(buf);
         try {
             request = packetBuffer.readItemStack();
+            quantity = packetBuffer.readInt();
         } catch (IOException e) {
-            MBMALog.warn("Could not read ItemStack form TokenUpdatePacket");
+            MBMALog.warn("Could not read ItemStack or quantity form TokenUpdatePacket");
         }
 
     }
@@ -44,6 +47,7 @@ public class TokenUpdatePacket implements IMessage {
     public void toBytes(ByteBuf buf) {
         PacketBuffer packetBuffer = new PacketBuffer(buf);
         packetBuffer.writeItemStack(request);
+        packetBuffer.writeInt(quantity);
     }
 
     public static class TokenUpdatePacketHandler implements IMessageHandler<TokenUpdatePacket, IMessage> {
@@ -57,9 +61,11 @@ public class TokenUpdatePacket implements IMessage {
                     if (message.request != null) {
                         MBMALog.debug("Got TokenUpdatePacket for {}!"+message.request.getDisplayName());
                         icr.setRequest(message.request);
+                        icr.setQuantity(message.quantity);
                     } else {
                         MBMALog.debug("Got TokenUpdatePacket to clear request!");
                         icr.setRequest(ItemStack.EMPTY);
+                        icr.setQuantity(0);
                     }
                 }
             }

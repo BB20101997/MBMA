@@ -14,13 +14,17 @@ public interface ICraftingRequest {
     ItemStack getRequest();
 
     void setRequest(@Nonnull ItemStack stack);
-
+    
     default boolean isCompleted() {
-        return getRequest().isEmpty();
+        return getRequest().isEmpty()||getQuantity()<=0;
     }
+    
+    void setQuantity(int amount);
+    
+    int getQuantity();
 
     default void reduceQuantity(int i) {
-        getRequest().shrink(i);
+        setQuantity(getQuantity()-i);
     }
 
 }

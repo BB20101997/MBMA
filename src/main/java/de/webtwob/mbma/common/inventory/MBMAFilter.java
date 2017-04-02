@@ -19,8 +19,8 @@ public class MBMAFilter {
     
     public static final IObjectCondition<Object> FALSE = (o) -> false;
     
-    public static final IObjectCondition<ICraftingRequest> REQUEST_EMPTY    = request -> request.getRequest().isEmpty() || request.isCompleted();
-    public static final IObjectCondition<ICraftingRequest> REQUEST_NOT_DONE = request -> !request.getRequest().isEmpty() && !request.isCompleted();
+    public static final IObjectCondition<ICraftingRequest> REQUEST_COMPlET  = ICraftingRequest::isCompleted;
+    public static final IObjectCondition<ICraftingRequest> REQUEST_NOT_DONE = request -> !request.isCompleted();
     
     public static final IObjectCondition<ItemStack> RECIPE_FILTER = Objects::nonNull;//TODO expand to check if valid recipe
     
@@ -31,7 +31,7 @@ public class MBMAFilter {
             e.getCapability(CAPABILITY_CRAFTING_REQUEST, null), REQUEST_NOT_DONE);
     
     public static final IObjectCondition<ItemStack> INPUT_FILTER  = (e) -> e != null && checkIfNotNull(
-            e.getCapability(CAPABILITY_CRAFTING_REQUEST, null), REQUEST_EMPTY);
+            e.getCapability(CAPABILITY_CRAFTING_REQUEST, null), REQUEST_COMPlET);
     
     private static <T> boolean checkIfNotNull(T o, IObjectCondition<T> cond) {
         return o != null && cond.checkCondition(o);

@@ -58,11 +58,8 @@ public class TokenGui extends GuiContainer {
         itemNameTextField.setEnableBackgroundDrawing(false);
         ICraftingRequest icr = token.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null);
         if(icr != null) {
-            ItemStack req = icr.getRequest();
-            if(!req.isEmpty()) {
-                amount = req.getCount();
-            }
-            ResourceLocation loc = req.getItem().getRegistryName();
+            amount = icr.getQuantity();
+            ResourceLocation loc = icr.getRequest().getItem().getRegistryName();
             if(loc != null) {
                 itemNameTextField.setText(loc.toString());
             }
@@ -85,9 +82,6 @@ public class TokenGui extends GuiContainer {
     private void updateItemStack() {
         if(amount < 1) {
             amount = 1;
-        }
-        if(amount > 127) {
-            amount = 127; //TODO fix request being limited by 127, than remove this
         }
         Item item = Item.getByNameOrId(itemNameTextField.getText());
         if(item != null) {
@@ -160,8 +154,8 @@ public class TokenGui extends GuiContainer {
         if(request == null) {
             requestStack = ItemStack.EMPTY;
         } else {
-            requestStack = new ItemStack(request, amount);
+            requestStack = new ItemStack(request);
         }
-        MBMAPacketHandler.INSTANCE.sendToServer(new TokenUpdatePacket(requestStack));
+        MBMAPacketHandler.INSTANCE.sendToServer(new TokenUpdatePacket(requestStack,amount));
     }
 }

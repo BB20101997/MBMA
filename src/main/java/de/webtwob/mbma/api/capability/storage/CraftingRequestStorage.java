@@ -14,14 +14,24 @@ import javax.annotation.Nullable;
  */
 public class CraftingRequestStorage implements Capability.IStorage<ICraftingRequest> {
 
+    public static final String REQ = "MBMAAPI:ICRREQUEST";
+    public static final String QUANT = "MBMAAPI:ICRQUANTITY";
+    
     @Nullable
     @Override
     public NBTBase writeNBT(Capability<ICraftingRequest> capability, ICraftingRequest instance, EnumFacing side) {
-        return instance.getRequest().serializeNBT();
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(QUANT,instance.getQuantity());
+        compound.setTag(REQ,instance.getRequest().serializeNBT());
+        return compound;
     }
 
     @Override
     public void readNBT(Capability<ICraftingRequest> capability, ICraftingRequest instance, EnumFacing side, NBTBase nbt) {
-        instance.setRequest(nbt instanceof NBTTagCompound ? new ItemStack((NBTTagCompound) nbt) : ItemStack.EMPTY);
+        if(nbt instanceof NBTTagCompound){
+            NBTTagCompound compound = (NBTTagCompound) nbt;
+            instance.setRequest(new ItemStack(compound.getCompoundTag(REQ)));
+            instance.setQuantity(compound.getInteger(QUANT));
+        }
     }
 }

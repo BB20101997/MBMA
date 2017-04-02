@@ -10,22 +10,43 @@ import java.util.concurrent.Callable;
  * Created by BB20101997 on 19. Mär. 2017.
  */
 public class CraftingRequestFactory implements Callable<ICraftingRequest> {
-
+    
     @Override
     public ICraftingRequest call() throws Exception {
         return new ICraftingRequest() {
-
+            
             private ItemStack stack = ItemStack.EMPTY;
-
+            private int quantity = -1;
+            
             @Nonnull
             @Override
             public ItemStack getRequest() {
                 return stack;
             }
-
+            
             @Override
             public void setRequest(@Nonnull ItemStack itemStack) {
                 stack = itemStack;
+            }
+            
+            @Override
+            public boolean isCompleted() {
+                return quantity <= 0 || stack.isEmpty();
+            }
+            
+            @Override
+            public void setQuantity(final int amount) {
+                quantity = amount;
+            }
+            
+            @Override
+            public int getQuantity() {
+                return quantity;
+            }
+            
+            @Override
+            public void reduceQuantity(final int i) {
+                quantity -= 1;
             }
         };
     }
