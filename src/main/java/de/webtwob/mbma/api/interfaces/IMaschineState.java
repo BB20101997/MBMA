@@ -1,4 +1,4 @@
-package de.webtwob.mbma.common.interfaces;
+package de.webtwob.mbma.api.interfaces;
 
 import de.webtwob.mbma.api.enums.MaschineState;
 

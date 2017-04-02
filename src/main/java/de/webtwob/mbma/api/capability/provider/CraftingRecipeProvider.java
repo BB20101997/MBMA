@@ -48,13 +48,11 @@ public class CraftingRecipeProvider implements ICapabilitySerializable {
         return capability == CAPABILITY_CRAFTING_REQUEST;
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if(hasCapability(capability,facing)){
-            return (T) provider;
-        }
-        return null;
+        return hasCapability(capability, facing) ? (T) provider : null;
     }
 
     @Override

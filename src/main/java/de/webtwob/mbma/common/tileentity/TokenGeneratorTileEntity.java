@@ -2,8 +2,8 @@ package de.webtwob.mbma.common.tileentity;
 
 import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.capability.interfaces.ICraftingRequest;
-import de.webtwob.mbma.common.capability.CombinedItemHandler;
-import de.webtwob.mbma.common.capability.FilteredItemHandler;
+import de.webtwob.mbma.api.capability.implementations.CombinedItemHandler;
+import de.webtwob.mbma.api.capability.implementations.FilteredItemHandler;
 import de.webtwob.mbma.common.inventory.MBMAFilter;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +40,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     private final ItemStackHandler muster = new FilteredItemHandler(musterList, MBMAFilter.MUSTER_FILTER, 1);
 
-    private final ItemStackHandler output = new FilteredItemHandler(outputList, MBMAFilter.OUTPUT_FILTER, 64);
+    private final ItemStackHandler output = new FilteredItemHandler(outputList, MBMAFilter.FALSE::checkCondition, 64);
 
     private final ItemStackHandler up    = new FilteredItemHandler(upList, MBMAFilter.INPUT_FILTER, 64);
     private final ItemStackHandler north = new FilteredItemHandler(northList, MBMAFilter.INPUT_FILTER, 64);
@@ -204,7 +204,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     @Override
     public boolean canInsertItem(int slot, @Nonnull ItemStack itemStack, @Nonnull EnumFacing enumFacing) {
-        boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && MBMAFilter.INPUT_FILTER.accept(itemStack);
+        boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && MBMAFilter.INPUT_FILTER.checkCondition(itemStack);
         return flag && combined.getStackInSlot(slot).isEmpty();
     }
 
@@ -326,11 +326,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     @Override
     public boolean isItemValidForSlot(int slot, @Nonnull ItemStack itemStack) {
-        if(slot > 4) {
-            return MBMAFilter.OUTPUT_FILTER.accept(itemStack);
-        } else {
-            return MBMAFilter.INPUT_FILTER.accept(itemStack);
-        }
+        return slot <= 4 && MBMAFilter.INPUT_FILTER.checkCondition(itemStack);
     }
 
     @Override

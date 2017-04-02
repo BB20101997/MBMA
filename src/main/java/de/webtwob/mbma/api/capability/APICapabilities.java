@@ -20,6 +20,7 @@ public class APICapabilities {
 
     @CapabilityInject(IBlockPosProvider.class)
     public static Capability<IBlockPosProvider> CAPABILITY_BLOCK_POS        = null;
+    
     @CapabilityInject(ICraftingRequest.class)
     public static Capability<ICraftingRequest>  CAPABILITY_CRAFTING_REQUEST = null;
 

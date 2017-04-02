@@ -2,7 +2,7 @@ package de.webtwob.mbma.common.packet;
 
 import de.webtwob.mbma.api.enums.MaschineState;
 import de.webtwob.mbma.common.MBMALog;
-import de.webtwob.mbma.common.interfaces.IMaschineState;
+import de.webtwob.mbma.api.interfaces.IMaschineState;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

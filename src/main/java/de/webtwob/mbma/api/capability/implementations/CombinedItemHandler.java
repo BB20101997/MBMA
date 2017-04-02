@@ -1,4 +1,4 @@
-package de.webtwob.mbma.common.capability;
+package de.webtwob.mbma.api.capability.implementations;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -16,7 +16,7 @@ public class CombinedItemHandler extends ItemStackHandler {
     public CombinedItemHandler(ItemStackHandler... handler) {
         itemHandlers = handler;
     }
-
+    
     private ItemStackHandler getItemHandlerForSlot(int slot) {
         for (ItemStackHandler handler : itemHandlers) {
             if (slot < handler.getSlots()) {
@@ -44,7 +44,6 @@ public class CombinedItemHandler extends ItemStackHandler {
         }
         return sum;
     }
-
 
     @Nonnull
     @Override

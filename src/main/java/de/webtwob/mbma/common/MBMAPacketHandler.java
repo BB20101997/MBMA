@@ -2,6 +2,7 @@ package de.webtwob.mbma.common;
 
 import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
+import de.webtwob.mbma.common.packet.PageUpdatePacket;
 import de.webtwob.mbma.common.packet.TokenUpdatePacket;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -28,6 +29,8 @@ public class MBMAPacketHandler {
             MBMALog.debug("Registering PacketHandler");
             INSTANCE.registerMessage(MaschineStateUpdatePacket.MaschineStateUpdatePacketHandler.class, MaschineStateUpdatePacket.class, getNextID(), Side.CLIENT);
             INSTANCE.registerMessage(TokenUpdatePacket.TokenUpdatePacketHandler.class, TokenUpdatePacket.class, getNextID(), Side.SERVER);
+            INSTANCE.registerMessage(PageUpdatePacket.PageUpdatePacketHandler.class,PageUpdatePacket.class,getNextID(),Side.SERVER);
+            INSTANCE.registerMessage(PageUpdatePacket.PageUpdatePacketHandler.class,PageUpdatePacket.class,getNextID(),Side.CLIENT);
         }
     }
 }

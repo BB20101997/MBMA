@@ -1,7 +1,6 @@
 package de.webtwob.mbma.api.capability.provider;
 
 import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
-import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -58,13 +57,11 @@ public class BlockPosProvider implements ICapabilitySerializable {
         return capability == CAPABILITY_BLOCK_POS;
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (hasCapability(capability, facing)) {
-            return (T) provider;
-        }
-        return null;
+        return hasCapability(capability, facing) ? (T) provider : null;
     }
 
     @Override

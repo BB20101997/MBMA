@@ -30,6 +30,7 @@ public class MBMAItemList {
     public static final ItemBlock STORAGE_INTERFACE_ITEM = new ItemBlock(MBMABlockList.STORAGE_INTERFACE_BLOCK);
     public static final ItemBlock QUEUE_STACK_ITEM = new ItemBlock(MBMABlockList.QUEUE_STACK_BLOCK);
     public static final ItemBlock TOKEN_GENERATOR_ITEM = new ItemBlock(MBMABlockList.TOKEN_GENERATOR_BLOCK);
+    public static final ItemBlock RECIPE_BANK_ITEM = new ItemBlock(MBMABlockList.RECIPE_BANK_BLOCK);
 
     //Items
     public static final Item LINKCARD = new LinkCardItem();
@@ -41,12 +42,14 @@ public class MBMAItemList {
         MBMALog.info("Registering Items");
 
         //set Register names
-        STORAGE_INTERFACE_ITEM.setRegistryName(INTERFACE_REGISTRY_NAME);
         LINKCARD.setRegistryName(LINKCARD_REGISTRY_NAME);
-        QUEUE_STACK_ITEM.setRegistryName(QUEUESTACK_REGISTRY_NAME);
         TOKEN.setRegistryName(TOKEN_REGISTRY_NAME);
         RECIPE_PATTERN.setRegistryName(RECIPE_PATTERN_REGISTRY_NAME);
+
+        STORAGE_INTERFACE_ITEM.setRegistryName(INTERFACE_REGISTRY_NAME);
+        QUEUE_STACK_ITEM.setRegistryName(QUEUESTACK_REGISTRY_NAME);
         TOKEN_GENERATOR_ITEM.setRegistryName(TOKEN_GENERATOR_REGISTRY_NAME);
+        RECIPE_BANK_ITEM.setRegistryName(RECIPE_BANK_REGISTRY_NAME);
 
         //set Unlocalized names
         TOKEN.setUnlocalizedName(TOKEN_REGISTRY_NAME.toString());
@@ -56,7 +59,7 @@ public class MBMAItemList {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         //register items
-        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN, TOKEN_GENERATOR_ITEM);
+        registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD, QUEUE_STACK_ITEM, TOKEN, RECIPE_PATTERN, TOKEN_GENERATOR_ITEM,RECIPE_BANK_ITEM);
         MultiblockMaschineAutomation.proxy.initModel();
     }
 
@@ -77,6 +80,7 @@ public class MBMAItemList {
         ModelLoader.setCustomModelResourceLocation(STORAGE_INTERFACE_ITEM, 0, new ModelResourceLocation(INTERFACE_REGISTRY_NAME, "inventory"));
         ModelLoader.setCustomModelResourceLocation(QUEUE_STACK_ITEM, 0, new ModelResourceLocation(QUEUESTACK_REGISTRY_NAME, "inventory"));
         ModelLoader.setCustomModelResourceLocation(TOKEN_GENERATOR_ITEM, 0, new ModelResourceLocation(TOKEN_GENERATOR_REGISTRY_NAME, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(RECIPE_BANK_ITEM,0,new ModelResourceLocation(RECIPE_BANK_REGISTRY_NAME,"inventory"));
 
         //Items
         ModelLoader.setCustomModelResourceLocation(LINKCARD, 0, new ModelResourceLocation(LINKCARD_REGISTRY_NAME, "inventory"));

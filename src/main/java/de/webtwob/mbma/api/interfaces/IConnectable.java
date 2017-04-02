@@ -1,4 +1,4 @@
-package de.webtwob.mbma.common.interfaces;
+package de.webtwob.mbma.api.interfaces;
 
 /**
  * Created by BB20101997 on 19. Mär. 2017.

@@ -14,6 +14,8 @@ import net.minecraft.inventory.Container;
 public class TokenGeneratorGui extends GuiContainer {
 
     EntityPlayer player;
+    TokenGeneratorTileEntity tileEntity;
+    int pageScroll = 0;
 
     public TokenGeneratorGui(EntityPlayer player0, TokenGeneratorTileEntity tgte) {
         super(new TokenGeneratorContainer(player0,tgte));

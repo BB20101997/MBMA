@@ -1,6 +1,6 @@
-package de.webtwob.mbma.common.capability;
+package de.webtwob.mbma.api.capability.implementations;
 
-import de.webtwob.mbma.common.interfaces.IStackFilter;
+import de.webtwob.mbma.api.interfaces.IObjectCondition;
 import de.webtwob.mbma.common.item.MBMAItemList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -15,10 +15,10 @@ public class FilteredItemHandler extends ItemStackHandler {
 
     private static final ItemStack ITEM_STACK = new ItemStack(MBMAItemList.LINKCARD, 0);
 
-    private final IStackFilter filter;
+    private final IObjectCondition<ItemStack> filter;
     private final int limit;
 
-    public FilteredItemHandler(NonNullList<ItemStack> stack, IStackFilter filter, int maxStackSize) {
+    public FilteredItemHandler(NonNullList<ItemStack> stack, IObjectCondition<ItemStack> filter, int maxStackSize) {
         super(stack);
         limit=maxStackSize;
         this.filter = filter;
@@ -31,7 +31,7 @@ public class FilteredItemHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (!filter.accept(stack)) return stack;
+        if (!filter.checkCondition(stack)) return stack;
         return super.insertItem(slot, stack, simulate);
     }
 

@@ -6,10 +6,10 @@ import de.webtwob.mbma.api.capability.interfaces.IBlockPosProvider;
 import de.webtwob.mbma.api.capability.interfaces.ICraftingRequest;
 import de.webtwob.mbma.api.enums.MaschineState;
 import de.webtwob.mbma.common.MBMAPacketHandler;
-import de.webtwob.mbma.common.capability.CombinedItemHandler;
-import de.webtwob.mbma.common.capability.FilteredItemHandler;
-import de.webtwob.mbma.common.interfaces.ICondition;
-import de.webtwob.mbma.common.interfaces.IMaschineState;
+import de.webtwob.mbma.api.capability.implementations.CombinedItemHandler;
+import de.webtwob.mbma.api.capability.implementations.FilteredItemHandler;
+import de.webtwob.mbma.api.interfaces.ICondition;
+import de.webtwob.mbma.api.interfaces.IMaschineState;
 import de.webtwob.mbma.common.inventory.MBMAFilter;
 import de.webtwob.mbma.common.packet.MaschineStateUpdatePacket;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
@@ -30,6 +30,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -179,16 +180,16 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         return (ITEM_HANDLER != null && capability == ITEM_HANDLER) || super.hasCapability(capability, facing);
     }
 
-    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if(ITEM_HANDLER != null && capability == ITEM_HANDLER) {
+            //noinspection unchecked
             return (T) combinedLinks;
         }
         return super.getCapability(capability, facing);
     }
-
+    
     @Override
     public void update() {
         if(!world.isRemote) {
@@ -268,23 +269,11 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
         for(int linkID = 0; linkID < permanentLinks.getSlots(); linkID++) {
             inv = getInventoryFromLink(permanentLinks.getStackInSlot(linkID));
             if(inv != null) {
-                itemStack = moveStackToInventory(itemStack, inv);
+                itemStack = ItemHandlerHelper.insertItemStacked(inv,itemStack,false);
             }
             if(itemStack.isEmpty()) { break; }
         }
         return itemStack;
-    }
-
-    /**
-     * @return what could not be moved or ItemStack.EMPTY
-     */
-    @Nonnull
-    private ItemStack moveStackToInventory(@Nonnull ItemStack stack, @Nonnull IItemHandler inv) {
-        for(int slot = 0; slot < inv.getSlots(); slot++) {
-            stack = inv.insertItem(slot, stack, false);
-            if(stack.isEmpty()) { break; }
-        }
-        return stack;
     }
 
     private static BlockPos getLinkFromItemStack(ItemStack itemStack) {
@@ -370,7 +359,7 @@ public class QSTileEntity extends TileEntity implements ITickable, IMaschineStat
     public void creativeComplete() {
         ICraftingRequest request = getRequestFromToken(token);
         if(request != null && !request.isCompleted()) {
-            request.setRequest(moveStackToInventory(request.getRequest(), internalInventory));
+            request.setRequest(ItemHandlerHelper.insertItemStacked(internalInventory,request.getRequest(),false));
         }
     }
 
