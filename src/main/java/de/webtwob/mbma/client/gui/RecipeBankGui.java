@@ -5,6 +5,7 @@ import de.webtwob.mbma.common.inventory.RecipeBankContainer;
 import de.webtwob.mbma.common.packet.PageUpdatePacket;
 import de.webtwob.mbma.common.references.MBMAResources;
 import de.webtwob.mbma.common.tileentity.RecipeBankTileEntity;
+import de.webtwob.mbma.api.RecipePage;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -63,7 +64,7 @@ public class RecipeBankGui extends GuiContainer {
         );
         for(int i = 0; i < 5; i++){
             if(te.getPageCount() > i + pageScrollOffset) {
-                RecipeBankTileEntity.RecipePage page = te.getPage(i + pageScrollOffset);
+                RecipePage page = te.getPage(i + pageScrollOffset);
                 if("".equals(page.name)) {
                     pages[i].displayString = "Page " + (i + pageScrollOffset);
                 } else {

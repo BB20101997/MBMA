@@ -1,19 +1,18 @@
 package de.webtwob.mbma.common.tileentity;
 
+import de.webtwob.mbma.api.RecipePage;
 import de.webtwob.mbma.common.references.MBMA_NBTKeys;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-
-import static de.webtwob.mbma.common.references.MBMA_NBTKeys.RB_PAGE_LINK;
-import static de.webtwob.mbma.common.references.MBMA_NBTKeys.RB_PAGE_NAME;
-import static de.webtwob.mbma.common.references.MBMA_NBTKeys.RB_PAGE_RECIPE;
 
 /**
  * Created by bennet on 01.04.17.
@@ -37,56 +36,16 @@ public class RecipeBankTileEntity extends TileEntity {
         markDirty();
     }
     
-    public static class RecipePage implements INBTSerializable<NBTTagCompound> {
-        
-        public NonNullList<ItemStack> recipes       = NonNullList.withSize(42, ItemStack.EMPTY);
-        public NonNullList<ItemStack> maschineLinks = NonNullList.withSize(18,ItemStack.EMPTY);
-        
-        public String name;
-        
-        @Override
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound comp = new NBTTagCompound();
-            if(name != null) {
-                comp.setString(RB_PAGE_NAME, name);
-            }
-            int            itemIndex = 0;
-            NBTTagCompound rec       = new NBTTagCompound();
-            for(ItemStack stack : recipes){
-                rec.setTag(RB_PAGE_RECIPE + itemIndex++, stack.serializeNBT());
-            }
-            comp.setTag(RB_PAGE_RECIPE + "s", rec);
-            rec = new NBTTagCompound();
-            itemIndex = 0;
-            for(ItemStack stack : maschineLinks){
-                rec.setTag(RB_PAGE_LINK + itemIndex++, stack.serializeNBT());
-            }
-            comp.setTag(RB_PAGE_LINK + "s", rec);
-            return comp;
-        }
-        
-        @Override
-        public void deserializeNBT(NBTTagCompound compound) {
-            if(compound.hasKey(RB_PAGE_NAME)) {
-                name = compound.getString(RB_PAGE_NAME);
-            }
-            NBTTagCompound rec;
-            if(compound.hasKey(RB_PAGE_RECIPE + "s")) {
-                rec = compound.getCompoundTag(RB_PAGE_RECIPE + "s");
-                for(String key : rec.getKeySet()){
-                    recipes.add(new ItemStack(rec.getCompoundTag(key)));
-                }
-            }
-            if(compound.hasKey(RB_PAGE_LINK + "s")) {
-                rec = compound.getCompoundTag(RB_PAGE_LINK + "s");
-                for(String key : rec.getKeySet()){
-                    maschineLinks.add(new ItemStack(rec.getCompoundTag(key)));
-                }
-            }
-        }
-        
-        public void setName(final String name) {
-            this.name = name;
+    public void destroyed() {
+        World    world = getWorld();
+        BlockPos pos   = getPos();
+        for(RecipePage page : pages){
+           for(ItemStack stack: page.maschineLinks){
+               world.spawnEntity(new EntityItem(world,pos.getX(),pos.getY(),pos.getZ(),stack));
+           }
+           for(ItemStack stack: page.recipes){
+               world.spawnEntity(new EntityItem(world,pos.getX(),pos.getY(),pos.getZ(),stack));
+           }
         }
     }
     
@@ -113,8 +72,8 @@ public class RecipeBankTileEntity extends TileEntity {
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagCompound compound = getTileData();
-        int        size = compound.getInteger(MBMA_NBTKeys.RB_PAGES + "SIZE");
-        RecipePage page;
+        int            size     = compound.getInteger(MBMA_NBTKeys.RB_PAGES + "SIZE");
+        RecipePage     page;
         for(int i = 0; i < size; i++){
             if(compound.hasKey(MBMA_NBTKeys.RB_PAGES + i)) {
                 page = new RecipePage();
@@ -133,6 +92,6 @@ public class RecipeBankTileEntity extends TileEntity {
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(),0,writeToNBT(new NBTTagCompound()));
+        return new SPacketUpdateTileEntity(getPos(), 0, writeToNBT(new NBTTagCompound()));
     }
 }

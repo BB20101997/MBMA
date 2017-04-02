@@ -24,17 +24,17 @@ import java.io.IOException;
  * Created by bennet on 21.03.17.
  */
 public class TokenGui extends GuiContainer {
-
+    
     private final EntityPlayer player;
-    private ItemStack token;
+    private       ItemStack    token;
     private int amount = 1;
-
-    private GuiButton saveButton;
+    
+    private GuiButton    saveButton;
     private GuiTextField itemNameTextField;
-    private GuiButton itemCountUp, itemCountUp10;
+    private GuiButton    itemCountUp, itemCountUp10;
     private GuiButton itemCountDown, itemCountDown10;
     private GhostSlot slot;
-
+    
     public TokenGui(ItemStack stack, EntityPlayer player) {
         super(new TokenContainer(stack));
         slot = new GhostSlot(guiLeft + 114, guiTop + 28);
@@ -43,11 +43,11 @@ public class TokenGui extends GuiContainer {
         xSize = 130;
         ySize = 56;
     }
-
+    
     @Override
     public void initGui() {
         super.initGui();
-
+        
         slot.xPos = 103;
         slot.yPos = 32;
         ((TokenContainer) inventorySlots).addSlotToContainer(slot);
@@ -57,19 +57,19 @@ public class TokenGui extends GuiContainer {
         itemNameTextField.setDisabledTextColour(-1);
         itemNameTextField.setEnableBackgroundDrawing(false);
         ICraftingRequest icr = token.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null);
-        if (icr != null) {
+        if(icr != null) {
             ItemStack req = icr.getRequest();
-            if (!req.isEmpty()) {
+            if(!req.isEmpty()) {
                 amount = req.getCount();
             }
             ResourceLocation loc = req.getItem().getRegistryName();
-            if(loc!=null){
+            if(loc != null) {
                 itemNameTextField.setText(loc.toString());
             }
         }
         saveButton = new GuiButton(0, guiLeft + 10, guiTop + ySize + 5, xSize - 20, 20, "Save");
         addButton(saveButton);
-
+        
         itemCountUp = new GuiButton(1, guiLeft + 90, guiTop + 29, 10, 10, "+");
         itemCountDown = new GuiButton(2, guiLeft + 90, guiTop + 41, 10, 10, "-");
         itemCountUp10 = new GuiButton(3, guiLeft + 68, guiTop + 29, 20, 10, "++");
@@ -78,37 +78,40 @@ public class TokenGui extends GuiContainer {
         addButton(itemCountDown);
         addButton(itemCountUp10);
         addButton(itemCountDown10);
-
+        
         updateItemStack();
     }
-
+    
     private void updateItemStack() {
-        if (amount < 1) {
+        if(amount < 1) {
             amount = 1;
         }
+        if(amount > 127) {
+            amount = 127; //TODO fix request being limited by 127, than remove this
+        }
         Item item = Item.getByNameOrId(itemNameTextField.getText());
-        if (item != null) {
+        if(item != null) {
             slot.setItemStack(new ItemStack(item, amount));
         } else {
             slot.setItemStack(ItemStack.EMPTY);
         }
     }
-
+    
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (!itemNameTextField.textboxKeyTyped(typedChar, keyCode)) {
+        if(!itemNameTextField.textboxKeyTyped(typedChar, keyCode)) {
             super.keyTyped(typedChar, keyCode);
         } else {
             updateItemStack();
         }
     }
-
+    
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         itemNameTextField.mouseClicked(mouseX, mouseY, mouseButton);
     }
-
+    
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
@@ -117,44 +120,44 @@ public class TokenGui extends GuiContainer {
         drawTexturedModalRect(guiLeft + 10, guiTop + 10, 0, ySize + (itemNameTextField.isFocused() ? 0 : 16), 110, 16);
         itemNameTextField.drawTextBox();
     }
-
+    
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
-        switch (button.id) {
-            case 0: {
+        switch(button.id){
+            case 0:{
                 MBMALog.debug("Saving Token!");
                 updateToken();
                 break;
             }
-            case 1: {
+            case 1:{
                 amount++;
                 break;
             }
-            case 2: {
+            case 2:{
                 amount--;
                 break;
             }
-            case 3: {
-                if (amount == 1) {
+            case 3:{
+                if(amount == 1) {
                     amount = 10;
                 } else {
                     amount += 10;
                 }
                 break;
             }
-            case 4: {
+            case 4:{
                 amount -= 10;
                 break;
             }
         }
         updateItemStack();
     }
-
+    
     private void updateToken() {
-        Item request = Item.getByNameOrId(itemNameTextField.getText());
+        Item      request = Item.getByNameOrId(itemNameTextField.getText());
         ItemStack requestStack;
-        if (request == null) {
+        if(request == null) {
             requestStack = ItemStack.EMPTY;
         } else {
             requestStack = new ItemStack(request, amount);

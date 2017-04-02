@@ -3,14 +3,13 @@ package de.webtwob.mbma.common.inventory;
 import de.webtwob.mbma.api.capability.implementations.ReplaceableItemHandler;
 import de.webtwob.mbma.api.interfaces.IObjectCondition;
 import de.webtwob.mbma.common.tileentity.RecipeBankTileEntity;
-import net.minecraft.entity.item.EntityItem;
+import de.webtwob.mbma.api.RecipePage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
@@ -20,15 +19,15 @@ public class RecipeBankContainer extends Container {
     
     EntityPlayer player;
     private RecipeBankTileEntity tileEntity;
-    private static final int                             xSize        = 256;
+    private static final int                    xSize        = 256;
     private static final int                             ySize        = 223;
-    private static final int                             linkX        = 138;
-    private static final int                             linkY        = 78;
-    private static final int                             patternX     = 12;
-    private static final int                             patternY     = 6;
-    private static final NonNullList<ItemStack>          dummyLinks   = NonNullList.withSize(18, ItemStack.EMPTY);
-    private static final NonNullList<ItemStack>          dummyRecipes = NonNullList.withSize(42, ItemStack.EMPTY);
-    private              RecipeBankTileEntity.RecipePage currentPage  = null;
+    private static final int                    linkX        = 138;
+    private static final int                    linkY        = 78;
+    private static final int                    patternX     = 12;
+    private static final int                    patternY     = 6;
+    private static final NonNullList<ItemStack> dummyLinks   = NonNullList.withSize(18, ItemStack.EMPTY);
+    private static final NonNullList<ItemStack> dummyRecipes = NonNullList.withSize(42, ItemStack.EMPTY);
+    private              RecipePage             currentPage  = null;
     
     private final IObjectCondition<ItemStack> LINK_FILTER   = stack -> currentPage != null && MBMAFilter.LINK_FILTER.checkCondition(stack);
     private final IObjectCondition<ItemStack> RECIPE_FILTER = stack -> currentPage != null && MBMAFilter.RECIPE_FILTER.checkCondition(stack);
@@ -89,7 +88,7 @@ public class RecipeBankContainer extends Container {
     }
     
     public void createPage(String name) {
-        currentPage = new RecipeBankTileEntity.RecipePage();
+        currentPage = new RecipePage();
         currentPage.setName(name);
         recipes.replaceItemList(currentPage.recipes);
         links.replaceItemList(currentPage.maschineLinks);
@@ -97,25 +96,18 @@ public class RecipeBankContainer extends Container {
     }
     
     public void removePage() {
-        //todo clear page
         if(currentPage == null) {
             return;
         }
-        RecipeBankTileEntity.RecipePage old = currentPage;
+        RecipePage old = currentPage;
         currentPage = null;
         tileEntity.removePage(old);
         if(!tileEntity.getWorld().isRemote) {
-            World    world = tileEntity.getWorld();
-            BlockPos pos   = tileEntity.getPos();
             for(ItemStack stack : old.recipes){
-                if(!stack.isEmpty()) {
-                    world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
-                }
+                ItemHandlerHelper.giveItemToPlayer(player,stack);
             }
             for(ItemStack stack : old.maschineLinks){
-                if(!stack.isEmpty()) {
-                    world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
-                }
+                ItemHandlerHelper.giveItemToPlayer(player,stack);
             }
         }
         links.replaceItemList(dummyLinks);

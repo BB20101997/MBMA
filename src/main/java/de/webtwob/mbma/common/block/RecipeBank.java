@@ -24,7 +24,16 @@ public class RecipeBank extends Block {
         super(Material.IRON);
         setCreativeTab(MBMACreativeTab.MBMATab);
     }
-
+    
+    @Override
+    public void breakBlock(final World world, final BlockPos pos, final IBlockState stat) {
+        TileEntity te = world.getTileEntity(pos);
+        if(te instanceof RecipeBankTileEntity){
+            ((RecipeBankTileEntity)te).destroyed();
+        }
+        super.breakBlock(world, pos, stat);
+    }
+    
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float p_onBlockActivated_7_, float p_onBlockActivated_8_, float p_onBlockActivated_9_) {
         if(!world.isRemote){
