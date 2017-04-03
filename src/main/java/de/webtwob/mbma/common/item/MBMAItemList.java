@@ -3,6 +3,7 @@ package de.webtwob.mbma.common.item;
 import de.webtwob.mbma.MultiblockMaschineAutomation;
 import de.webtwob.mbma.api.capability.provider.BlockPosProvider;
 import de.webtwob.mbma.api.capability.provider.CraftingRecipeProvider;
+import de.webtwob.mbma.api.capability.provider.CraftingRequestProvider;
 import de.webtwob.mbma.common.MBMALog;
 import de.webtwob.mbma.common.block.MBMABlockList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -69,7 +70,10 @@ public class MBMAItemList {
             event.addCapability(CAP_BLOCK_POSITION, new BlockPosProvider(event.getObject()));
         }
         if (event.getObject().getItem() == TOKEN) {
-            event.addCapability(CAP_CRAFTING_REQUEST, new CraftingRecipeProvider(event.getObject()));
+            event.addCapability(CAP_CRAFTING_REQUEST, new CraftingRequestProvider(event.getObject()));
+        }
+        if(event.getObject().getItem() == RECIPE_PATTERN){
+            event.addCapability(CAP_CRAFTING_RECIPE,new CraftingRecipeProvider(event.getObject()));
         }
     }
 

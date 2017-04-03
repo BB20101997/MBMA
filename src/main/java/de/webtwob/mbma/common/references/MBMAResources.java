@@ -12,6 +12,7 @@ public class MBMAResources {
     //CapabilityProvider
     public static final ResourceLocation CAP_BLOCK_POSITION = new ResourceLocation(MODID, "blockPos");
     public static final ResourceLocation CAP_CRAFTING_REQUEST = new ResourceLocation(MODID, "craftingRequest");
+    public static final ResourceLocation CAP_CRAFTING_RECIPE = new ResourceLocation(MODID,"craftingRecipe");
 
     //Textures
     public static final ResourceLocation QUEUESTACK_GUI = new ResourceLocation(MODID, "textures/gui/queuestack.png");
