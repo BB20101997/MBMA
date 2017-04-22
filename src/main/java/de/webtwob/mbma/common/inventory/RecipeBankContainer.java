@@ -1,9 +1,8 @@
 package de.webtwob.mbma.common.inventory;
 
-import de.webtwob.mbma.api.capability.implementations.ReplaceableItemHandler;
-import de.webtwob.mbma.api.interfaces.IObjectCondition;
-import de.webtwob.mbma.common.tileentity.RecipeBankTileEntity;
 import de.webtwob.mbma.api.RecipePage;
+import de.webtwob.mbma.api.capability.implementations.ReplaceableItemHandler;
+import de.webtwob.mbma.common.tileentity.RecipeBankTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -11,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.SlotItemHandler;
+
+import java.util.function.Predicate;
 
 /**
  * Created by bennet on 01.04.17.
@@ -29,8 +30,8 @@ public class RecipeBankContainer extends Container {
     private static final NonNullList<ItemStack> dummyRecipes = NonNullList.withSize(42, ItemStack.EMPTY);
     private              RecipePage             currentPage  = null;
     
-    private final IObjectCondition<ItemStack> LINK_FILTER   = stack -> currentPage != null && MBMAFilter.LINK_FILTER.checkCondition(stack);
-    private final IObjectCondition<ItemStack> RECIPE_FILTER = stack -> currentPage != null && MBMAFilter.RECIPE_FILTER.checkCondition(stack);
+    private final Predicate<ItemStack> LINK_FILTER   = stack -> currentPage != null && MBMAFilter.LINK_FILTER.test(stack);
+    private final Predicate<ItemStack> RECIPE_FILTER = stack -> currentPage != null && MBMAFilter.RECIPE_FILTER.test(stack);
     
     private ReplaceableItemHandler links, recipes;
     
