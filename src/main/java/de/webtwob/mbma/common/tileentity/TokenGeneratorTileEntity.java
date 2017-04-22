@@ -40,7 +40,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     private final ItemStackHandler muster = new FilteredItemHandler(musterList, MBMAFilter.MUSTER_FILTER, 1);
 
-    private final ItemStackHandler output = new FilteredItemHandler(outputList, MBMAFilter.FALSE::checkCondition, 64);
+    private final ItemStackHandler output = new FilteredItemHandler(outputList, (o)->false, 64);
 
     private final ItemStackHandler up    = new FilteredItemHandler(upList, MBMAFilter.INPUT_FILTER, 64);
     private final ItemStackHandler north = new FilteredItemHandler(northList, MBMAFilter.INPUT_FILTER, 64);
@@ -205,7 +205,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     @Override
     public boolean canInsertItem(int slot, @Nonnull ItemStack itemStack, @Nonnull EnumFacing enumFacing) {
-        boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && MBMAFilter.INPUT_FILTER.checkCondition(itemStack);
+        boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && MBMAFilter.INPUT_FILTER.test(itemStack);
         return flag && combined.getStackInSlot(slot).isEmpty();
     }
 
@@ -327,7 +327,7 @@ public class TokenGeneratorTileEntity extends TileEntity implements ITickable, I
 
     @Override
     public boolean isItemValidForSlot(int slot, @Nonnull ItemStack itemStack) {
-        return slot <= 4 && MBMAFilter.INPUT_FILTER.checkCondition(itemStack);
+        return slot <= 4 && MBMAFilter.INPUT_FILTER.test(itemStack);
     }
 
     @Override
