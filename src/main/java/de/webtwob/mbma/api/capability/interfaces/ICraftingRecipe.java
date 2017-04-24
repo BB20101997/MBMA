@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound>{
     String NBTINPUTS = "mbma:inputs";
     String NBTOUTPUTS = "mbma:outputs";
+    String NBTVANILLA = "mbma:vanilla";
+    
+    boolean isVanilla();
+    void setVanilla(boolean vanilla);
     
     List<InputTuple> getInputs();
     List<OutputTuple> getOutputs();
@@ -33,6 +37,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound>{
     interface  OutputTuple extends INBTSerializable<NBTTagCompound>{
             String NBTSTACK = "mbma:stack";
             String NBTGUARANTEE = "mbma:guarantee";
+            
             
             void setGuaranteed(boolean bool);
             boolean isGuaranteed();
