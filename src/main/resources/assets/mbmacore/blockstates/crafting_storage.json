@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "mbmacore:crafting/storage/idle",
+    "uvlock": true
+  },
+  "variants": {
+    "inventory": [
+      {}
+    ],
+    "normal": [
+      {
+      }
+    ],
+    "state": {
+      "idle": {
+      },
+      "running": {
+        "model": "mbmacore:crafting/storage/running"
+      },
+      "waiting": {
+        "model": "mbmacore:crafting/storage/waiting"
+      },
+      "problem": {
+        "model": "mbmacore:crafting/storage/problem"
+      }
+    }
+  }
+}
