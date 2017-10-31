@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "mbmacore:crafting/controller/idle",
+    "uvlock": true
+  },
+  "variants": {
+    "inventory": [
+      {}
+    ],
+    "normal": [
+      {
+      }
+    ],
+    "state": {
+      "idle": {
+      },
+      "running": {
+        "model": "mbmacore:crafting/controller/running"
+      },
+      "waiting": {
+        "model": "mbmacore:crafting/controller/waiting"
+      },
+      "problem": {
+        "model": "mbmacore:crafting/controller/problem"
+      }
+    }
+  }
+}

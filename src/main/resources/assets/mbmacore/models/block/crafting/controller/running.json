@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:block/cube_top",
+    "textures":{
+        "top":"mbmacore:blocks/crafting/controller/running_top",
+        "side":"mbmacore:blocks/crafting/running"
+    }
+}

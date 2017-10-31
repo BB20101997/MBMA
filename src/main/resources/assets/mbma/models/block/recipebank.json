@@ -1,8 +1,0 @@
-{
-  "parent": "block/cube_bottom_top",
-  "textures": {
-    "bottom": "mbma:blocks/rb/rb_bottom",
-    "top": "mbma:blocks/rb/rb_top",
-    "side": "mbma:blocks/rb/rb_side"
-  }
-}

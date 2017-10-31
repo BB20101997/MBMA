@@ -1,0 +1,8 @@
+{
+  "parent": "mbmacore:block/psi",
+  "textures": {
+    "bottom": "mbmacore:blocks/psi/psi_connected_base",
+    "top": "mbmacore:blocks/psi/psi_connected_point",
+    "side": "mbmacore:blocks/psi/psi_connected_arrow"
+  }
+}

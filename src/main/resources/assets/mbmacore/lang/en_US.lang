@@ -1,0 +1,17 @@
+#block localisation
+tile.mbmacore:storage_interface.name=Storage Interface
+tile.mbmacore:tokengenerator.name=Maschine Token Generator
+tile.mbmacore:playertokengenerator.name=Player Token Generator
+tile.mbmacore:crafting_controller.name=Crafting Controller
+tile.mbmacore:crafting_processor.name=Crafting Processor
+tile.mbmacore:crafting_storage.name=Crafting Storage
+
+#creativetab localisation
+itemGroup.mbma=Multiblock Maschine Automation
+
+#item localisation
+item.mbmacore:linkcard.name=Link Card
+item.mbmacore:linkcard.linked.name=Linked Link Card
+item.mbmacore:linkcard.unlinked.name=Unlinked Link Card
+item.mbmacore:token.name=Token
+item.mbmacore:recipe_pattern.name=Recipe Pattern
