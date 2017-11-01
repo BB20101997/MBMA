@@ -61,7 +61,7 @@ public class BlockStorageInterface extends Block {
     @Override
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         IBlockState state = world.getBlockState(pos);
-        state = state.withProperty(MBMAProperties.CONNECTED, connected(world, pos, state.getValue(MBMAProperties.FACING)));
+        state = state.withProperty(MBMAProperties.CONNECTED, isConnected(world, pos, state.getValue(MBMAProperties.FACING)));
         if (world instanceof World) {
             ((World) world).setBlockState(pos, state);
         }
@@ -74,7 +74,7 @@ public class BlockStorageInterface extends Block {
         IBlockState state = getDefaultState();
         EnumFacing blockFacing = EnumFacing.getDirectionFromEntityLiving(pos, placer);
         state = state.withProperty(MBMAProperties.FACING, blockFacing);
-        state = state.withProperty(MBMAProperties.CONNECTED, connected(world, pos, blockFacing));
+        state = state.withProperty(MBMAProperties.CONNECTED, isConnected(world, pos, blockFacing));
         return state;
     }
 
@@ -84,7 +84,7 @@ public class BlockStorageInterface extends Block {
      * @param orientation the direction the block is facing
      * @return whether the block is connected to a block that has the Item_HANDLER_CAPABILITY
      */
-    private boolean connected(IBlockAccess world, BlockPos pos, EnumFacing orientation) {
+    private boolean isConnected(IBlockAccess world, BlockPos pos, EnumFacing orientation) {
         BlockPos dest = pos.offset(orientation);
         TileEntity te;
         if (world instanceof ChunkCache) {

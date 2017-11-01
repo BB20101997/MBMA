@@ -1,48 +1,85 @@
 package de.webtwob.mbma.api.multiblock;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import de.webtwob.mbma.api.registries.MultiBlockGroupType;
+
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
 
-public class MultiBlockGroupManager extends IForgeRegistryEntry.Impl<MultiBlockGroupManager>{
-   
-    //TODO save groups
+public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
+    WorldSavedData data;
+    private Set<MultiBlockGroup> groupMap = new HashSet<>();
     
-    private Map<Integer, MultiBlockGroup> groupMap = new HashMap<>();
-    private int largestKey = 0;
-    
-    public static void register() {
-    
+    public MultiBlockGroupManager(WorldSavedData mbgmWorldSaveData) {
+        data = mbgmWorldSaveData;
     }
     
     @Nullable
-    public MultiBlockGroup getGroupForID(int id) {
-        MultiBlockGroup group = groupMap.getOrDefault(id, null);
-        if (group != null && group.isValid()) {
-            return group;
-        } else {
-            groupMap.remove(id);
-            return null;
+    public static MultiBlockGroupManager getInstance(World world) {
+        MBGMWorldSaveData data = MBGMWorldSaveData.get(world);
+        if (data != null) {
+            return data.multiBlockGroupManager;
         }
+        return null;
     }
     
     /**
      * I do not expect an integer overflow to happen in any some what likely scenario
      */
-    public MultiBlockGroup createNewGroup() {
-        MultiBlockGroup group = new MultiBlockGroup(this,largestKey++);
-        groupMap.put(group.getID(),group );
+    public MultiBlockGroup createNewGroup(MultiBlockGroupType type) {
+        MultiBlockGroup group = new MultiBlockGroup(this, type);
+        groupMap.add(group);
+        data.markDirty();
         return group;
     }
     
-    public MultiBlockGroup getGroupForMember(final MultiblockMember member) {
-        return groupMap.values().stream().filter(e -> e.isMemberOfGroup(member)).findAny().orElse(null);
+    public MultiBlockGroup getGroupForMember(final MultiBlockMember member, final MultiBlockGroupType type) {
+        return groupMap.stream()
+                .filter(MultiBlockGroup::isValid)
+                .filter(g -> g.getType() == type)
+                .filter(e -> e.isMemberOfGroup(member))
+                .findAny().orElse(null);
     }
     
+    public void removeGroup(MultiBlockGroup group) {
+        group.voidGroup();
+        groupMap.remove(group);
+        data.markDirty();
+    }
+    
+    @Override
+    public NBTTagList serializeNBT() {
+        NBTTagList groupList = new NBTTagList();
+        for (MultiBlockGroup entry : groupMap) {
+            if (entry != null) {
+                groupList.appendTag(entry.serializeNBT());
+            }
+        }
+        return groupList;
+    }
+    
+    @Override
+    public void deserializeNBT(final NBTTagList nbt) {
+        groupMap.forEach(MultiBlockGroup::voidGroup);
+        groupMap.clear();
+        MultiBlockGroup group;
+        for (NBTBase base : nbt) {
+            if (base instanceof NBTTagCompound) {
+                group = new MultiBlockGroup(this);
+                group.deserializeNBT((NBTTagCompound) base);
+                groupMap.add(group);
+            }
+        }
+    }
 }

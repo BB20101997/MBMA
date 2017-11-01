@@ -1,7 +1,7 @@
 package de.webtwob.mbma.core.common.tileentity;
 
 import de.webtwob.mbma.api.crafting.ItemStackContainer;
-import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
+import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 import de.webtwob.mbma.core.common.config.MBMAConfiguration;
 import de.webtwob.mbma.core.common.references.MBMA_NBTKeys;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     
     @ObjectHolder("mbmacore:crafting")
-    public static final MultiBlockGroupManager MANAGER_CRAFTING = null;
+    public static final MultiBlockGroupType MANAGER_CRAFTING = null;
     public final List<ItemStackContainer> containerList;
     
     {
@@ -32,7 +32,7 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     }
     
     @Override
-    public MultiBlockGroupManager getManager() {
+    public MultiBlockGroupType getGroupType() {
         return MANAGER_CRAFTING;
     }
     

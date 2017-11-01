@@ -1,6 +1,5 @@
 package de.webtwob.mbma.core.common.registration;
 
-import de.webtwob.mbma.core.MBMA_CORE;
 import de.webtwob.mbma.api.capability.provider.BlockPosProvider;
 import de.webtwob.mbma.api.capability.provider.CraftingRecipeProvider;
 import de.webtwob.mbma.api.capability.provider.CraftingRequestProvider;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -24,9 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Blocks.*;
-import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Capabilities.CAP_BLOCK_POSITION;
-import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Capabilities.CAP_CRAFTING_RECIPE;
-import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Capabilities.CAP_CRAFTING_REQUEST;
+import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Capabilities.*;
 import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Items.*;
 
 /**
@@ -78,7 +76,6 @@ public class MBMAItemList {
         
         //register items
         registry.registerAll(STORAGE_INTERFACE_ITEM, LINKCARD,TOKEN, RECIPE_PATTERN, DEBUG_WAND, TOKEN_GENERATOR_ITEM, CRAFTING_CONTROLLER_ITEM,CRAFTING_PROCESSOR_ITEM,CRAFTING_STORAGE_ITEM);
-        MBMA_CORE.proxy.initModel();
     }
     
     @SubscribeEvent
@@ -94,9 +91,10 @@ public class MBMAItemList {
         }
     }
     
-    
     @SideOnly(Side.CLIENT)
-    public static void initModels() {
+    @SubscribeEvent
+    public static void initModels(ModelRegistryEvent event) {
+        MBMALog.info("Registering Models");
         //ItemBlocks
         ModelLoader.setCustomModelResourceLocation(STORAGE_INTERFACE_ITEM, 0, new ModelResourceLocation(STORAGE_INTERFACE_RL, "inventory"));
         ModelLoader.setCustomModelResourceLocation(TOKEN_GENERATOR_ITEM, 0, new ModelResourceLocation(TOKEN_GENERATOR_REGISTRY_NAME, "inventory"));

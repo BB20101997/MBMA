@@ -15,12 +15,11 @@ public class MultiBlockUtils {
     private MultiBlockUtils() {
     }
     
-    public static MultiBlockGroup getGroupForPosition(World world, BlockPos pos){
+    public static MultiBlockGroup getGroupForPosition(World world, BlockPos pos) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof IMultiBlockTile) {
-            return ((IMultiBlockTile) tileEntity).getGroup();
+            IMultiBlockTile.getGroup(world,pos,((IMultiBlockTile) tileEntity).getGroupType());
         }
         return null;
     }
-    
 }

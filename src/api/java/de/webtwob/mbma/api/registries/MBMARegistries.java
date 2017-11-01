@@ -1,7 +1,6 @@
 package de.webtwob.mbma.api.registries;
 
 import de.webtwob.mbma.api.MBMA_API_Constants;
-import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
 
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,11 +17,17 @@ public class MBMARegistries {
     }
     
     @SubscribeEvent
-    public static void registerRegistries(RegistryEvent.NewRegistry event){
-        RegistryBuilder<MultiBlockGroupManager> builder = new RegistryBuilder<>();
+    public static void registerRegistries(RegistryEvent.NewRegistry event) {
+        RegistryBuilder<MultiBlockGroupType> builder = new RegistryBuilder<>();
         builder.setName(MBMA_API_Constants.REG_MULTIBLOCK);
-        builder.setType(MultiBlockGroupManager.class);
+        builder.setType(MultiBlockGroupType.class);
+        builder.set((key) -> {
+            MultiBlockGroupType multiBlockGroupType = new MultiBlockGroupType();
+            multiBlockGroupType.setRegistryName(key);
+            return multiBlockGroupType;
+        });
         builder.allowModification();
+        builder.disableSaving();
         builder.create();
     }
     

@@ -1,6 +1,6 @@
 package de.webtwob.mbma.core.common.tileentity;
 
-import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
+import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -10,11 +10,11 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class TileEntityPatternStore extends MultiBlockTileEntity {
     
     @ObjectHolder("mbmacore:recipes")
-    public static final MultiBlockGroupManager MANAGER_RECIPES = null;
+    public static final MultiBlockGroupType MANAGER_RECIPES = null;
 
 
     @Override
-    public MultiBlockGroupManager getManager() {
+    public MultiBlockGroupType getGroupType() {
         return MANAGER_RECIPES;
     }
 }

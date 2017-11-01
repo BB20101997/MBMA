@@ -1,6 +1,6 @@
 package de.webtwob.mbma.core.common.tileentity;
 
-import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
+import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -9,11 +9,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public class TileEntityQueue extends MultiBlockTileEntity{
     @GameRegistry.ObjectHolder("mbmacore:queue")
-    public static final MultiBlockGroupManager MANAGER_QUEUE= null;
+    public static final MultiBlockGroupType MANAGER_QUEUE= null;
     
     
-    @Override
-    public MultiBlockGroupManager getManager() {
+    public MultiBlockGroupType getGroupType() {
         return MANAGER_QUEUE;
     }
 }

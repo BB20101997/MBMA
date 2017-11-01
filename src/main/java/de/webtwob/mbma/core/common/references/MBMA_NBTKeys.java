@@ -22,8 +22,6 @@ public class MBMA_NBTKeys {
     public static final String RB_PAGE_NAME = MODID + ":pageName";
     public static final String RB_PAGE_LINK = MODID + ":pageLink";
     public static final String RB_PAGE_RECIPE = MODID + ":pageRecipe";
-
-    public static final String MULTIBLOCK_GROUP_ID = MODID+":mbgid";
     
     public static final String CRAFTING_STORAGE_LIST = MODID + ":cslist";
     

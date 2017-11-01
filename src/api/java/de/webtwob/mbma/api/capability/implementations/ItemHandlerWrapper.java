@@ -9,12 +9,11 @@ import net.minecraftforge.items.ItemStackHandler;
 
 /**
  * Created by BB20101997 on 07. Mai. 2017.
- */
-/**
+ * <p>
  * Fixes the ItemStackHandler's saving and loading functionality so we don't have to use a NonNullList
  * this is needed for the FilteredItemHandler, CombinedItemHandler
  * since they all may wrap another ItemStackHandler
- * */
+ */
 public abstract class ItemHandlerWrapper extends ItemStackHandler {
     
     public ItemHandlerWrapper() {

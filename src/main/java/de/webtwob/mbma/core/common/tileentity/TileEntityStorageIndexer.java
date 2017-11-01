@@ -1,6 +1,9 @@
 package de.webtwob.mbma.core.common.tileentity;
 
-import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
+import de.webtwob.mbma.api.interfaces.tileentity.IItemMoveRequest;
+import de.webtwob.mbma.api.registries.MultiBlockGroupType;
+
+import java.util.LinkedList;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -10,17 +13,25 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class TileEntityStorageIndexer extends MultiBlockTileEntity {
     
     @ObjectHolder("mbmacore:storage")
-    public static final MultiBlockGroupManager MANAGER_STORAGE = null;
+    public static final MultiBlockGroupType MANAGER_STORAGE = null;
+    
+    private LinkedList<IItemMoveRequest> requests = new LinkedList<>();
 
 
     @Override
-    public MultiBlockGroupManager getManager() {
+    public MultiBlockGroupType getGroupType() {
         return MANAGER_STORAGE;
     }
     
     @Override
     public void update() {
         super.update();
-        
+        //TODO handle requests
+        requests.forEach(IItemMoveRequest::passOnRequest);
     }
+    
+    public void addItemMoveRequest(IItemMoveRequest request){
+        requests.add(request);
+    }
+    
 }

@@ -4,7 +4,6 @@ import de.webtwob.mbma.core.client.gui.RecipeBankGui;
 import de.webtwob.mbma.core.client.gui.TokenGeneratorGui;
 import de.webtwob.mbma.core.client.gui.TokenGui;
 import de.webtwob.mbma.core.common.proxy.CommonProxy;
-import de.webtwob.mbma.core.common.registration.MBMAItemList;
 import de.webtwob.mbma.core.common.tileentity.TileEntityRequestGenerator;
 import de.webtwob.mbma.core.common.tileentity.old.TileEntityRecipeStoreOld;
 
@@ -42,10 +41,5 @@ public class ClientProxy extends CommonProxy {
             }
         }
         return null;
-    }
-
-    @Override
-    public void initModel() {
-        MBMAItemList.initModels();
     }
 }

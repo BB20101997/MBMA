@@ -4,7 +4,7 @@ import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.enums.MachineState;
 import de.webtwob.mbma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
-import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
+import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class TileEntityCraftingController extends MultiBlockTileEntity {
 
     @ObjectHolder("mbmacore:crafting")
-    public static final MultiBlockGroupManager MANAGER_CRAFTING = null;
+    public static final MultiBlockGroupType MANAGER_CRAFTING = null;
 
     private static int WAIT_TIME = 20;
     private static int MAX_QUEUES = 5;
@@ -33,6 +33,11 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
 
     @Nonnull
     private MachineState state = MachineState.IDLE;
+    
+    @Nonnull
+    public MachineState getState(){
+        return state;
+    }
 
     private int pause = WAIT_TIME;
 
@@ -49,7 +54,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     private ItemStack currentRequest = ItemStack.EMPTY;
 
     @Override
-    public MultiBlockGroupManager getManager() {
+    public MultiBlockGroupType getGroupType() {
         return MANAGER_CRAFTING;
     }
 

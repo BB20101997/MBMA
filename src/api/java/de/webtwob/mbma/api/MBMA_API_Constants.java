@@ -18,4 +18,13 @@ public class MBMA_API_Constants {
     
     private MBMA_API_Constants() {
     }
+    
+    public static class NBT {
+        public static final String GROUP_TYPE = MODID+":group_type";
+        public static final String MBG_MEMBERS = MODID + ":members";
+        public static final String MBG_LIST = MODID + ":mbgmDataMap";
+    
+        private NBT() {
+        }
+    }
 }

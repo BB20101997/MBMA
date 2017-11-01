@@ -37,11 +37,7 @@ public class CommonProxy implements IGuiHandler {
         MBMALog.debug("Registering GUIHandler");
         NetworkRegistry.INSTANCE.registerGuiHandler(MBMA_CORE.INSTANCE, this);
     }
-
-    public void initModel() {
-
-    }
-
+    
     @Nullable
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
