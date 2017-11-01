@@ -39,8 +39,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     }
     
     /**
-     * @param member the MultiBlockMember to add
-     * @return if adding did work
+     * @param member the MultiBlockMember to addd
      * @throws IllegalStateException when called on an invalid group
      */
     public void addMember(MultiBlockMember member) {
