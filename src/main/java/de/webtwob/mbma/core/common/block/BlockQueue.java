@@ -1,5 +1,7 @@
 package de.webtwob.mbma.core.common.block;
 
+import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 
@@ -10,6 +12,8 @@ public class BlockQueue extends Block{
     
     public BlockQueue() {
         super(Material.IRON);
+        
+        setCreativeTab(MBMACreativeTab.MBMATab);
     }
     
     //TODO add TileEntity

@@ -27,6 +27,8 @@ public class Blocks {
     
     public static final BlockQueue QUEUE = new BlockQueue();
     
+    public static final BlockPatternStorage PATTERN_STORAGE = new BlockPatternStorage();
+    
     public static final BlockCraftingController CRAFTING_CONTROLLER = new BlockCraftingController();
     public static final BlockCraftingProcessor CRAFTING_PROCESSOR = new BlockCraftingProcessor();
     public static final BlockCraftingStorage CRAFTING_STORAGE = new BlockCraftingStorage();
@@ -46,6 +48,8 @@ public class Blocks {
         setNameAndRegister(TOKEN_GENERATOR, TOKEN_GENERATOR_REGISTRY_NAME, registry);
         
         setNameAndRegister(QUEUE, QUEUE_RL, registry);
+        
+        setNameAndRegister(PATTERN_STORAGE,PATTERN_STORAGE_REGISTRY_NAME,registry);
         
         setNameAndRegister(CRAFTING_CONTROLLER, CRAFTING_CONTROLLER_RL, registry);
         setNameAndRegister(CRAFTING_PROCESSOR, CRAFTING_PROCESSOR_RL, registry);

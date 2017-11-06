@@ -42,6 +42,7 @@ public class Items {
     
     public static final ItemBlock TOKEN_GENERATOR_ITEM = new ItemBlock(Blocks.TOKEN_GENERATOR);
     public static final ItemBlock QUEUE_ITEM = new ItemBlock(Blocks.QUEUE);
+    public static final ItemBlock PATTERN_STORAGE_ITEM = new ItemBlock(Blocks.PATTERN_STORAGE);
     
     public static final ItemBlock CRAFTING_STORAGE_ITEM = new ItemBlock(Blocks.CRAFTING_STORAGE);
     public static final ItemBlock CRAFTING_PROCESSOR_ITEM = new ItemBlock(Blocks.CRAFTING_PROCESSOR);
@@ -73,6 +74,7 @@ public class Items {
 
         setNameAndRegister(TOKEN_GENERATOR_ITEM,TOKEN_GENERATOR_REGISTRY_NAME,registry);
         setNameAndRegister(QUEUE_ITEM,QUEUE_RL,registry);
+        setNameAndRegister(PATTERN_STORAGE_ITEM,PATTERN_STORAGE_REGISTRY_NAME,registry);
     
         setNameAndRegister(CRAFTING_CONTROLLER_ITEM,CRAFTING_CONTROLLER_RL,registry);
         setNameAndRegister(CRAFTING_PROCESSOR_ITEM,CRAFTING_PROCESSOR_RL,registry);
@@ -109,6 +111,7 @@ public class Items {
         
         registerDefaultModel(TOKEN_GENERATOR_ITEM);
         registerDefaultModel(QUEUE_ITEM);
+        registerDefaultModel(PATTERN_STORAGE_ITEM);
 
         registerDefaultModel(CRAFTING_STORAGE_ITEM);
         registerDefaultModel(CRAFTING_PROCESSOR_ITEM);

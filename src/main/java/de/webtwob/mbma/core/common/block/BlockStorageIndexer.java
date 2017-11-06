@@ -1,6 +1,7 @@
 package de.webtwob.mbma.core.common.block;
 
 
+import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
 import de.webtwob.mbma.core.common.tileentity.TileEntityStorageIndexer;
 
 import net.minecraft.block.Block;
@@ -20,6 +21,8 @@ public class BlockStorageIndexer extends Block {
     
     public BlockStorageIndexer(){
         super(Material.IRON);
+        
+        setCreativeTab(MBMACreativeTab.MBMATab);
     }
     
     @Override
