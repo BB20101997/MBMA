@@ -25,7 +25,11 @@ public class MBGMWorldSaveData extends WorldSavedData {
     public final MultiBlockGroupManager multiBlockGroupManager = new MultiBlockGroupManager(this);
     
     public MBGMWorldSaveData() {
-        super(DATA_NAME);
+        this(DATA_NAME);
+    }
+    
+    public MBGMWorldSaveData(String name){
+        super(name);
     }
     
     @Nullable
