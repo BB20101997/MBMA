@@ -13,18 +13,18 @@ import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Multi
  * Created by BB20101997 on 25. Okt. 2017.
  */
 @Mod.EventBusSubscriber(modid = "mbmacore")
-public class MBMAMultiBlockGroupManagers {
+public class MultiBlockGroupTypes {
     
     public static final MultiBlockGroupType  STORAGE = new MultiBlockGroupType();
     public static final MultiBlockGroupType  CRAFTING = new MultiBlockGroupType();
     public static final MultiBlockGroupType  RECIPES = new MultiBlockGroupType();
     public static final MultiBlockGroupType  QUEUE = new MultiBlockGroupType();
     
-    private MBMAMultiBlockGroupManagers() {
+    private MultiBlockGroupTypes() {
     }
     
     @SubscribeEvent
-    public static void registerMBGM(RegistryEvent.Register<MultiBlockGroupType> event) {
+    public static void registerMBGT(RegistryEvent.Register<MultiBlockGroupType> event) {
         MBMALog.info("Registering MultiBlockGroupManagers");
         
         STORAGE.setRegistryName(MBGM_STORAGE);

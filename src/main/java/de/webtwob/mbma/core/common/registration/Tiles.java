@@ -1,10 +1,7 @@
 package de.webtwob.mbma.core.common.registration;
 
 import de.webtwob.mbma.core.common.MBMALog;
-import de.webtwob.mbma.core.common.tileentity.TileEntityCraftingController;
-import de.webtwob.mbma.core.common.tileentity.TileEntityCraftingProcessor;
-import de.webtwob.mbma.core.common.tileentity.TileEntityCraftingStorage;
-import de.webtwob.mbma.core.common.tileentity.TileEntityRequestGenerator;
+import de.webtwob.mbma.core.common.tileentity.*;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -16,14 +13,20 @@ import static de.webtwob.mbma.core.common.references.MBMAResourceLocations.Block
  * Created by BB20101997 on 18. Mär. 2017.
  */
 @Mod.EventBusSubscriber(modid = "mbmacore")
-public class MBMATileEntityList {
+public class Tiles {
     
-    private MBMATileEntityList() {
+    private Tiles() {
     }
     
     public static void registerTileEntities() {
         MBMALog.debug("Registering TileEntities");
+        GameRegistry.registerTileEntity(TileEntityStorageIndexer.class,STORAGE_INDEXER_RL.toString());
+        
         GameRegistry.registerTileEntity(TileEntityRequestGenerator.class, TOKEN_GENERATOR_REGISTRY_NAME.toString());
+        GameRegistry.registerTileEntity(TileEntityQueue.class, QUEUE_RL.toString());
+        
+        GameRegistry.registerTileEntity(TileEntityPatternStore.class,PATTERN_STORAGE_REGISTRY_NAME.toString());
+        
         GameRegistry.registerTileEntity(TileEntityCraftingController.class,CRAFTING_CONTROLLER_RL.toString());
         GameRegistry.registerTileEntity(TileEntityCraftingProcessor.class, CRAFTING_PROCESSOR_RL.toString());
         GameRegistry.registerTileEntity(TileEntityCraftingStorage.class,CRAFTING_STORAGE_RL.toString());

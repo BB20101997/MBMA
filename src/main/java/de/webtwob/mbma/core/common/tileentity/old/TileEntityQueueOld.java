@@ -6,7 +6,7 @@ import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mbma.core.common.crafting.old.QSCraftingAccessor;
 import de.webtwob.mbma.core.common.crafting.old.QSData;
 import de.webtwob.mbma.core.common.packet.MaschineStateUpdatePacket;
-import de.webtwob.mbma.core.common.registration.MBMAPacketHandler;
+import de.webtwob.mbma.core.common.registration.PacketHandler;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -261,7 +261,7 @@ public class TileEntityQueueOld extends TileEntity implements ITickable, IMachin
         data.machineState = state;
         if (hasWorld()) {
             if (!getWorld().isRemote) {
-                MBMAPacketHandler.INSTANCE.sendToDimension(
+                PacketHandler.INSTANCE.sendToDimension(
                         new MaschineStateUpdatePacket(getPos(), state), world.provider.getDimension());
             } else {
                 getWorld().markBlockRangeForRenderUpdate(pos, pos);

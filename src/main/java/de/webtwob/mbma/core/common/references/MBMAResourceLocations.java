@@ -40,6 +40,7 @@ public class MBMAResourceLocations {
     
         public static final ResourceLocation STORAGE_INTERFACE_RL = new ResourceLocation(MODID, "storage_interface");
         public static final ResourceLocation STORAGE_INDEXER_RL = new ResourceLocation(MODID, "storage_indexer");
+        public static final ResourceLocation QUEUE_RL = new ResourceLocation(MODID,"queue");
     
         private Blocks() {
         }

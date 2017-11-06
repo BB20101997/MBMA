@@ -3,7 +3,7 @@ package de.webtwob.mbma.core.client.gui;
 import de.webtwob.mbma.core.common.crafting.RecipePage;
 import de.webtwob.mbma.core.common.inventory.RecipeBankContainer;
 import de.webtwob.mbma.core.common.packet.PageUpdatePacket;
-import de.webtwob.mbma.core.common.registration.MBMAPacketHandler;
+import de.webtwob.mbma.core.common.registration.PacketHandler;
 import de.webtwob.mbma.core.common.tileentity.old.TileEntityRecipeStoreOld;
 
 import net.minecraft.client.gui.GuiButton;
@@ -81,15 +81,15 @@ public class RecipeBankGui extends GuiContainer {
     protected void actionPerformed(final GuiButton action) throws IOException {
         super.actionPerformed(action);
         if (action.id == 0) {
-            MBMAPacketHandler.INSTANCE.sendToServer(PageUpdatePacket.createCreatePagePacket(""));
+            PacketHandler.INSTANCE.sendToServer(PageUpdatePacket.createCreatePagePacket(""));
             updateScreen();
         }
         if (action.id > 0 && action.id < 6) {
-            MBMAPacketHandler.INSTANCE.sendToServer(
+            PacketHandler.INSTANCE.sendToServer(
                     PageUpdatePacket.createSwichPagePacket(action.id - 1 + pageScrollOffset));
         }
         if (action.id == 7) {
-            MBMAPacketHandler.INSTANCE.sendToServer(PageUpdatePacket.createDeletePagePacket());
+            PacketHandler.INSTANCE.sendToServer(PageUpdatePacket.createDeletePagePacket());
         }
         if (action.id == 8) {
             pageScrollOffset = Math.max(0, pageScrollOffset - 1);

@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
-public class MBMAPacketHandler {
+public class PacketHandler {
 
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel
             (MBMA_CORE.MODID);
@@ -21,7 +21,7 @@ public class MBMAPacketHandler {
     private static int id = 0;
     private static boolean registered;
     
-    private MBMAPacketHandler() {
+    private PacketHandler() {
     }
     
     public static int getNextID() {
