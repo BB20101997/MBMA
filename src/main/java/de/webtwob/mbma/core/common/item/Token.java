@@ -1,8 +1,8 @@
 package de.webtwob.mbma.core.common.item;
 
-import de.webtwob.mbma.core.MBMA_CORE;
 import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
+import de.webtwob.mbma.core.MBMA_CORE;
 import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -27,21 +27,21 @@ import java.util.List;
  * Created by BB20101997 on 18. Mär. 2017.
  */
 public class Token extends Item {
-
+    
     public Token() {
         setCreativeTab(MBMACreativeTab.MBMATab);
     }
-
+    
     @Override
     public boolean getShareTag() {
         return true;
     }
-
+    
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced) {
         super.addInformation(stack, world, tooltip, advanced);
-
+        
         ICraftingRequest icr;
         if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
             if (!icr.isCompleted()) {
@@ -49,7 +49,7 @@ public class Token extends Item {
             }
         }
     }
-
+    
     @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
@@ -63,30 +63,32 @@ public class Token extends Item {
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
-
+    
     @Nullable
     @Override
     public IItemPropertyGetter getPropertyGetter(ResourceLocation key) {
         return super.getPropertyGetter(key);
     }
-
+    
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        super.getSubItems(tab, subItems);
-        ItemStack stack = new ItemStack(this);
-        ICraftingRequest icr;
-        if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-            icr.setRequest(new ItemStack(Blocks.DIRT));
-            icr.setQuantity(1);
+        if (isInCreativeTab(tab)) {
+            subItems.add(new ItemStack(this));
+            ItemStack stack = new ItemStack(this);
+            ICraftingRequest icr;
+            if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
+                icr.setRequest(new ItemStack(Blocks.DIRT));
+                icr.setQuantity(1);
+            }
+            subItems.add(stack);
         }
-        subItems.add(stack);
     }
-
+    
     @Override
     public boolean updateItemStackNBT(final NBTTagCompound p_updateItemStackNBT_1_) {
         return true;
     }
-
+    
     @Override
     public int getItemStackLimit(ItemStack stack) {
         return 16;
