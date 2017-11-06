@@ -1,6 +1,6 @@
 package de.webtwob.mbma.core.common.creativetab;
 
-import de.webtwob.mbma.core.common.registration.MBMABlockList;
+import de.webtwob.mbma.core.common.registration.Blocks;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -25,6 +25,6 @@ public class MBMACreativeTab extends CreativeTabs {
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {
-        return new ItemStack(MBMABlockList.STORAGE_INTERFACE);
+        return new ItemStack(Blocks.STORAGE_INTERFACE);
     }
 }

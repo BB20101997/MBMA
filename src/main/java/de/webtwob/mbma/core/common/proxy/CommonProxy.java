@@ -5,7 +5,7 @@ import de.webtwob.mbma.core.common.MBMALog;
 import de.webtwob.mbma.core.common.inventory.RecipeBankContainer;
 import de.webtwob.mbma.core.common.inventory.TokenContainer;
 import de.webtwob.mbma.core.common.inventory.TokenGeneratorContainer;
-import de.webtwob.mbma.core.common.registration.MBMAItemList;
+import de.webtwob.mbma.core.common.registration.Items;
 import de.webtwob.mbma.core.common.tileentity.TileEntityRequestGenerator;
 import de.webtwob.mbma.core.common.tileentity.old.TileEntityRecipeStoreOld;
 
@@ -46,7 +46,7 @@ public class CommonProxy implements IGuiHandler {
             case MAIN_HAND_ITEM_GUI:
             case OFF_HAND_ITEM_GUI: {
                 ItemStack held = player.getHeldItem(EnumHand.values()[ID - 1]);
-                if (held.getItem() == MBMAItemList.TOKEN) {
+                if (held.getItem() == Items.TOKEN) {
                     return new TokenContainer(player.getHeldItem(EnumHand.values()[ID - 1]));
                 }
             }

@@ -2,8 +2,8 @@ package de.webtwob.mbma.core;
 
 import de.webtwob.mbma.core.common.MBMALog;
 import de.webtwob.mbma.core.common.proxy.CommonProxy;
-import de.webtwob.mbma.core.common.registration.MBMAPacketHandler;
-import de.webtwob.mbma.core.common.registration.MBMATileEntityList;
+import de.webtwob.mbma.core.common.registration.PacketHandler;
+import de.webtwob.mbma.core.common.registration.Tiles;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -34,7 +34,7 @@ public class MBMA_CORE {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         MBMALog.info("Starting PreInit!");
-        MBMATileEntityList.registerTileEntities();
+        Tiles.registerTileEntities();
         /*
          * other stuff that would go here:
          * Ore-Dict assignment
@@ -46,7 +46,7 @@ public class MBMA_CORE {
     @Mod.EventHandler
     public void inti(FMLInitializationEvent event) {
         MBMALog.info("Starting Init!");
-        MBMAPacketHandler.init();
+        PacketHandler.init();
         proxy.register();
         /*
          * other stuff that would go here:

@@ -7,7 +7,7 @@ import de.webtwob.mbma.core.common.MBMALog;
 import de.webtwob.mbma.core.common.inventory.TokenContainer;
 import de.webtwob.mbma.core.common.packet.TokenUpdatePacket;
 import de.webtwob.mbma.core.common.references.MBMAResourceLocations;
-import de.webtwob.mbma.core.common.registration.MBMAPacketHandler;
+import de.webtwob.mbma.core.common.registration.PacketHandler;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.gui.GuiButton;
@@ -157,6 +157,6 @@ public class TokenGui extends GuiContainer {
         } else {
             requestStack = new ItemStack(request);
         }
-        MBMAPacketHandler.INSTANCE.sendToServer(new TokenUpdatePacket(requestStack, amount));
+        PacketHandler.INSTANCE.sendToServer(new TokenUpdatePacket(requestStack, amount));
     }
 }
