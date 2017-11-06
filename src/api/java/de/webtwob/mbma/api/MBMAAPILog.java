@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MBMAAPILog {
 
-    private static final Logger LOGGER = LogManager.getLogger("MBMAAPI");
+    private static final Logger LOGGER = LogManager.getLogger(MBMA_API.MODID);
 
     private MBMAAPILog() {
     }

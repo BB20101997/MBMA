@@ -5,6 +5,7 @@ import de.webtwob.mbma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mbma.api.multiblock.MultiBlockGroup;
 import de.webtwob.mbma.api.multiblock.MultiBlockGroupManager;
 import de.webtwob.mbma.api.multiblock.MultiBlockMember;
+import de.webtwob.mbma.core.common.MBMALog;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -30,7 +31,7 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
                     .filter(Objects::nonNull)
                     .reduce(MultiBlockGroup::joinGroups).orElse(null);
             if (group == null) {
-                System.out.println("Reduction concluded in null creating new Group!");
+                MBMALog.debug("Reduction concluded in null creating new Group!");
                 MultiBlockGroupManager manager = MultiBlockGroupManager.getInstance(world);
                 if (manager != null) {
                     group = manager.createNewGroup(getGroupType());
