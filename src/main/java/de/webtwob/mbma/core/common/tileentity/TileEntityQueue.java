@@ -1,133 +1,175 @@
 package de.webtwob.mbma.core.common.tileentity;
 
+import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
+import de.webtwob.mbma.api.interfaces.capability.ICraftingRequestProvider;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 import de.webtwob.mbma.core.common.config.MBMAConfiguration;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import de.webtwob.mbma.core.common.references.MBMA_NBTKeys;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.function.Predicate;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityQueue extends MultiBlockTileEntity implements ISidedInventory {
+public class TileEntityQueue extends MultiBlockTileEntity {
     
-    @SuppressWarnings("WeakerAccess")
     @ObjectHolder("mbmacore:queue")
-    public static final MultiBlockGroupType MANAGER_QUEUE = null;
-    private final ItemStack[] requests = new ItemStack[MBMAConfiguration.queueLenght];
-    private final LinkedList<ItemStack> requests;
+    private static final MultiBlockGroupType MANAGER_QUEUE = null;
     
-    {
-        requests = new LinkedList<>();
-    }
+    @CapabilityInject(IItemHandler.class)
+    private static Capability<IItemHandler> ITEM_HANDLER = null;
+    
+    @CapabilityInject(ICraftingRequest.class)
+    private static Capability<ICraftingRequest> CRAFTING_REQUEST = null;
+    
+    @CapabilityInject(ICraftingRequestProvider.class)
+    private static Capability<ICraftingRequestProvider> REQUEST_PROVIDER = null;
+    
+    private final Queue<ItemStack> requestList = new LinkedList<>();
+    
+    private IItemHandler handler = new EnqueueingItemHandler();
     
     public MultiBlockGroupType getGroupType() {
         return MANAGER_QUEUE;
     }
     
     @Override
-    public int[] getSlotsForFace(final EnumFacing side) {
-        return new int[]{0,1};
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        return super.hasCapability(capability, facing) || getCapability(capability, facing) != null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (ITEM_HANDLER != null && ITEM_HANDLER == capability) {
+            return (T) handler;
+        }else if(REQUEST_PROVIDER!=null && REQUEST_PROVIDER == capability){
+            return (T)(ICraftingRequestProvider)this::getRequestIfRequirementHolds;
+        }
+        return super.getCapability(capability, facing);
+    }
+    
+    @Nonnull
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound supComp = super.writeToNBT(compound);
+        NBTTagList items = new NBTTagList();
+        requestList.forEach(stack -> items.appendTag(stack.serializeNBT()));
+        supComp.setTag(MBMA_NBTKeys.QUEUE_STACKS, items);
+        return supComp;
     }
     
     @Override
-    public boolean canInsertItem(final int index, final ItemStack itemStackIn, final EnumFacing direction) {
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        requestList.clear();
+        compound.getTagList(MBMA_NBTKeys.QUEUE_STACKS, Constants.NBT.TAG_COMPOUND).forEach(comp -> requestList.add(new ItemStack((NBTTagCompound) comp)));
+    }
+    
+    /**
+     * //TODO: Used by the Queues GUI to show enqueued requests
+     *
+     * @return an Array containing the currently enqueued Requests
+     */
+    public ICraftingRequest[] getCurrentRequests() {
+        return requestList.stream().map(stack -> stack.getCapability(CRAFTING_REQUEST, null)).filter(Objects::nonNull).toArray(ICraftingRequest[]::new);
+    }
+    
+    /**
+     * @param require the condition a request must satisfy
+     * @return the first element of the queue satisfying the requirement or else null
+     */
+    private ItemStack getRequestIfRequirementHolds(Predicate<ItemStack> require) {
+        //find the first matching request, remove and return it
+        return requestList.stream().filter(require).findFirst().map(stack -> {
+            requestList.remove(stack);
+            return stack;
+        }).orElse(null);
+    }
+    
+    private class EnqueueingItemHandler implements IItemHandler {
         
-        return false;
-    }
-    
-    @Override
-    public boolean canExtractItem(final int index, final ItemStack stack, final EnumFacing direction) {
-        return false;
-    }
-    
-    @Override
-    public int getSizeInventory() {
-        return 0;
-    }
-    
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-    
-    @Override
-    public ItemStack getStackInSlot(final int index) {
-        return null;
-    }
-    
-    @Override
-    public ItemStack decrStackSize(final int index, final int count) {
-        return null;
-    }
-    
-    @Override
-    public ItemStack removeStackFromSlot(final int index) {
-        return null;
-    }
-    
-    @Override
-    public void setInventorySlotContents(final int index, final ItemStack stack) {
-    
-    }
-    
-    @Override
-    public int getInventoryStackLimit() {
-        return 0;
-    }
-    
-    @Override
-    public boolean isUsableByPlayer(final EntityPlayer player) {
-        return false;
-    }
-    
-    @Override
-    public void openInventory(final EntityPlayer player) {
-    
-    }
-    
-    @Override
-    public void closeInventory(final EntityPlayer player) {
-    
-    }
-    
-    @Override
-    public boolean isItemValidForSlot(final int index, final ItemStack stack) {
-        return false;
-    }
-    
-    @Override
-    public int getField(final int id) {
-        return 0;
-    }
-    
-    @Override
-    public void setField(final int id, final int value) {
-    
-    }
-    
-    @Override
-    public int getFieldCount() {
-        return 0;
-    }
-    
-    @Override
-    public void clear() {
-    
-    }
-    
-    @Override
-    public String getName() {
-        return null;
-    }
-    
-    @Override
-    public boolean hasCustomName() {
-        return false;
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+        
+        @Nonnull
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return ItemStack.EMPTY;
+        }
+        
+        @Nonnull
+        @Override
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            if (slot >= getSlots() || slot < 0) {
+                if (!simulate) {
+                    //Are you a QA tester?
+                    throw new IndexOutOfBoundsException(String.format("Attempted Insert into Slot:%d for Size:%d!", slot, getSlots()));
+                } else {
+                    //they may not try to really insert if they get the whole stack back
+                    return stack;
+                }
+            }
+            
+            //do we have room and is there even some thing to insert
+            if (requestList.size() >= MBMAConfiguration.queueLenght || stack.getCount() <= 0) {
+                return stack;
+            }
+            
+            {
+                ICraftingRequest request;
+                
+                //is the ItemStack a Request and is it uncompleted
+                if ((request = stack.getCapability(CRAFTING_REQUEST, null)) == null || request.isCompleted()) {
+                    return stack;
+                }
+            }
+            
+            //create two copies one to return and one to enqueue
+            ItemStack enqueue = stack.copy();
+            ItemStack result = stack.copy();
+            
+            //set the stack we want to enqueue to size 1 while decreasing the returned stack, we don't want to dupe requests
+            enqueue.setCount(1);
+            result.shrink(1);
+            
+            if (simulate || requestList.add(enqueue)) {
+                //either this is simulated or we succeed with adding the request to the queue therefore we return the decremented result stack
+                return result;
+            }
+            //we are neither a simulation nor did we succeeded in adding to the queue therefore we return the original stack
+            return stack;
+        }
+        
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            //we don't allow extraction
+            return ItemStack.EMPTY;
+        }
+        
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
     }
 }

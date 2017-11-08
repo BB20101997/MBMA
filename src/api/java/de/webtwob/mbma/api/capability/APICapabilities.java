@@ -10,10 +10,15 @@ import de.webtwob.mbma.api.capability.storage.CraftingRequestStorage;
 import de.webtwob.mbma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRecipe;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
+import de.webtwob.mbma.api.interfaces.capability.ICraftingRequestProvider;
 
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by BB20101997 on 18. Mär. 2017.
@@ -43,6 +48,20 @@ public class APICapabilities {
                     ICraftingRequest.class, new CraftingRequestStorage(), new CraftingRequestFactory());
             CapabilityManager.INSTANCE.register(
                     ICraftingRecipe.class, new CraftingRecipeStorage(), new CraftingRecipeFactory());
+            CapabilityManager.INSTANCE.register(ICraftingRequestProvider.class, new ICraftingRequestProviderIStorage(),()-> require -> null);
+        }
+    }
+    
+    private static class ICraftingRequestProviderIStorage implements Capability.IStorage<ICraftingRequestProvider> {
+        @Nullable
+        @Override
+        public NBTBase writeNBT(Capability<ICraftingRequestProvider> capability, ICraftingRequestProvider instance, EnumFacing side) {
+            return null;
+        }
+        
+        @Override
+        public void readNBT(Capability<ICraftingRequestProvider> capability, ICraftingRequestProvider instance, EnumFacing side, NBTBase nbt) {
+
         }
     }
 }
