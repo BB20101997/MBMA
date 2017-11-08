@@ -5,6 +5,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by bennet on 22.03.17.
  */
@@ -17,13 +19,14 @@ public class GhostSlot extends Slot {
         super(null, 0, xPosition, yPosition);
     }
 
+    @Nonnull
     @Override
     public ItemStack getStack() {
         return stack;
     }
 
     @Override
-    public void putStack(ItemStack stack) {
+    public void putStack(@Nonnull ItemStack stack) {
     }
 
     public void setItemStack(ItemStack stack) {
@@ -44,6 +47,7 @@ public class GhostSlot extends Slot {
         return 0;
     }
 
+    @Nonnull
     @Override
     public ItemStack decrStackSize(int amount) {
         return ItemStack.EMPTY;

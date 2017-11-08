@@ -10,6 +10,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by bennet on 28.03.17.
  */
@@ -48,6 +50,7 @@ public class TokenGeneratorContainer extends Container {
 
     }
 
+    @Nonnull
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
 
@@ -89,7 +92,7 @@ public class TokenGeneratorContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer entityPlayer) {
+    public boolean canInteractWith(@Nonnull EntityPlayer entityPlayer) {
         return true;
     }
 

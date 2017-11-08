@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
         super.update();
     }
     
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound nbtc) {
         NBTTagCompound compound = super.writeToNBT(nbtc);

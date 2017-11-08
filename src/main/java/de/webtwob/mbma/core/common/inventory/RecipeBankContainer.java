@@ -13,6 +13,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 /**
@@ -78,7 +79,7 @@ public class RecipeBankContainer extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer entityPlayer) {
+    public boolean canInteractWith(@Nonnull EntityPlayer entityPlayer) {
         return true;
     }
 
