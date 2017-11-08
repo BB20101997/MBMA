@@ -15,6 +15,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -28,7 +29,7 @@ public class RecipeBank extends Block {
     }
 
     @Override
-    public void breakBlock(final World world, final BlockPos pos, final IBlockState stat) {
+    public void breakBlock(@Nonnull final World world, @Nonnull final BlockPos pos, @Nonnull final IBlockState stat) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityRecipeStoreOld) {
             ((TileEntityRecipeStoreOld) te).destroyed();
@@ -52,7 +53,7 @@ public class RecipeBank extends Block {
     @Nullable
     @Override
     public TileEntity createTileEntity(
-            final World p_createTileEntity_1_, final IBlockState p_createTileEntity_2_
+            @Nonnull final World p_createTileEntity_1_, @Nonnull final IBlockState p_createTileEntity_2_
     ) {
         return new TileEntityRecipeStoreOld();
     }

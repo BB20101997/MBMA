@@ -13,6 +13,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class TileEntityRecipeStoreOld extends TileEntity {
         return pages.get(i);
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound p_writeToNBT_1_) {
         NBTTagCompound compound = getTileData();

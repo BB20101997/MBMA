@@ -16,6 +16,8 @@ import net.minecraft.util.text.TextComponentString;
 import java.util.Arrays;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
@@ -43,6 +45,7 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
         }
     }
     
+    @Nonnull
     @Override
     public void performDebugOnTile(EntityPlayer player) {
         StringBuilder sb = new StringBuilder();

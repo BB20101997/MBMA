@@ -30,6 +30,7 @@ public class BlockCraftingProcessor extends Block {
         setDefaultState(state);
     }
     
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, MBMAProperties.STATE);
@@ -57,7 +58,7 @@ public class BlockCraftingProcessor extends Block {
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityCraftingProcessor();
     }@Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         
         if (tileEntity instanceof IMultiBlockTile) {

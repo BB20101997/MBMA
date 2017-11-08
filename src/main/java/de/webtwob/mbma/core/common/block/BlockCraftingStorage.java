@@ -36,15 +36,17 @@ public class BlockCraftingStorage extends Block {
     @Nonnull
     @Deprecated
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         return super.getActualState(state, worldIn, pos);
     }
     
+    @Nonnull
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getExtendedState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
         return super.getExtendedState(state, world, pos);
     }
     
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, MBMAProperties.STATE);
@@ -73,7 +75,7 @@ public class BlockCraftingStorage extends Block {
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityCraftingStorage();
     }@Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         
         if (tileEntity instanceof IMultiBlockTile) {
