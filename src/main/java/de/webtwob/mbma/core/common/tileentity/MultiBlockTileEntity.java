@@ -16,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
@@ -69,6 +71,7 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
         }
     }
     
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound compound1 = super.writeToNBT(compound);
