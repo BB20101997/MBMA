@@ -81,7 +81,7 @@ public class BlockCraftingController extends Block {
     }
     
     @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         
         if (tileEntity instanceof IMultiBlockTile) {

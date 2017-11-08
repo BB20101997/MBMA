@@ -30,6 +30,7 @@ public class DebugWand extends Item {
     }
     
     
+    @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
         RayTraceResult result = rayTrace(worldIn, playerIn, true);

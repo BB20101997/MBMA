@@ -108,6 +108,7 @@ public class TileEntityQueueOld extends TileEntity implements ITickable, IMachin
     }
 
 
+    @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
         return super.getUpdateTag();

@@ -66,12 +66,12 @@ public class Token extends Item {
     
     @Nullable
     @Override
-    public IItemPropertyGetter getPropertyGetter(ResourceLocation key) {
+    public IItemPropertyGetter getPropertyGetter(@Nonnull ResourceLocation key) {
         return super.getPropertyGetter(key);
     }
     
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
         if (isInCreativeTab(tab)) {
             subItems.add(new ItemStack(this));
             ItemStack stack = new ItemStack(this);
