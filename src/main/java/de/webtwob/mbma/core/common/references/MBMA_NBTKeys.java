@@ -24,6 +24,7 @@ public class MBMA_NBTKeys {
     public static final String RB_PAGE_RECIPE = MODID + ":pageRecipe";
     
     public static final String CRAFTING_STORAGE_LIST = MODID + ":cslist";
+    public static final String QUEUE_STACKS = MODID+":queueStacks";
     
     private MBMA_NBTKeys() {
     }
