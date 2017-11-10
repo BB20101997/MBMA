@@ -2,6 +2,7 @@ package de.webtwob.mbma.core.common.tileentity;
 
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequestProvider;
+import de.webtwob.mbma.api.multiblock.MultiBlockMember;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 import de.webtwob.mbma.core.common.config.MBMAConfiguration;
 import de.webtwob.mbma.core.common.references.MBMA_NBTKeys;
@@ -10,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.Constants;
@@ -17,6 +19,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -60,8 +63,8 @@ public class TileEntityQueue extends MultiBlockTileEntity {
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (ITEM_HANDLER != null && ITEM_HANDLER == capability) {
             return (T) handler;
-        }else if(REQUEST_PROVIDER!=null && REQUEST_PROVIDER == capability){
-            return (T)(ICraftingRequestProvider)this::getRequestIfRequirementHolds;
+        } else if (REQUEST_PROVIDER != null && REQUEST_PROVIDER == capability) {
+            return (T) (ICraftingRequestProvider) this::groupGetRequestIfRequirementHolds;
         }
         return super.getCapability(capability, facing);
     }
@@ -89,19 +92,42 @@ public class TileEntityQueue extends MultiBlockTileEntity {
      * @return an Array containing the currently enqueued Requests
      */
     public ICraftingRequest[] getCurrentRequests() {
-        return requestList.stream().map(stack -> stack.getCapability(CRAFTING_REQUEST, null)).filter(Objects::nonNull).toArray(ICraftingRequest[]::new);
+        return group.getMembers().stream()
+                .map(MultiBlockMember::getPos)
+                .sorted(BlockPos::compareTo)
+                .map(world::getTileEntity)
+                .filter(TileEntityQueue.class::isInstance)
+                .map(TileEntityQueue.class::cast)
+                .map(t -> t.requestList).flatMap(Collection::stream)
+                .map(stack -> stack.getCapability(CRAFTING_REQUEST, null))
+                .filter(Objects::nonNull).toArray(ICraftingRequest[]::new);
+    }
+    
+    /**
+     * find the first Group Member that returns a non empty ItemStack and return said ItemStack
+     */
+    @Nonnull
+    private ItemStack groupGetRequestIfRequirementHolds(@Nonnull final Predicate<ItemStack> requirement) {
+        return group.getMembers().stream()
+                .map(MultiBlockMember::getPos)
+                .sorted(BlockPos::compareTo)
+                .map(world::getTileEntity)
+                .filter(TileEntityQueue.class::isInstance)
+                .map(TileEntityQueue.class::cast)
+                .map(t -> t.getRequestIfRequirementHolds(requirement))
+                .filter(stack -> !stack.isEmpty()).findFirst().orElse(ItemStack.EMPTY);
     }
     
     /**
      * @param require the condition a request must satisfy
      * @return the first element of the queue satisfying the requirement or else null
      */
-    private ItemStack getRequestIfRequirementHolds(Predicate<ItemStack> require) {
-        //find the first matching request, remove and return it
-        return requestList.stream().filter(require).findFirst().map(stack -> {
-            requestList.remove(stack);
-            return stack;
-        }).orElse(null);
+    @Nonnull
+    private ItemStack getRequestIfRequirementHolds(@Nonnull final Predicate<ItemStack> require) {
+        return requestList.stream().filter(require).findFirst().map(itemStack -> {
+            requestList.remove(itemStack);
+            return itemStack;
+        }).orElse(ItemStack.EMPTY);
     }
     
     private class EnqueueingItemHandler implements IItemHandler {
