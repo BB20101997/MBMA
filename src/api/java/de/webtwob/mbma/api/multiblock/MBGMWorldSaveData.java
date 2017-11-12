@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.multiblock;
 
-import de.webtwob.mbma.api.MBMA_API_Constants;
+import de.webtwob.mbma.api.references.NBTKeys;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static de.webtwob.mbma.api.MBMA_API.MODID;
+import static de.webtwob.mbma.api.MBMAAPI.MODID;
 
 
 /**
@@ -33,7 +33,7 @@ public class MBGMWorldSaveData extends WorldSavedData {
     }
     
     @Nullable
-    public static MBGMWorldSaveData get(World world) throws NullPointerException {
+    public static MBGMWorldSaveData get(World world){
         MapStorage storage = world.getMapStorage();
         if (storage == null) {
             return null;
@@ -49,15 +49,15 @@ public class MBGMWorldSaveData extends WorldSavedData {
     
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound nbt) {
-        if (nbt.hasKey(MBMA_API_Constants.NBT.MBG_LIST, Constants.NBT.TAG_LIST)) {
-            multiBlockGroupManager.deserializeNBT(nbt.getTagList(MBMA_API_Constants.NBT.MBG_LIST, Constants.NBT.TAG_COMPOUND));
+        if (nbt.hasKey(NBTKeys.MBG_LIST, Constants.NBT.TAG_LIST)) {
+            multiBlockGroupManager.deserializeNBT(nbt.getTagList(NBTKeys.MBG_LIST, Constants.NBT.TAG_COMPOUND));
         }
     }
     
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
-        compound.setTag(MBMA_API_Constants.NBT.MBG_LIST, multiBlockGroupManager.serializeNBT());
+        compound.setTag(NBTKeys.MBG_LIST, multiBlockGroupManager.serializeNBT());
         return compound;
     }
     

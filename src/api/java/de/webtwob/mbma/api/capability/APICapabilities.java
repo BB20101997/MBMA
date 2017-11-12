@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.capability;
 
-import de.webtwob.mbma.api.MBMAAPILog;
+import de.webtwob.mbma.api.APILog;
 import de.webtwob.mbma.api.capability.factory.BlockPosFactory;
 import de.webtwob.mbma.api.capability.factory.CraftingRecipeFactory;
 import de.webtwob.mbma.api.capability.factory.CraftingRequestFactory;
@@ -26,11 +26,11 @@ import javax.annotation.Nullable;
 public class APICapabilities {
     
     @CapabilityInject(IBlockPosProvider.class)
-    public static Capability<IBlockPosProvider> CAPABILITY_BLOCK_POS = null;
+    public static final Capability<IBlockPosProvider> CAPABILITY_BLOCK_POS = null;
     @CapabilityInject(ICraftingRequest.class)
-    public static Capability<ICraftingRequest> CAPABILITY_CRAFTING_REQUEST = null;
+    public static final Capability<ICraftingRequest> CAPABILITY_CRAFTING_REQUEST = null;
     @CapabilityInject(ICraftingRecipe.class)
-    public static Capability<ICraftingRecipe> CAPABILITY_CRAFTING_RECIPE = null;
+    public static final Capability<ICraftingRecipe> CAPABILITY_CRAFTING_RECIPE = null;
     private static boolean registered = false;
     
     private APICapabilities() {
@@ -42,7 +42,7 @@ public class APICapabilities {
     public static void register() {
         if (!registered) {
             registered = true;
-            MBMAAPILog.debug("Registering Capabilities");
+            APILog.debug("Registering Capabilities");
             CapabilityManager.INSTANCE.register(IBlockPosProvider.class, new BlockPosStorage(), new BlockPosFactory());
             CapabilityManager.INSTANCE.register(
                     ICraftingRequest.class, new CraftingRequestStorage(), new CraftingRequestFactory());
@@ -56,12 +56,13 @@ public class APICapabilities {
         @Nullable
         @Override
         public NBTBase writeNBT(Capability<ICraftingRequestProvider> capability, ICraftingRequestProvider instance, EnumFacing side) {
+            //by default we don't store stuff in the Provider
             return null;
         }
         
         @Override
         public void readNBT(Capability<ICraftingRequestProvider> capability, ICraftingRequestProvider instance, EnumFacing side, NBTBase nbt) {
-
+            //by default we won't don't store stuff so we can't read stuff
         }
     }
 }

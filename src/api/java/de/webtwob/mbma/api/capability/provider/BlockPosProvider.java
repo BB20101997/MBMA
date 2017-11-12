@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.capability.provider;
 
-import de.webtwob.mbma.api.MBMA_API_Constants;
+import de.webtwob.mbma.api.references.NBTKeys;
 import de.webtwob.mbma.api.interfaces.capability.IBlockPosProvider;
 
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,7 @@ public class BlockPosProvider implements ICapabilitySerializable {
         public BlockPos getBlockPos() {
             NBTTagCompound compound = item.getTagCompound();
             if (compound == null) return null;
-            int[] posA = compound.getIntArray(MBMA_API_Constants.LINK_SHARE_POS);
+            int[] posA = compound.getIntArray(NBTKeys.LINK_SHARE_POS);
             if (posA.length >= 3) {
                 return new BlockPos(posA[0], posA[1], posA[2]);
             }
@@ -40,9 +40,9 @@ public class BlockPosProvider implements ICapabilitySerializable {
             NBTTagCompound compound = item.getTagCompound();
             if (compound == null) compound = new NBTTagCompound();
             if (pos != null) {
-                compound.setIntArray(MBMA_API_Constants.LINK_SHARE_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
+                compound.setIntArray(NBTKeys.LINK_SHARE_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
             } else {
-                compound.removeTag(MBMA_API_Constants.LINK_SHARE_POS);
+                compound.removeTag(NBTKeys.LINK_SHARE_POS);
             }
             item.setTagCompound(compound);
         }

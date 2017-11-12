@@ -10,21 +10,21 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  */
 
 @Mod.EventBusSubscriber
-@Mod(modid = MBMA_API.MODID, useMetadata = true)
-public class MBMA_API {
+@Mod(modid = MBMAAPI.MODID, useMetadata = true)
+public class MBMAAPI {
     public static final String MODID = "mbmaapi";
     
     @Mod.Instance(MODID)
-    public static  MBMA_API INSTANCE;
+    public static MBMAAPI INSTANCE;
     
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        MBMAAPILog.info("Starting PreInit!");
+        APILog.info("Starting PreInit!");
         APICapabilities.register();
         /*
          * other stuff that would go here:
          * Ore-Dict assignment
          */
-        MBMAAPILog.info("Finished PreInit!");
+        APILog.info("Finished PreInit!");
     }
 }

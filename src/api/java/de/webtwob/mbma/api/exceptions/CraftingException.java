@@ -3,7 +3,7 @@ package de.webtwob.mbma.api.exceptions;
 /**
  * Created by BB20101997 on 23. Apr. 2017.
  */
-public class CraftingException extends Throwable {
+public class CraftingException extends Exception {
 
     public CraftingException(String message) {
         super(message);

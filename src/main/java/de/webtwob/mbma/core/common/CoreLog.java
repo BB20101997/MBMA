@@ -1,17 +1,17 @@
 package de.webtwob.mbma.core.common;
 
-import de.webtwob.mbma.core.MBMA_CORE;
+import de.webtwob.mbma.core.MBMACore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
-public class MBMALog {
+public class CoreLog {
     
-    public static Logger LOGGER = LogManager.getLogger(MBMA_CORE.MODID);
+    public static Logger LOGGER = LogManager.getLogger(MBMACore.MODID);
     
-    private MBMALog() {
+    private CoreLog() {
     }
 
     public static void info(String message, Object... data) {

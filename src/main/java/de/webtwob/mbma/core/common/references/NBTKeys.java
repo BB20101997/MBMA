@@ -1,12 +1,12 @@
 package de.webtwob.mbma.core.common.references;
 
-import static de.webtwob.mbma.core.MBMA_CORE.MODID;
+import static de.webtwob.mbma.core.MBMACore.MODID;
 
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
 @SuppressWarnings("StringConcatenationMissingWhitespace")
-public class MBMA_NBTKeys {
+public class NBTKeys {
 
     public static final String QS_ITEM_HANDLER = MODID + ":QSITEMS";
     public static final String QS_TOKEN = MODID + ":QSToken";
@@ -26,6 +26,6 @@ public class MBMA_NBTKeys {
     public static final String CRAFTING_STORAGE_LIST = MODID + ":cslist";
     public static final String QUEUE_STACKS = MODID+":queueStacks";
     
-    private MBMA_NBTKeys() {
+    private NBTKeys() {
     }
 }

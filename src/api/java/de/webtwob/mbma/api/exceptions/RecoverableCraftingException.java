@@ -11,7 +11,7 @@ import java.util.Optional;
 public abstract class RecoverableCraftingException extends CraftingException {
     
     @Nullable
-    private ICraftingNode recoverNode = null;
+    private transient ICraftingNode recoverNode = null;
     
     public RecoverableCraftingException(String message) {
         super(message);

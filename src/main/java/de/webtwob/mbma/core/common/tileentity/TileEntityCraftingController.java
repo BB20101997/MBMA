@@ -29,9 +29,9 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
     
     @CapabilityInject(ICraftingRequestProvider.class)
-    private static Capability<ICraftingRequestProvider> REQUEST_PROVIDER = null;
+    private static final Capability<ICraftingRequestProvider> REQUEST_PROVIDER = null;
     @CapabilityInject(ICraftingRequest.class)
-    private static Capability<ICraftingRequest> CAPABILITY_REQUEST = null;
+    private static final Capability<ICraftingRequest> CAPABILITY_REQUEST = null;
     
     private static int WAIT_TIME = 20;
     private final List<Function<TileEntityCraftingController, String>> ERROR_SOLVED = new LinkedList<>();
@@ -152,10 +152,11 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean getNewRequest() {
-        return !(currentRequest = getRequestProviders()
+        currentRequest = getRequestProviders()
                 .map(cap -> cap.getRequestIfRequirementHolds(this::canHandleRequest))
                 .filter(Objects::nonNull)
-                .findFirst().orElse(ItemStack.EMPTY)).isEmpty();
+                .findFirst().orElse(ItemStack.EMPTY);
+        return !currentRequest.isEmpty();
     }
     
 }

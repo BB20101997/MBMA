@@ -6,11 +6,11 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
-public class MBMAAPILog {
+public class APILog {
 
-    private static final Logger LOGGER = LogManager.getLogger(MBMA_API.MODID);
+    private static final Logger LOGGER = LogManager.getLogger(MBMAAPI.MODID);
 
-    private MBMAAPILog() {
+    private APILog() {
     }
 
     public static void info(String message, Object... data) {

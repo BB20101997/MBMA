@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.multiblock;
 
-import de.webtwob.mbma.api.MBMAAPILog;
+import de.webtwob.mbma.api.APILog;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 
 import net.minecraft.nbt.NBTBase;
@@ -63,13 +63,11 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
     public NBTTagList serializeNBT() {
         NBTTagList groupList = new NBTTagList();
         for (MultiBlockGroup entry : groupMap) {
-            if (entry != null) {
-                if (entry.isValid() && !entry.getMembers().isEmpty()) {
-                    groupList.appendTag(entry.serializeNBT());
-                }
+            if (entry != null && entry.isValid() && !entry.getMembers().isEmpty()) {
+                groupList.appendTag(entry.serializeNBT());
             }
         }
-        MBMAAPILog.info("Serialized " + groupList.tagCount() + " group(s).");
+        APILog.info("Serialized " + groupList.tagCount() + " group(s).");
         return groupList;
     }
     
@@ -85,6 +83,6 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
                 groupMap.add(group);
             }
         }
-        MBMAAPILog.info("Deserialized " + groupMap.size() + " group(s).");
+        APILog.info("Deserialized " + groupMap.size() + " group(s).");
     }
 }

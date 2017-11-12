@@ -12,39 +12,25 @@ import javax.annotation.Nonnull;
  */
 public class GhostSlot extends Slot {
 
-    private ItemStack stack = ItemStack.EMPTY;
-
-    public GhostSlot(int xPosition, int yPosition) {
+    //TODO redo this
+    
+    public GhostSlot(@Nonnull IInventory inventory,int slot, int xPosition, int yPosition) {
         //noinspection ConstantConditions
-        super(null, 0, xPosition, yPosition);
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getStack() {
-        return stack;
-    }
-
-    @Override
-    public void putStack(@Nonnull ItemStack stack) {
+        super(inventory, slot, xPosition, yPosition);
     }
 
     public void setItemStack(ItemStack stack) {
-        this.stack = stack;
-    }
-
-    @Override
-    public void onSlotChanged() {
+       this.inventory.setInventorySlotContents(slotNumber,stack);
     }
 
     @Override
     public int getSlotStackLimit() {
-        return 0;
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public int getItemStackLimit(ItemStack stack) {
-        return 0;
+        return Integer.MAX_VALUE;
     }
 
     @Nonnull
@@ -54,22 +40,7 @@ public class GhostSlot extends Slot {
     }
 
     @Override
-    public boolean isHere(IInventory inv, int slotIn) {
-        return false;
-    }
-
-    @Override
     public boolean canTakeStack(EntityPlayer playerIn) {
-        return false;
-    }
-
-    @Override
-    public int getSlotIndex() {
-        return 0;
-    }
-
-    @Override
-    public boolean isSameInventory(Slot other) {
-        return false;
+        return true;
     }
 }

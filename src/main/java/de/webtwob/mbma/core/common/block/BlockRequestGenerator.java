@@ -1,6 +1,6 @@
 package de.webtwob.mbma.core.common.block;
 
-import de.webtwob.mbma.core.MBMA_CORE;
+import de.webtwob.mbma.core.MBMACore;
 import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
 import de.webtwob.mbma.core.common.proxy.CommonProxy;
 import de.webtwob.mbma.core.common.tileentity.TileEntityRequestGenerator;
@@ -32,7 +32,7 @@ public class BlockRequestGenerator extends Block {
     public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing dir, float x, float y, float z) {
         //open gui
         if (!world.isRemote) {
-            player.openGui(MBMA_CORE.INSTANCE, CommonProxy.TOKEN_GENERATOR_GUI, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            player.openGui(MBMACore.INSTANCE, CommonProxy.TOKEN_GENERATOR_GUI, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
         }
         return true;
     }

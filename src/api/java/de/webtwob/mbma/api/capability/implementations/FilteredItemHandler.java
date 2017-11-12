@@ -42,12 +42,10 @@ public class FilteredItemHandler extends ItemHandlerWrapper {
         this.filter = filter;
         handler = stackHandler;
     }
-    
-    /**
-     * The size of a FilteredItemHandler can not be changed therefore we ignore such attempts
-     * */
+   
     @Override
     public void setSize(int size) {
+        //can't resize because if we get a NonNullList in the constructor we need to keep using it
     }
     
     @Override

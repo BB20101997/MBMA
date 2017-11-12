@@ -23,41 +23,42 @@ import javax.annotation.Nonnull;
  * Created by BB20101997 on 16. Mär. 2017.
  */
 public class BlockStorageInterface extends Block {
-
+    
     public BlockStorageInterface() {
         super(Material.IRON);
         setCreativeTab(MBMACreativeTab.MBMATab);
-
+        
         IBlockState state = blockState.getBaseState();
         state = state.withProperty(MBMAProperties.FACING, EnumFacing.UP);
         state = state.withProperty(MBMAProperties.CONNECTED, false);
-
+        
         setDefaultState(state);
     }
-
+    
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         return state.getValue(MBMAProperties.CONNECTED) ? 10 : 0;
     }
-
+    
     @SuppressWarnings("deprecation")
+    @Deprecated
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(MBMAProperties.FACING, EnumFacing.values()[meta >> 1]).withProperty(MBMAProperties.CONNECTED, !((meta & 1) == 0));
+        return getDefaultState().withProperty(MBMAProperties.FACING, EnumFacing.values()[meta >> 1]).withProperty(MBMAProperties.CONNECTED, (meta & 1) != 0);
     }
-
+    
     @Override
     public int getMetaFromState(IBlockState state) {
         return (state.getValue(MBMAProperties.FACING).ordinal() << 1) | (state.getValue(MBMAProperties.CONNECTED) ? 1 : 0);
     }
-
+    
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, MBMAProperties.FACING, MBMAProperties.CONNECTED);
     }
-
+    
     @Override
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         IBlockState state = world.getBlockState(pos);
@@ -66,7 +67,7 @@ public class BlockStorageInterface extends Block {
             ((World) world).setBlockState(pos, state);
         }
     }
-
+    
     @Nonnull
     @Override
     public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedFacing, float hitX, float hitY,
@@ -77,7 +78,7 @@ public class BlockStorageInterface extends Block {
         state = state.withProperty(MBMAProperties.CONNECTED, isConnected(world, pos, blockFacing));
         return state;
     }
-
+    
     /**
      * @param world       the world the block is in
      * @param pos         the position the block is in
@@ -93,7 +94,7 @@ public class BlockStorageInterface extends Block {
         } else {
             te = world.getTileEntity(dest);
         }
-
+        
         return te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation.getOpposite());
     }
 }

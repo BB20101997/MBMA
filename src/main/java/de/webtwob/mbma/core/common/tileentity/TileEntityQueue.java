@@ -5,7 +5,7 @@ import de.webtwob.mbma.api.interfaces.capability.ICraftingRequestProvider;
 import de.webtwob.mbma.api.multiblock.MultiBlockMember;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 import de.webtwob.mbma.core.common.config.MBMAConfiguration;
-import de.webtwob.mbma.core.common.references.MBMA_NBTKeys;
+import de.webtwob.mbma.core.common.references.NBTKeys;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -75,7 +75,7 @@ public class TileEntityQueue extends MultiBlockTileEntity {
         NBTTagCompound supComp = super.writeToNBT(compound);
         NBTTagList items = new NBTTagList();
         requestList.forEach(stack -> items.appendTag(stack.serializeNBT()));
-        supComp.setTag(MBMA_NBTKeys.QUEUE_STACKS, items);
+        supComp.setTag(NBTKeys.QUEUE_STACKS, items);
         return supComp;
     }
     
@@ -83,7 +83,7 @@ public class TileEntityQueue extends MultiBlockTileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         requestList.clear();
-        compound.getTagList(MBMA_NBTKeys.QUEUE_STACKS, Constants.NBT.TAG_COMPOUND).forEach(comp -> requestList.add(new ItemStack((NBTTagCompound) comp)));
+        compound.getTagList(NBTKeys.QUEUE_STACKS, Constants.NBT.TAG_COMPOUND).forEach(comp -> requestList.add(new ItemStack((NBTTagCompound) comp)));
     }
     
     /**

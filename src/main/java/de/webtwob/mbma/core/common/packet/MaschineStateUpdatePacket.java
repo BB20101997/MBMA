@@ -2,7 +2,7 @@ package de.webtwob.mbma.core.common.packet;
 
 import de.webtwob.mbma.api.enums.MachineState;
 import de.webtwob.mbma.api.interfaces.block.IMachineState;
-import de.webtwob.mbma.core.common.MBMALog;
+import de.webtwob.mbma.core.common.CoreLog;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
@@ -56,23 +56,21 @@ public class MaschineStateUpdatePacket implements IMessage {
 
         @Override
         public IMessage onMessage(MaschineStateUpdatePacket message, MessageContext ctx) {
-            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-                if (message.blockPos != null) {
-                    Minecraft.getMinecraft().addScheduledTask(() -> {
-                        EntityPlayerSP playerSP = Minecraft.getMinecraft().player;
-                        if (playerSP == null) {
-                            return;
-                        }
-                        TileEntity tileEntity = playerSP.getEntityWorld().getTileEntity(message.blockPos);
-                        if (tileEntity instanceof IMachineState) {
-                            ((IMachineState) tileEntity).setMachineState(message.machineState);
-                            tileEntity.markDirty();
-                        } else {
-                            MBMALog.warn("Received MaschineStateUpdatePacket for Block at {} {} {}, but TileEntity " +
-                                    "didn't support it!", message.blockPos.getX(), message.blockPos.getY(), message.blockPos.getZ());
-                        }
-                    });
-                }
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT && message.blockPos != null) {
+                Minecraft.getMinecraft().addScheduledTask(() -> {
+                    EntityPlayerSP playerSP = Minecraft.getMinecraft().player;
+                    if (playerSP == null) {
+                        return;
+                    }
+                    TileEntity tileEntity = playerSP.getEntityWorld().getTileEntity(message.blockPos);
+                    if (tileEntity instanceof IMachineState) {
+                        ((IMachineState) tileEntity).setMachineState(message.machineState);
+                        tileEntity.markDirty();
+                    } else {
+                        CoreLog.warn("Received MaschineStateUpdatePacket for Block at {} {} {}, but TileEntity " +
+                                "didn't support it!", message.blockPos.getX(), message.blockPos.getY(), message.blockPos.getZ());
+                    }
+                });
             }
             return null;
         }

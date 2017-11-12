@@ -4,7 +4,7 @@ import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mbma.api.property.IsLinkedItemPropertyGetter;
 import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
-import de.webtwob.mbma.core.common.references.MBMAResourceLocations;
+import de.webtwob.mbma.core.common.references.ResourceLocations;
 import de.webtwob.mbma.core.common.references.MBMAUnlocalizedNames;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -32,7 +32,7 @@ public class LinkCardItem extends Item {
     public LinkCardItem() {
         super();
         setCreativeTab(MBMACreativeTab.MBMATab);
-        addPropertyOverride(MBMAResourceLocations.Items.LINKED, IsLinkedItemPropertyGetter.INSTANCE);
+        addPropertyOverride(ResourceLocations.Items.LINKED, IsLinkedItemPropertyGetter.INSTANCE);
     }
 
     private BlockPos getLinked(ItemStack stack) {

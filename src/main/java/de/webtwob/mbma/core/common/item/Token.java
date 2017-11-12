@@ -2,7 +2,7 @@ package de.webtwob.mbma.core.common.item;
 
 import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
-import de.webtwob.mbma.core.MBMA_CORE;
+import de.webtwob.mbma.core.MBMACore;
 import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -57,7 +57,7 @@ public class Token extends Item {
         if (!worldIn.isRemote) {
             BlockPos pos = playerIn.getPosition();
             playerIn.openGui(
-                    MBMA_CORE.INSTANCE, handIn.ordinal() + 1, worldIn, pos.getX(), pos.getY(),
+                    MBMACore.INSTANCE, handIn.ordinal() + 1, worldIn, pos.getX(), pos.getY(),
                     pos.getZ()
             );
         }

@@ -3,7 +3,7 @@ package de.webtwob.mbma.core.common.tileentity;
 import de.webtwob.mbma.api.crafting.ItemStackContainer;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 import de.webtwob.mbma.core.common.config.MBMAConfiguration;
-import de.webtwob.mbma.core.common.references.MBMA_NBTKeys;
+import de.webtwob.mbma.core.common.references.NBTKeys;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -53,14 +53,14 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
                 itemList.appendTag(stack.serializeNBT());
             }
         }
-        compound.setTag(MBMA_NBTKeys.CRAFTING_STORAGE_LIST, itemList);
+        compound.setTag(NBTKeys.CRAFTING_STORAGE_LIST, itemList);
         return compound;
     }
     
     @Override
     public void readFromNBT(final NBTTagCompound compound) {
         super.readFromNBT(compound);
-        NBTTagList itemList = compound.getTagList(MBMA_NBTKeys.CRAFTING_STORAGE_LIST, Constants.NBT.TAG_COMPOUND);
+        NBTTagList itemList = compound.getTagList(NBTKeys.CRAFTING_STORAGE_LIST, Constants.NBT.TAG_COMPOUND);
         int sizeNBT = itemList.tagCount();
         int sizeList = containerList.size();
         for (int i = 0; i < sizeList && i < sizeNBT; i++) {

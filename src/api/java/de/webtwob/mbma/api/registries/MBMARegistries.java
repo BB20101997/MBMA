@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.registries;
 
-import de.webtwob.mbma.api.MBMA_API_Constants;
+import de.webtwob.mbma.api.references.ResourceLocations;
 
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,17 +18,36 @@ public class MBMARegistries {
     
     @SubscribeEvent
     public static void registerRegistries(RegistryEvent.NewRegistry event) {
-        RegistryBuilder<MultiBlockGroupType> builder = new RegistryBuilder<>();
-        builder.setName(MBMA_API_Constants.REG_MULTIBLOCK);
-        builder.setType(MultiBlockGroupType.class);
-        builder.set((key) -> {
-            MultiBlockGroupType multiBlockGroupType = new MultiBlockGroupType();
-            multiBlockGroupType.setRegistryName(key);
-            return multiBlockGroupType;
-        });
-        builder.allowModification();
-        builder.disableSaving();
-        builder.create();
+        new RegistryBuilder<MultiBlockGroupType>()
+                .setName(ResourceLocations.REG_MULTIBLOCK)
+                .setType(MultiBlockGroupType.class)
+                .set(
+                        key -> {
+                            MultiBlockGroupType multiBlockGroupType = new MultiBlockGroupType();
+                            multiBlockGroupType.setRegistryName(key);
+                            return multiBlockGroupType;
+                        })
+                .allowModification()
+                .disableSaving()
+                .create();
+        
+        new RegistryBuilder<RecipeType>().setName(ResourceLocations.REG_RECIPE_TYPE)
+                .setType(RecipeType.class).set(
+                key -> {
+                    RecipeType type = new RecipeType(false);
+                    type.setRegistryName(key);
+                    return type;
+                })
+                .allowModification()
+                .disableSaving()
+                .create();
+    }
+    
+    public static class DefaultRecipeType extends RecipeType {
+        
+        DefaultRecipeType(boolean autoFill) {
+            super(autoFill);
+        }
     }
     
     

@@ -1,11 +1,9 @@
 package de.webtwob.mbma.core.client.proxy;
 
-import de.webtwob.mbma.core.client.gui.RecipeBankGui;
 import de.webtwob.mbma.core.client.gui.TokenGeneratorGui;
 import de.webtwob.mbma.core.client.gui.TokenGui;
 import de.webtwob.mbma.core.common.proxy.CommonProxy;
 import de.webtwob.mbma.core.common.tileentity.TileEntityRequestGenerator;
-import de.webtwob.mbma.core.common.tileentity.old.TileEntityRecipeStoreOld;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -22,22 +20,18 @@ public class ClientProxy extends CommonProxy {
 
     @Nullable
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-        switch (ID) {
+        switch (id) {
             case MAIN_HAND_ITEM_GUI:
             case OFF_HAND_ITEM_GUI: {
-                return new TokenGui(player.getHeldItem(EnumHand.values()[ID - 1]), player);
+                return new TokenGui(player.getHeldItem(EnumHand.values()[id - 1]), player);
             }
             case TOKEN_GENERATOR_GUI: {
                 if (tileEntity instanceof TileEntityRequestGenerator) {
                     return new TokenGeneratorGui(player, (TileEntityRequestGenerator) tileEntity);
                 }
-            }
-            case RECIPE_BANK_GUI: {
-                if (tileEntity instanceof TileEntityRecipeStoreOld) {
-                    return new RecipeBankGui(player, (TileEntityRecipeStoreOld) tileEntity);
-                }
+                break;
             }
         }
         return null;

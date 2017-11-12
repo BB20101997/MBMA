@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.multiblock;
 
-import de.webtwob.mbma.api.MBMA_API_Constants;
+import de.webtwob.mbma.api.references.NBTKeys;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
 
 import net.minecraft.nbt.NBTBase;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static de.webtwob.mbma.api.MBMA_API_Constants.NBT.GROUP_TYPE;
+import static de.webtwob.mbma.api.references.NBTKeys.GROUP_TYPE;
 
 /**
  * Created by BB20101997 on 25. Okt. 2017.
@@ -134,7 +134,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         for(MultiBlockMember member:multiblockMemberSet){
             memberList.appendTag(member.serializeNBT());
         }
-        compound.setTag(MBMA_API_Constants.NBT.MBG_MEMBERS, memberList);
+        compound.setTag(NBTKeys.MBG_MEMBERS, memberList);
         return compound;
     }
     
@@ -145,8 +145,8 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
             type = GameRegistry.findRegistry(MultiBlockGroupType.class).getValue(new ResourceLocation(compound.getString(GROUP_TYPE)));
         }
         
-        if (compound.hasKey(MBMA_API_Constants.NBT.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY)) {
-            NBTTagList memberList = compound.getTagList(MBMA_API_Constants.NBT.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY);
+        if (compound.hasKey(NBTKeys.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY)) {
+            NBTTagList memberList = compound.getTagList(NBTKeys.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY);
             MultiBlockMember member;
             for (NBTBase base2 : memberList) {
                 if (base2 instanceof NBTTagIntArray) {

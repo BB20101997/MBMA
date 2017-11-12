@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -41,28 +42,40 @@ public class DebugWand extends Item {
         //noinspection ConstantConditions
         if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
             if (!worldIn.isRemote) {
-                boolean debugable = false;
+                boolean debuggable;
                 IBlockState blockState = worldIn.getBlockState(result.getBlockPos());
                 Block block = blockState.getBlock();
                 
-                if (block instanceof IDebugableBlock) {
-                    ((IDebugableBlock) block).performDebugOnBlock(worldIn, result.getBlockPos(), playerIn, 0);
-                    debugable = true;
-                }
+                debuggable = debugBlock(block, worldIn, result.getBlockPos(), playerIn);
+                debuggable |= debugTile(block, blockState, worldIn, result.getBlockPos(), playerIn);
                 
-                TileEntity tileEntity;
-                
-                if (block.hasTileEntity(blockState) && (tileEntity = worldIn.getTileEntity(result.getBlockPos())) instanceof IDebugableTile) {
-                    ((IDebugableTile) tileEntity).performDebugOnTile(playerIn);
-                    debugable = true;
-                }
-                
-                if (!debugable) {
+                if (!debuggable) {
                     playerIn.sendStatusMessage(new TextComponentString("No Debug Action available for " + block.getLocalizedName()), false);
                 }
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
         }
         return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+    
+    private boolean debugBlock(Block block, World world, BlockPos pos, EntityPlayer player) {
+        if (block instanceof IDebugableBlock) {
+            player.sendStatusMessage(new TextComponentString("Debug Information for Block " + block.getLocalizedName()), false);
+            ((IDebugableBlock) block).performDebugOnBlock(world, pos, player, 0);
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean debugTile(Block block, IBlockState state, World world, BlockPos pos, EntityPlayer player) {
+        if (block.hasTileEntity(state)) {
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity instanceof IDebugableTile) {
+                player.sendStatusMessage(new TextComponentString("Debug Information for TileEntity of Block " + block.getLocalizedName()), false);
+                ((IDebugableTile) tileEntity).performDebugOnTile(player);
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 package de.webtwob.mbma.core.common.config;
 
 import com.typesafe.config.impl.ConfigImpl;
-import de.webtwob.mbma.core.MBMA_CORE;
+import de.webtwob.mbma.core.MBMACore;
 
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 /**
  * Created by BB20101997 on 31. Okt. 2017.
  */
-@Config(modid = MBMA_CORE.MODID)
+@Config(modid = MBMACore.MODID)
 @Config.LangKey("mbmacore:config.title")
 public class MBMAConfiguration extends ConfigImpl {
     
@@ -26,12 +26,12 @@ public class MBMAConfiguration extends ConfigImpl {
     public static int storageStackLimit = 64;
     
     
-    @Mod.EventBusSubscriber(modid = MBMA_CORE.MODID)
+    @Mod.EventBusSubscriber(modid = MBMACore.MODID)
     private static class EventHandler{
         @SubscribeEvent
         public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event){
-            if(event.getModID().equals(MBMA_CORE.MODID)){
-                ConfigManager.sync(MBMA_CORE.MODID,Config.Type.INSTANCE);
+            if(event.getModID().equals(MBMACore.MODID)){
+                ConfigManager.sync(MBMACore.MODID,Config.Type.INSTANCE);
             }
         }
     }

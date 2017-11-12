@@ -3,10 +3,10 @@ package de.webtwob.mbma.core.client.gui;
 import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mbma.api.inventory.GhostSlot;
-import de.webtwob.mbma.core.common.MBMALog;
+import de.webtwob.mbma.core.common.CoreLog;
 import de.webtwob.mbma.core.common.inventory.TokenContainer;
 import de.webtwob.mbma.core.common.packet.TokenUpdatePacket;
-import de.webtwob.mbma.core.common.references.MBMAResourceLocations;
+import de.webtwob.mbma.core.common.references.ResourceLocations;
 import de.webtwob.mbma.core.common.registration.PacketHandler;
 import org.lwjgl.input.Keyboard;
 
@@ -38,7 +38,8 @@ public class TokenGui extends GuiContainer {
 
     public TokenGui(ItemStack stack, EntityPlayer player) {
         super(new TokenContainer(stack));
-        slot = new GhostSlot(guiLeft + 114, guiTop + 28);
+        //noinspection ConstantConditions
+        slot = new GhostSlot(null,0,guiLeft + 114, guiTop + 28);
         token = stack;
         this.player = player;
         xSize = 130;
@@ -110,7 +111,7 @@ public class TokenGui extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(MBMAResourceLocations.Textures.TOKEN_GUI);
+        mc.getTextureManager().bindTexture(ResourceLocations.Textures.TOKEN_GUI);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         drawTexturedModalRect(guiLeft + 10, guiTop + 10, 0, ySize + (itemNameTextField.isFocused() ? 0 : 16), 110, 16);
         itemNameTextField.drawTextBox();
@@ -121,7 +122,7 @@ public class TokenGui extends GuiContainer {
         super.actionPerformed(button);
         switch (button.id) {
             case 0: {
-                MBMALog.debug("Saving Token!");
+                CoreLog.debug("Saving Token!");
                 updateToken();
                 break;
             }

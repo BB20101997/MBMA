@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface IMultiBlockTile {
 
     MultiBlockGroupType getGroupType();

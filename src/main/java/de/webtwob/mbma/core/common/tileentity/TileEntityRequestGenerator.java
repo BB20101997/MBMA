@@ -5,7 +5,7 @@ import de.webtwob.mbma.api.capability.implementations.CombinedItemHandler;
 import de.webtwob.mbma.api.capability.implementations.FilteredItemHandler;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mbma.api.util.MBMAFilter;
-import de.webtwob.mbma.core.common.references.MBMA_NBTKeys;
+import de.webtwob.mbma.core.common.references.NBTKeys;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -62,11 +62,11 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     public void readFromNBT(@Nonnull NBTTagCompound nbtTagCompound) {
         super.readFromNBT(nbtTagCompound);
         NBTTagCompound compound = getTileData();
-        if (compound.hasKey(MBMA_NBTKeys.TOKEN_GENERATOR_MUSTER)) {
-            muster.deserializeNBT((NBTTagCompound) compound.getTag(MBMA_NBTKeys.TOKEN_GENERATOR_MUSTER));
+        if (compound.hasKey(NBTKeys.TOKEN_GENERATOR_MUSTER)) {
+            muster.deserializeNBT((NBTTagCompound) compound.getTag(NBTKeys.TOKEN_GENERATOR_MUSTER));
         }
-        if (compound.hasKey(MBMA_NBTKeys.TOKEN_GENERATOR_COMBINED)) {
-            combined.deserializeNBT((NBTTagCompound) compound.getTag(MBMA_NBTKeys.TOKEN_GENERATOR_COMBINED));
+        if (compound.hasKey(NBTKeys.TOKEN_GENERATOR_COMBINED)) {
+            combined.deserializeNBT((NBTTagCompound) compound.getTag(NBTKeys.TOKEN_GENERATOR_COMBINED));
         }
         if (nbtTagCompound.hasKey("CustomName", 8)) {
             this.setCustomName(nbtTagCompound.getString("CustomName"));
@@ -79,8 +79,8 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbtTagCompound) {
         NBTTagCompound compound = getTileData();
-        compound.setTag(MBMA_NBTKeys.TOKEN_GENERATOR_MUSTER, muster.serializeNBT());
-        compound.setTag(MBMA_NBTKeys.TOKEN_GENERATOR_COMBINED, combined.serializeNBT());
+        compound.setTag(NBTKeys.TOKEN_GENERATOR_MUSTER, muster.serializeNBT());
+        compound.setTag(NBTKeys.TOKEN_GENERATOR_COMBINED, combined.serializeNBT());
 
         nbtTagCompound = super.writeToNBT(nbtTagCompound);
 

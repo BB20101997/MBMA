@@ -1,6 +1,6 @@
 package de.webtwob.mbma.api.capability.provider;
 
-import de.webtwob.mbma.api.MBMA_API_Constants;
+import de.webtwob.mbma.api.references.NBTKeys;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
 
 import net.minecraft.item.ItemStack;
@@ -26,8 +26,8 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
         @Override
         public boolean isCompleted() {
             NBTTagCompound compound = item.getTagCompound();
-            return compound == null || compound.getInteger(MBMA_API_Constants.TOKEN_SHARE_QUANTITY) <= 0 || new ItemStack(
-                    compound.getCompoundTag(MBMA_API_Constants.TOKEN_SHARE_REQUEST)).isEmpty();
+            return compound == null || compound.getInteger(NBTKeys.TOKEN_SHARE_QUANTITY) <= 0 || new ItemStack(
+                    compound.getCompoundTag(NBTKeys.TOKEN_SHARE_REQUEST)).isEmpty();
         }
         
         @Override
@@ -36,8 +36,8 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
             if (compound == null) {
                 compound = new NBTTagCompound();
             }
-            compound.setInteger(MBMA_API_Constants.TOKEN_SHARE_QUANTITY,
-                    Math.max(0, compound.getInteger(MBMA_API_Constants.TOKEN_SHARE_QUANTITY) - i));
+            compound.setInteger(NBTKeys.TOKEN_SHARE_QUANTITY,
+                    Math.max(0, compound.getInteger(NBTKeys.TOKEN_SHARE_QUANTITY) - i));
             item.setTagCompound(compound);
         }
         
@@ -47,7 +47,7 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
             if (compound == null) {
                 return 0;
             }
-            return compound.getInteger(MBMA_API_Constants.TOKEN_SHARE_QUANTITY);
+            return compound.getInteger(NBTKeys.TOKEN_SHARE_QUANTITY);
         }
         
         @Override
@@ -56,7 +56,7 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
             if (compound == null) {
                 compound = new NBTTagCompound();
             }
-            compound.setInteger(MBMA_API_Constants.TOKEN_SHARE_QUANTITY, amount);
+            compound.setInteger(NBTKeys.TOKEN_SHARE_QUANTITY, amount);
             item.setTagCompound(compound);
         }
         
@@ -67,7 +67,7 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
             if (compound == null) {
                 return ItemStack.EMPTY;
             }
-            return new ItemStack(compound.getCompoundTag(MBMA_API_Constants.TOKEN_SHARE_REQUEST));
+            return new ItemStack(compound.getCompoundTag(NBTKeys.TOKEN_SHARE_REQUEST));
         }
         
         @Override
@@ -76,7 +76,7 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
             if (compound == null) {
                 compound = new NBTTagCompound();
             }
-            compound.setTag(MBMA_API_Constants.TOKEN_SHARE_REQUEST, stack.serializeNBT());
+            compound.setTag(NBTKeys.TOKEN_SHARE_REQUEST, stack.serializeNBT());
             item.setTagCompound(compound);
         }
     };

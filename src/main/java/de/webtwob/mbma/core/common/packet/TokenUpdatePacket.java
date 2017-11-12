@@ -2,7 +2,7 @@ package de.webtwob.mbma.core.common.packet;
 
 import de.webtwob.mbma.api.capability.APICapabilities;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
-import de.webtwob.mbma.core.common.MBMALog;
+import de.webtwob.mbma.core.common.CoreLog;
 import de.webtwob.mbma.core.common.inventory.TokenContainer;
 import io.netty.buffer.ByteBuf;
 
@@ -39,7 +39,7 @@ public class TokenUpdatePacket implements IMessage {
             request = packetBuffer.readItemStack();
             quantity = packetBuffer.readInt();
         } catch (IOException e) {
-            MBMALog.warn("Could not read ItemStack or quantity form TokenUpdatePacket");
+            CoreLog.warn("Could not read ItemStack or quantity form TokenUpdatePacket");
         }
 
     }
@@ -60,11 +60,11 @@ public class TokenUpdatePacket implements IMessage {
                 ICraftingRequest icr;
                 if ((icr = held.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
                     if (message.request != null) {
-                        MBMALog.debug("Got TokenUpdatePacket for {}!" + message.request.getDisplayName());
+                        CoreLog.debug("Got TokenUpdatePacket for {}!" + message.request.getDisplayName());
                         icr.setRequest(message.request);
                         icr.setQuantity(message.quantity);
                     } else {
-                        MBMALog.debug("Got TokenUpdatePacket to clear request!");
+                        CoreLog.debug("Got TokenUpdatePacket to clear request!");
                         icr.setRequest(ItemStack.EMPTY);
                         icr.setQuantity(0);
                     }

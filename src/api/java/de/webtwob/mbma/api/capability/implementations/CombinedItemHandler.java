@@ -28,12 +28,13 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
     }
 
 
-    private ItemStackHandler getItemHandlerForSlot(int slot) {
+    private ItemStackHandler getItemHandlerForSlot(final int slot) {
+        int slotOffset = slot;
         for (ItemStackHandler handler : itemHandlers) {
-            if (slot < handler.getSlots()) {
+            if (slotOffset < handler.getSlots()) {
                 return handler;
             }
-            slot -= handler.getSlots();
+            slotOffset -= handler.getSlots();
         }
         return null;
     }
@@ -49,6 +50,7 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
 
     @Override
     public void setSize(int size) {
+        //CombinedItemHandler always has the size of the combined ItemHandlers and can not be resized
     }
 
     @Override

@@ -2,12 +2,12 @@ package de.webtwob.mbma.core.common.references;
 
 import net.minecraft.util.ResourceLocation;
 
-import static de.webtwob.mbma.core.MBMA_CORE.MODID;
+import static de.webtwob.mbma.core.MBMACore.MODID;
 
 /**
  * Created by BB20101997 on 19. Mär. 2017.
  */
-public class MBMAResourceLocations {
+public class ResourceLocations {
     
     public static class MultiBlockGroups{
         public static final ResourceLocation MBGM_STORAGE = new ResourceLocation(MODID, "storage");
@@ -66,5 +66,7 @@ public class MBMAResourceLocations {
         private Capabilities() {
         }
     }
+    
+    private ResourceLocations(){}
     
 }

@@ -1,164 +1,113 @@
 package de.webtwob.mbma.api.capability.factory;
 
+import de.webtwob.mbma.api.enums.NBTMatchType;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRecipe;
+import de.webtwob.mbma.api.registries.RecipeType;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
-import net.minecraftforge.common.util.Constants;
 
-import java.util.List;
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 /**
  * Created by bennet on 03.04.17.
  */
 public class CraftingRecipeFactory implements Callable<ICraftingRecipe> {
-
+    
     @Override
     public ICraftingRecipe call() {
         return new ICraftingRecipe() {
-            private NonNullList<InputTuple> inputTuples = NonNullList.create();
-            private NonNullList<OutputTuple> outputTuples = NonNullList.create();
-            private boolean vanilla;
-
+            
+            ItemStack[] inputs = new ItemStack[0];
+            ItemStack[] outputs = new ItemStack[0];
+            NBTMatchType[] inputMatch = new NBTMatchType[0];
+            NBTMatchType[] outputMatch = new NBTMatchType[0];
+            boolean[] oreDict = new boolean[0];
+            double[] chances = new double[0];
+            RecipeType type;
+            
+            
             @Override
-            public boolean isVanilla() {
-                return vanilla;
+            public void resizeInputCount(int i) {
+                inputs = Arrays.copyOf(inputs,i);
+                inputMatch = Arrays.copyOf(inputMatch,i);
+                oreDict = Arrays.copyOf(oreDict,i);
             }
-
+    
             @Override
-            public void setVanilla(boolean vanilla) {
-                this.vanilla = vanilla;
+            public void resizeOutputCount(int i) {
+                outputs = Arrays.copyOf(outputs,i);
+                outputMatch = Arrays.copyOf(outputMatch, i);
+                chances = Arrays.copyOf(chances,i);
             }
-
+    
             @Override
-            public List<InputTuple> getInputs() {
-                return inputTuples;
-            }
-
-            @Override
-            public List<OutputTuple> getOutputs() {
-                return outputTuples;
-            }
-
-            @Override
-            public void addInput(final InputTuple input) {
-                inputTuples.add(input);
-            }
-
-            @Override
-            public void addOutput(final OutputTuple output) {
-                outputTuples.add(output);
-            }
-
-            @Override
-            public void removeInput(final InputTuple input) {
-                inputTuples.remove(input);
-            }
-
-            @Override
-            public void removeOutput(final OutputTuple output) {
-                outputTuples.remove(output);
-            }
-
-            @Override
-            public NBTTagCompound serializeNBT() {
-                NBTTagCompound compound = new NBTTagCompound();
-                NBTTagList list = new NBTTagList();
-                for (InputTuple inputTuple : getInputs()) {
-                    list.appendTag(inputTuple.serializeNBT());
+            public void setInput(int slot, @Nonnull ItemStack stack, boolean oredict, @Nonnull NBTMatchType ignoreNBT) {
+                if(slot>=inputs.length){
+                    resizeInputCount(slot+1);
                 }
-                compound.setTag(NBTINPUTS, list);
-                list = new NBTTagList();
-                for (OutputTuple outputTuple : outputTuples) {
-                    list.appendTag(outputTuple.serializeNBT());
+                inputs[slot] = stack;
+                oreDict[slot] = oredict;
+                inputMatch[slot] = ignoreNBT;
+            }
+    
+            @Override
+            public void setOutput(int slot, @Nonnull ItemStack stack, double chance, @Nonnull NBTMatchType ignoreNBT) {
+                if(slot>=outputs.length){
+                    resizeOutputCount(slot+1);
                 }
-                compound.setTag(NBTOUTPUTS, list);
-                return compound;
+                outputs[slot] = stack;
+                chances[slot] = chance;
+                outputMatch[slot] = ignoreNBT;
             }
-
+    
+            @Nonnull
             @Override
-            public void deserializeNBT(final NBTTagCompound compound) {
-                if (compound == null) return;
-                NBTTagList list = compound.getTagList(NBTINPUTS, Constants.NBT.TAG_COMPOUND);
-                InputTuple input;
-                for (int i = 0; i < list.tagCount(); i++) {
-                    input = getInputTuple();
-                    input.deserializeNBT(list.getCompoundTagAt(i));
-                    addInput(input);
-                }
-                list = compound.getTagList(NBTINPUTS, Constants.NBT.TAG_COMPOUND);
-                OutputTuple output;
-                for (int i = 0; i < list.tagCount(); i++) {
-                    output = getOutputTuple();
-                    output.deserializeNBT(list.getCompoundTagAt(i));
-                    addOutput(output);
-                }
+            public ItemStack[] getInputs() {
+                return inputs;
             }
-        };
-    }
-
-    private ICraftingRecipe.OutputTuple getOutputTuple() {
-        return new ICraftingRecipe.OutputTuple() {
-
-            boolean guarantee;
-            ItemStack result = ItemStack.EMPTY;
-
+    
+            @Nonnull
             @Override
-            public boolean isGuaranteed() {
-                return guarantee;
+            public ItemStack[] getOutputs() {
+                return outputs;
             }
-
+    
             @Override
-            public void setGuaranteed(final boolean bool) {
-                guarantee = bool;
+            public double[] getChance() {
+                return chances;
             }
-
+    
+            @Nonnull
             @Override
-            public ItemStack getResult() {
-                return result;
+            public boolean[] isInputOrdict() {
+                return oreDict;
             }
-
+    
+            @Nonnull
             @Override
-            public void setResult(final ItemStack stack) {
-                if (stack == null) {
-                    this.result = ItemStack.EMPTY;
-                } else {
-                    this.result = stack;
-                }
+            public NBTMatchType[] shouldNBTBeIgnoredForInput() {
+                return inputMatch;
             }
-        };
-    }
-
-    private ICraftingRecipe.InputTuple getInputTuple() {
-        return new ICraftingRecipe.InputTuple() {
-            private int slot;
-            private ItemStack stack = ItemStack.EMPTY;
-
+    
+            @Nonnull
             @Override
-            public int getSlot() {
-                return slot;
+            public NBTMatchType[] shouldNBTBeIgnoredForOutput() {
+                return outputMatch;
             }
-
+    
+            @Nonnull
             @Override
-            public void setSlot(final int i) {
-                slot = i;
+            public RecipeType getRecipeType() {
+                //TODO default to CustomRecipeType
+                return type!=null?type:new RecipeType(false);
             }
-
+    
+            @Nonnull
             @Override
-            public ItemStack getItemStack() {
-                return stack;
-            }
-
-            @Override
-            public void setItemStack(final ItemStack stack) {
-                if (stack == null) {
-                    this.stack = ItemStack.EMPTY;
-                } else {
-                    this.stack = stack;
-                }
+            public void setRecipeType(RecipeType r) {
+                type = r;
             }
         };
     }
