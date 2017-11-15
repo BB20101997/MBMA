@@ -43,10 +43,8 @@ public class Token extends Item {
         super.addInformation(stack, world, tooltip, advanced);
         
         ICraftingRequest icr;
-        if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
-            if (!icr.isCompleted()) {
-                tooltip.add(String.format("Request for %d %s", icr.getQuantity(), icr.getRequest().getDisplayName()));
-            }
+        if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null && !icr.isCompleted()) {
+            tooltip.add(String.format("Request for %d %s", icr.getQuantity(), icr.getRequest().getDisplayName()));
         }
     }
     
@@ -85,7 +83,7 @@ public class Token extends Item {
     }
     
     @Override
-    public boolean updateItemStackNBT(final NBTTagCompound p_updateItemStackNBT_1_) {
+    public boolean updateItemStackNBT(final NBTTagCompound nbtTagCompound) {
         return true;
     }
     

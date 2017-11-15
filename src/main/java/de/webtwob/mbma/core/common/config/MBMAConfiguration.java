@@ -6,7 +6,7 @@ import de.webtwob.mbma.core.MBMACore;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
@@ -26,7 +26,7 @@ public class MBMAConfiguration extends ConfigImpl {
     public static int storageStackLimit = 64;
     
     
-    @Mod.EventBusSubscriber(modid = MBMACore.MODID)
+    @EventBusSubscriber(modid = MBMACore.MODID)
     private static class EventHandler{
         @SubscribeEvent
         public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event){

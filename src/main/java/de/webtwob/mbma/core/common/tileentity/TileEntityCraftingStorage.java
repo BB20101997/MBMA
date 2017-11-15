@@ -26,9 +26,9 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
     public final List<ItemStackContainer> containerList;
     
-    {
+    public TileEntityCraftingStorage(){
         ItemStackContainer[] container = new ItemStackContainer[MBMAConfiguration.storageStackLimit];
-        Arrays.setAll(container, (i) -> new ItemStackContainer());
+        Arrays.setAll(container, i -> new ItemStackContainer());
         containerList = Collections.unmodifiableList(Arrays.asList(container));
     }
     
@@ -40,6 +40,7 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     @Override
     public void update() {
         super.update();
+        //TODO
     }
     
     @Nonnull

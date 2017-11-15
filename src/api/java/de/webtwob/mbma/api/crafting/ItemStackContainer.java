@@ -14,11 +14,31 @@ public class ItemStackContainer {
     private ItemStack stack = ItemStack.EMPTY;
     
     private Consumer<ItemStackContainer> consumer;
+    private Runnable dirtyCallback = null;
+   
     
+    public ItemStackContainer(){
+    
+    }
+    
+    public ItemStackContainer(@Nonnull ItemStack stack){
+        this.stack = stack;
+    }
+    
+    public void markDirty(){
+        if(dirtyCallback!=null) {
+            dirtyCallback.run();
+        }
+    }
+    
+    public void setDirtyCallback(Runnable run){
+        dirtyCallback = run;
+    }
     
     /**
      * get the contained ItemStack, this will not remove it or set it to empty
      * */
+    @Nonnull
     public ItemStack getItemStack(){
         return stack;
     }
@@ -26,7 +46,7 @@ public class ItemStackContainer {
     /**
      * set and override the current ItemStack
      * */
-    public void setItemStack(ItemStack stack){
+    public void setItemStack(@Nonnull ItemStack stack){
         this.stack = stack;
     }
    

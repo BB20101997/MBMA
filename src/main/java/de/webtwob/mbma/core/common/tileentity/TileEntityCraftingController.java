@@ -33,7 +33,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     @CapabilityInject(ICraftingRequest.class)
     private static final Capability<ICraftingRequest> CAPABILITY_REQUEST = null;
     
-    private static int WAIT_TIME = 20;
+    private static final int WAIT_TIME = 20;
     private final List<Function<TileEntityCraftingController, String>> ERROR_SOLVED = new LinkedList<>();
     private final List<Function<TileEntityCraftingController, String>> WAIT_CONDITION = new LinkedList<>();
     private final List<String> errors = new LinkedList<>();

@@ -77,6 +77,21 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+    /**
+     // replace stuff in mcmod.info, nothing else
+    from(sourceSets.api.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    // copy everything else except the mcmod.info
+    from(sourceSets.api.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+     */
+
 }
 
 processApiResources {

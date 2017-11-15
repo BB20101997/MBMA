@@ -1,9 +1,16 @@
 package de.webtwob.mbma.core.common.inventory;
 
+import de.webtwob.mbma.api.crafting.ItemStackContainer;
+import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import javax.annotation.Nonnull;
 
@@ -11,21 +18,58 @@ import javax.annotation.Nonnull;
  * Created by bennet on 21.03.17.
  */
 public class TokenContainer extends Container {
-
-    public ItemStack stack;
-
-    public TokenContainer(ItemStack stack) {
-        this.stack = stack;
-    }
-
+    
+    private static Capability<ICraftingRequest> requestCapability;
     @Nonnull
-    @Override
-    public Slot addSlotToContainer(Slot slotIn) {
-        return super.addSlotToContainer(slotIn);
+    public final ItemStack stack;
+    private final EnumHand hand;
+    private ItemStackContainer container = new ItemStackContainer();
+    
+    public TokenContainer(@Nonnull EntityPlayer player, EnumHand enumHand) {
+        stack = player.getHeldItem(enumHand);
+        hand = enumHand;
+        if (requestCapability != null) {
+            ICraftingRequest request = stack.getCapability(requestCapability, null);
+            if (request != null) {
+                container.setItemStack(request.getRequest());
+            }
+        }
     }
-
+    
+    public ResourceLocation getRequestRegistryName(){
+        return container.getItemStack().getItem().getRegistryName();
+    }
+    
+    @CapabilityInject(ICraftingRequest.class)
+    private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
+        TokenContainer.requestCapability = requestCapability;
+    }
+    
     @Override
     public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
-        return true;
+        return stack.equals(playerIn.getHeldItem(hand)) && requestCapability != null && stack.getCapability(requestCapability, null) != null;
+    }
+    
+    
+    public int getRequestAmount() {
+        ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
+        if(request!=null){
+            return request.getQuantity();
+        }
+        return 0;
+    }
+    
+    public void setItem(Item item) {
+        ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
+        if(request!=null){
+            request.setRequest(new ItemStack(item,request.getQuantity()));
+        }
+    }
+    
+    public void setAmount(int amount) {
+        ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
+        if(request!=null){
+            request.setQuantity(amount);
+        }
     }
 }

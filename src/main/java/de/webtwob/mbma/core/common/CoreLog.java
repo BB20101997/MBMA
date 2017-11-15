@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class CoreLog {
     
-    public static Logger LOGGER = LogManager.getLogger(MBMACore.MODID);
+    public static final Logger LOGGER = LogManager.getLogger(MBMACore.MODID);
     
     private CoreLog() {
     }

@@ -88,8 +88,13 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
         
         
         //noinspection ConstantConditions
-        compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, getRecipeType().getRegistryName().toString());
-        
+        ResourceLocation type = getRecipeType().getRegistryName();
+        if(type!=null) {
+            compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, type.toString());
+        }else{
+            //TODO default to custom type
+            //compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, "//TODO put default here");
+        }
         compound.setTag(NBTKeys.ICRAFT_RECIPE_STACKS_IN, inputItems);
         compound.setTag(NBTKeys.ICRAFT_RECIPE_OREDICT_LIST, oreDictInput);
         compound.setIntArray(NBTKeys.ICRAFT_RECIPE_NBT_IN, matchesOrdinalInput);

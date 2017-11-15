@@ -35,14 +35,9 @@ public class TileEntityQueue extends MultiBlockTileEntity {
     @ObjectHolder("mbmacore:queue")
     private static final MultiBlockGroupType MANAGER_QUEUE = null;
     
-    @CapabilityInject(IItemHandler.class)
-    private static Capability<IItemHandler> ITEM_HANDLER = null;
-    
-    @CapabilityInject(ICraftingRequest.class)
-    private static Capability<ICraftingRequest> CRAFTING_REQUEST = null;
-    
-    @CapabilityInject(ICraftingRequestProvider.class)
-    private static Capability<ICraftingRequestProvider> REQUEST_PROVIDER = null;
+    private static Capability<IItemHandler> capabilityItemHandler;
+    private static Capability<ICraftingRequest> capabilityCraftingRequest;
+    private static Capability<ICraftingRequestProvider> capabilityCraftingRequestProvider;
     
     private final Queue<ItemStack> requestList = new LinkedList<>();
     
@@ -61,9 +56,9 @@ public class TileEntityQueue extends MultiBlockTileEntity {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (ITEM_HANDLER != null && ITEM_HANDLER == capability) {
+        if (TileEntityQueue.capabilityItemHandler != null && TileEntityQueue.capabilityItemHandler == capability) {
             return (T) handler;
-        } else if (REQUEST_PROVIDER != null && REQUEST_PROVIDER == capability) {
+        } else if (capabilityCraftingRequestProvider != null && capabilityCraftingRequestProvider == capability) {
             return (T) (ICraftingRequestProvider) this::groupGetRequestIfRequirementHolds;
         }
         return super.getCapability(capability, facing);
@@ -99,7 +94,7 @@ public class TileEntityQueue extends MultiBlockTileEntity {
                 .filter(TileEntityQueue.class::isInstance)
                 .map(TileEntityQueue.class::cast)
                 .map(t -> t.requestList).flatMap(Collection::stream)
-                .map(stack -> stack.getCapability(CRAFTING_REQUEST, null))
+                .map(stack -> stack.getCapability(capabilityCraftingRequest, null))
                 .filter(Objects::nonNull).toArray(ICraftingRequest[]::new);
     }
     
@@ -161,14 +156,14 @@ public class TileEntityQueue extends MultiBlockTileEntity {
                 return stack;
             }
             
-            {
-                ICraftingRequest request;
-                
-                //is the ItemStack a Request and is it uncompleted
-                if ((request = stack.getCapability(CRAFTING_REQUEST, null)) == null || request.isCompleted()) {
-                    return stack;
-                }
+            
+            ICraftingRequest request;
+            
+            //is the ItemStack a Request and is it uncompleted
+            if (capabilityCraftingRequest !=null &&((request = stack.getCapability(capabilityCraftingRequest, null)) == null || request.isCompleted())) {
+                return stack;
             }
+            
             
             //create two copies one to return and one to enqueue
             ItemStack enqueue = stack.copy();
@@ -197,5 +192,20 @@ public class TileEntityQueue extends MultiBlockTileEntity {
         public int getSlotLimit(int slot) {
             return 1;
         }
+    }
+    
+    @CapabilityInject(IItemHandler.class)
+    private static void injectItemHandler(Capability<IItemHandler> handler){
+        capabilityItemHandler = handler;
+    }
+    
+    @CapabilityInject(ICraftingRequest.class)
+    private static void injectCraftingRequest(Capability<ICraftingRequest> handler){
+        capabilityCraftingRequest = handler;
+    }
+    
+    @CapabilityInject(ICraftingRequestProvider.class)
+    private static void injectCraftingRequestProvider(Capability<ICraftingRequestProvider> handler){
+        capabilityCraftingRequestProvider = handler;
     }
 }
