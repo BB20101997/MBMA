@@ -36,14 +36,6 @@ public class BlockCraftingProcessor extends Block {
         return new BlockStateContainer(this, MBMAProperties.STATE);
     }
     
-    @SuppressWarnings("deprecation")
-    @Nonnull
-    @Deprecated
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
-    }
-    
     @Override
     public int getMetaFromState(IBlockState state) {
         return 0;

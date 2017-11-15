@@ -32,14 +32,6 @@ public class BlockCraftingController extends Block {
         setDefaultState(state);
     }
     
-    @SuppressWarnings("deprecation")
-    @Nonnull
-    @Deprecated
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
-    }
-    
     @Override
     public int getMetaFromState(IBlockState state) {
         return 0;
