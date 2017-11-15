@@ -2,6 +2,7 @@ package de.webtwob.mbma.api.interfaces.capability;
 
 import de.webtwob.mbma.api.references.NBTKeys;
 import de.webtwob.mbma.api.enums.NBTMatchType;
+import de.webtwob.mbma.api.references.ResourceLocations;
 import de.webtwob.mbma.api.registries.RecipeType;
 
 import net.minecraft.item.ItemStack;
@@ -92,8 +93,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
         if(type!=null) {
             compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, type.toString());
         }else{
-            //TODO default to custom type
-            //compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, "//TODO put default here");
+            compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, ResourceLocations.REG_RECIPE_CUSTOM.toString());
         }
         compound.setTag(NBTKeys.ICRAFT_RECIPE_STACKS_IN, inputItems);
         compound.setTag(NBTKeys.ICRAFT_RECIPE_OREDICT_LIST, oreDictInput);
@@ -112,7 +112,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
             if (nbt.hasKey(NBTKeys.ICRAFT_RECIPE_TYPE, Constants.NBT.TAG_STRING)) {
                 setRecipeType(GameRegistry.findRegistry(RecipeType.class).getValue(new ResourceLocation(nbt.getString(NBTKeys.ICRAFT_RECIPE_TYPE))));
             } else {
-                //TODO default to custom TYPE
+                setRecipeType(GameRegistry.findRegistry(RecipeType.class).getValue(ResourceLocations.REG_RECIPE_CUSTOM));
             }
             
             deserializeInputs(nbt);

@@ -13,6 +13,9 @@ public class ResourceLocations {
     public static final ResourceLocation REG_MULTIBLOCK = new ResourceLocation(MODID, "multiblock");
     public static final ResourceLocation REG_RECIPE_TYPE = new ResourceLocation(MODID, "recipeType");
     
+    public static final ResourceLocation REG_RECIPE_VANILLA = new ResourceLocation(MODID,"vanillaRecipe");
+    public static final ResourceLocation REG_RECIPE_CUSTOM = new ResourceLocation(MODID,"customRecipe");
+    
     private ResourceLocations() {
     }
 }

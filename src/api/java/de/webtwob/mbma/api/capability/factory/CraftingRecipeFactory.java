@@ -2,11 +2,15 @@ package de.webtwob.mbma.api.capability.factory;
 
 import de.webtwob.mbma.api.enums.NBTMatchType;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRecipe;
+import de.webtwob.mbma.api.references.ResourceLocations;
 import de.webtwob.mbma.api.registries.RecipeType;
 
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 
@@ -97,11 +101,10 @@ public class CraftingRecipeFactory implements Callable<ICraftingRecipe> {
                 return outputMatch;
             }
     
-            @Nonnull
+            @Nullable
             @Override
             public RecipeType getRecipeType() {
-                //TODO default to CustomRecipeType
-                return type!=null?type:new RecipeType(false);
+                return type!=null?type: GameRegistry.findRegistry(RecipeType.class).getValue(ResourceLocations.REG_RECIPE_CUSTOM);
             }
     
             @Nonnull

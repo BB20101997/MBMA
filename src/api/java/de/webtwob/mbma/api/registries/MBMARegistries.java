@@ -5,6 +5,7 @@ import de.webtwob.mbma.api.references.ResourceLocations;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
 /**
@@ -31,24 +32,28 @@ public class MBMARegistries {
                 .disableSaving()
                 .create();
         
-        new RegistryBuilder<RecipeType>().setName(ResourceLocations.REG_RECIPE_TYPE)
+        new RegistryBuilder<RecipeType>()
+                .setName(ResourceLocations.REG_RECIPE_TYPE)
                 .setType(RecipeType.class).set(
                 key -> {
-                    RecipeType type = new RecipeType(false);
+                    RecipeType type = new RecipeType.CustomtRecipeType();
                     type.setRegistryName(key);
                     return type;
-                })
+                }).setDefaultKey(ResourceLocations.REG_RECIPE_CUSTOM)
                 .allowModification()
                 .disableSaving()
                 .create();
     }
     
-    public static class DefaultRecipeType extends RecipeType {
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<RecipeType> registryEvent){
+        IForgeRegistry<RecipeType> registry = registryEvent.getRegistry();
         
-        DefaultRecipeType(boolean autoFill) {
-            super(autoFill);
-        }
+        RecipeType custom = new RecipeType.CustomtRecipeType();
+        custom.setRegistryName(ResourceLocations.REG_RECIPE_CUSTOM);
+        registry.register(custom);
+        
+        RecipeType vanilla = new RecipeType.VanillaCraftingRecipeType();
+        vanilla.setRegistryName(ResourceLocations.REG_RECIPE_VANILLA);
     }
-    
-    
 }
