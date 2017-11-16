@@ -36,6 +36,10 @@ public class Blocks {
     private Blocks() {
     }
 
+    /**
+     * Register all Blocks when the Event occurs
+     * @param event the Register event
+     * */
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         CoreLog.info("Registering Blocks");

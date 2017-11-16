@@ -26,6 +26,10 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
     public final List<ItemStackContainer> containerList;
     
+    /**
+     * Creates a new TileEntityCraftingStorage with a fixed Size unmodifiable List<ItemStackContainer>
+     *     with size based on the value found in the configuration file
+     */
     public TileEntityCraftingStorage(){
         ItemStackContainer[] container = new ItemStackContainer[MBMAConfiguration.storageStackLimit];
         Arrays.setAll(container, i -> new ItemStackContainer());

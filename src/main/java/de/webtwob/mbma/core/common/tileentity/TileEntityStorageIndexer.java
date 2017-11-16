@@ -30,6 +30,11 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
         requests.forEach(IItemMoveRequest::passOnRequest);
     }
     
+    /**
+     * Adds a IItemMoveRequest to the queue of requests to be handled
+     * Requests are handled on this TileEntity update Method being called  usually every Tick
+     * @param request the request to add
+     */
     public void addItemMoveRequest(IItemMoveRequest request){
         requests.add(request);
     }

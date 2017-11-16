@@ -23,12 +23,37 @@ import java.util.Arrays;
  */
 public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     
+    /**
+     * Resize the the internal data structure to accommodate i ItemStacks for the input
+     * this should defiantly extend the data structure if it can't currently accommodate at least i
+     * this can truncate the data structure to i, dropping all indices larger or equal to i
+     * @param i the amount of Inputs for this recipe
+     */
     void resizeInputCount(int i);
     
+    /**
+     * Resize the the internal data structure to accommodate i ItemStacks for the output
+     * this should defiantly extend the data structure if it can't currently accommodate at least i
+     * this can truncate the data structure to i, dropping all indices larger or equal to i
+     * @param i the amount of Outputs for this recipe
+     */
     void resizeOutputCount(int i);
     
+    
+    /**
+     * @param slot the index to change
+     * @param stack the stack to set at the index
+     * @param oredict should the OreDictionary be used for this input
+     * @param ignoreNBT the setting for matching NBT for this index
+     */
     void setInput(int slot, @Nonnull ItemStack stack, boolean oredict, @Nonnull NBTMatchType ignoreNBT);
     
+    /**
+     * @param slot the index to change
+     * @param stack the stack to set at the index
+     * @param chance how likely is this output, range from 0 to 1, a valid recipe should contain at least one Output of chance 1
+     * @param ignoreNBT the setting for matching NBT for this index
+     */
     void setOutput(int slot, @Nonnull ItemStack stack, double chance, @Nonnull NBTMatchType ignoreNBT);
     
     @Nonnull
@@ -39,20 +64,28 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     
     double[] getChance();
     
+    /**
+     * @return an Array containing all OutputStacks this Recipe may produce
+     */
     @Nonnull
     boolean[] isInputOrdict();
     
+    /**
+     * @return the Array of NBTMatchings for each slot of the Inputs
+     */
     @Nonnull
     NBTMatchType[] shouldNBTBeIgnoredForInput();
     
+    /**
+     * @return the Array of NBTMatchings for each slot of the Outputs
+     */
     @Nonnull
     NBTMatchType[] shouldNBTBeIgnoredForOutput();
     
     @Nonnull
     RecipeType getRecipeType();
     
-    @Nonnull
-    void setRecipeType(RecipeType r);
+    void setRecipeType(@Nonnull RecipeType r);
     
     @Override
     default NBTTagCompound serializeNBT() {

@@ -54,17 +54,20 @@ public class BlockCraftingController extends Block {
         return new TileEntityCraftingController();
     }
     
+    /**
+     * @deprecated
+     */
     @Nonnull
     @SuppressWarnings("deprecation")
     @Deprecated
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         return getExtendedState(state, worldIn, pos);
     }
     
     @Nonnull
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getExtendedState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof TileEntityCraftingController) {
             return state.withProperty(MBMAProperties.STATE, ((TileEntityCraftingController) tileEntity).getState());

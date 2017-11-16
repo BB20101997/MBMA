@@ -15,10 +15,16 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
 
     private final ItemStackHandler[] itemHandlers;
 
+    /**
+     * @param handler the ItemStackHandlers to Combine
+     */
     public CombinedItemHandler(ItemStackHandler... handler) {
         itemHandlers = handler;
     }
 
+    /**
+     * @param stacks the List of NonNullLists to Combine to an CombinedItemHandler
+     */
     public CombinedItemHandler(List<NonNullList<ItemStack>> stacks) {
         ItemStackHandler[] handlers = new ItemStackHandler[stacks.size()];
         for (int i = 0; i < handlers.length; i++) {

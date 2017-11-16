@@ -11,16 +11,27 @@ import net.minecraftforge.common.util.INBTSerializable;
 public class MultiBlockMember implements INBTSerializable<NBTTagIntArray>{
     private BlockPos pos;
     private int worldId;
-    
-    public MultiBlockMember(int worldId, BlockPos pos) {
+
+    /**
+     * @param dimensionID the world id of the world the member is in
+     * @param pos the position this member is at in worldId
+     * */
+    public MultiBlockMember(int dimensionID, BlockPos pos) {
         this.pos = pos.toImmutable();
-        this.worldId = worldId;
+        this.worldId = dimensionID;
     }
     
+    /**
+     * @param world the world the member is in, used to get the dimensionId
+     * @param pos the position this member is at in worldId
+     * */
     public MultiBlockMember(World world, BlockPos pos){
         this(world.provider.getDimension(), pos);
     }
     
+    /**
+     * used to create Members for deserializing NBT
+     * */
     public MultiBlockMember() {
     
     }

@@ -23,9 +23,17 @@ public class TokenUpdatePacket implements IMessage {
     private ItemStack request;
     private int quantity;
 
+    /**
+     * Used to generate TokenUpdatePackets from an incoming ByteStream
+     * */
     public TokenUpdatePacket() {
     }
 
+    /**
+     * Creates a TokenUpdatePacket
+     * @param request the ItemStack to request
+     * @param quantity the quantity to request
+     * */
     public TokenUpdatePacket(ItemStack request, int quantity) {
         this.request = request;
         this.quantity = quantity;

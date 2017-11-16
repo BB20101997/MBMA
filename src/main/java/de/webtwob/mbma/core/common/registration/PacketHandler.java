@@ -2,7 +2,7 @@ package de.webtwob.mbma.core.common.registration;
 
 import de.webtwob.mbma.core.MBMACore;
 import de.webtwob.mbma.core.common.CoreLog;
-import de.webtwob.mbma.core.common.packet.MaschineStateUpdatePacket;
+import de.webtwob.mbma.core.common.packet.MachineStateUpdatePacket;
 import de.webtwob.mbma.core.common.packet.TokenUpdatePacket;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -27,11 +27,14 @@ public class PacketHandler {
         return id++;
     }
 
+    /**
+     * Initialises the PacketHandler by registering all Messages to the Channel
+     */
     public static void init() {
         if (!registered) {
             registered = true;
             CoreLog.debug("Registering PacketHandler");
-            INSTANCE.registerMessage(MaschineStateUpdatePacket.MaschineStateUpdatePacketHandler.class, MaschineStateUpdatePacket.class, getNextID(), Side.CLIENT);
+            INSTANCE.registerMessage(MachineStateUpdatePacket.MachineStateUpdatePacketHandler.class, MachineStateUpdatePacket.class, getNextID(), Side.CLIENT);
             INSTANCE.registerMessage(TokenUpdatePacket.TokenUpdatePacketHandler.class, TokenUpdatePacket.class, getNextID(), Side.SERVER);
         }
     }

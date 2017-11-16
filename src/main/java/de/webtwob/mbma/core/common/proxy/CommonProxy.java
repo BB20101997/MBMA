@@ -39,7 +39,10 @@ public class CommonProxy implements IGuiHandler {
     private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
         CommonProxy.requestCapability = requestCapability;
     }
-    
+
+    /**
+     * registers this as this Mods GUIHandler
+     * */
     public void register() {
         CoreLog.debug("Registering GUIHandler");
         NetworkRegistry.INSTANCE.registerGuiHandler(MBMACore.INSTANCE, this);

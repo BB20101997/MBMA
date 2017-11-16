@@ -18,6 +18,9 @@ public class Tiles {
     private Tiles() {
     }
 
+    /**
+     * Registers all our TileEntitys
+     */
     public static void registerTileEntities() {
         CoreLog.debug("Registering TileEntities");
         GameRegistry.registerTileEntity(TileEntityStorageIndexer.class,STORAGE_INDEXER_RL.toString());

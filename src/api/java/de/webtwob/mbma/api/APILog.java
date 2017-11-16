@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
+@SuppressWarnings("JavaDoc")
 public class APILog {
 
     private static final Logger LOGGER = LogManager.getLogger(MBMAAPI.MODID);
@@ -25,8 +26,8 @@ public class APILog {
         LOGGER.warn(message, data);
     }
 
-    public static Logger getLogger() {
-        return LOGGER;
+    public static void error(String message, Object... data) {
+        LOGGER.error(message, data);
     }
 
 }

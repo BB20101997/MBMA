@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
+@SuppressWarnings("JavaDoc")
 public class CoreLog {
     
     public static final Logger LOGGER = LogManager.getLogger(MBMACore.MODID);
@@ -30,7 +31,4 @@ public class CoreLog {
         LOGGER.error(message, data);
     }
 
-    public static Logger getLogger() {
-        return LOGGER;
-    }
 }

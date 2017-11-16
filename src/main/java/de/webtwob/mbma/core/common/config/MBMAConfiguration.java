@@ -20,7 +20,7 @@ public class MBMAConfiguration extends ConfigImpl {
     public static String stuff = "default";
     
     @Config.Comment("How many requests can one Queue Block Store?")
-    public static int queueLenght = 5;
+    public static int queueLength = 5;
     
     @Config.Comment("How many Stacks can one Crafting Storage Block store?")
     public static int storageStackLimit = 64;

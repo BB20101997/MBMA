@@ -29,10 +29,17 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     private MultiBlockGroupType type;
     private boolean isValid = true;
     
+    /**
+     * @param mbgm the MultiBlockGroupManager managing this MultiBlockGroup
+     */
     public MultiBlockGroup(MultiBlockGroupManager mbgm) {
         manager = mbgm;
     }
     
+    /**
+     * @param mbgm the MultiBlockGroupManager managing this MultiBlockGroup
+     * @param type the MultiBlockGrouptype of this MultiBlockGroup
+     * */
     public MultiBlockGroup(MultiBlockGroupManager mbgm,MultiBlockGroupType type) {
         this(mbgm);
         this.type = type;
@@ -53,6 +60,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     /**
      * Call this when leaving a group
      * This way the id's of empty and invalid groups can be reused
+     * @param member the MultiBlockMember to remove from this group
      */
     public void removeMember(MultiBlockMember member) {
         if (multiblockMemberSet.contains(member)) {
@@ -88,6 +96,10 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         }
     }
     
+    /**
+     * @param group the group to test for join-ability with this group
+     * @return true if this can be joined with group
+     */
     public boolean canGroupsBeJoined(@Nonnull MultiBlockGroup group) {
         return group.type == type && isValid() && group.isValid();
     }
@@ -116,6 +128,10 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         return Collections.unmodifiableSet(multiblockMemberSet);
     }
     
+    /**
+     * @param member the member to chack for inclusion in this group
+     * @return true if member is a Member of this group
+     * */
     public boolean isMemberOfGroup(MultiBlockMember member) {
         return multiblockMemberSet.contains(member);
     }

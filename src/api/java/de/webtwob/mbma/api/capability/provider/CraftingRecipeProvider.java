@@ -20,7 +20,10 @@ public class CraftingRecipeProvider implements ICapabilitySerializable {
 
     private ICraftingRecipe provided = APICapabilities.CAPABILITY_CRAFTING_RECIPE.getDefaultInstance();
 
-    public CraftingRecipeProvider(final ItemStack object) {
+    /**
+     * @param stack the ItemStack for which to provide an instance of ICraftingRecipe
+     */
+    public CraftingRecipeProvider(final ItemStack stack) {
     }
 
     @Override

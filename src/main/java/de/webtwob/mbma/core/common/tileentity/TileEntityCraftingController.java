@@ -131,7 +131,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     
     private boolean canHandleRequest(ItemStack stack) {
         ICraftingRequest request;
-        if ((request = stack.getCapability(CAPABILITY_REQUEST, null)) != null && !request.isCompleted()) {
+        if (CAPABILITY_REQUEST!=null&&(request = stack.getCapability(CAPABILITY_REQUEST, null)) != null && !request.isCompleted()) {
         /*
         TODO:
             return true if a PatternStore contains a Pattern resulting in the requests requested item

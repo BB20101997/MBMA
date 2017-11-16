@@ -18,15 +18,22 @@ import net.minecraftforge.fml.relauncher.Side;
 /**
  * Created by BB20101997 on 19. Mär. 2017.
  */
-public class MaschineStateUpdatePacket implements IMessage {
+public class MachineStateUpdatePacket implements IMessage {
 
     private MachineState machineState = MachineState.IDLE;
     private BlockPos blockPos = new BlockPos(0, 0, 0);
 
-    public MaschineStateUpdatePacket() {
+    /**
+     * Used when generating Packets from the ByteStream from the Network
+     * */
+    public MachineStateUpdatePacket() {
     }
-
-    public MaschineStateUpdatePacket(BlockPos pos, MachineState state) {
+    
+    /**
+     * @param pos the position of the Machine to update
+     * @param state thet state to set the Machine to
+     */
+    public MachineStateUpdatePacket(BlockPos pos, MachineState state) {
         blockPos = pos;
         machineState = state;
     }
@@ -51,11 +58,11 @@ public class MaschineStateUpdatePacket implements IMessage {
         }
     }
 
-    public static class MaschineStateUpdatePacketHandler implements IMessageHandler<MaschineStateUpdatePacket,
+    public static class MachineStateUpdatePacketHandler implements IMessageHandler<MachineStateUpdatePacket,
             IMessage> {
 
         @Override
-        public IMessage onMessage(MaschineStateUpdatePacket message, MessageContext ctx) {
+        public IMessage onMessage(MachineStateUpdatePacket message, MessageContext ctx) {
             if (FMLCommonHandler.instance().getSide() == Side.CLIENT && message.blockPos != null) {
                 Minecraft.getMinecraft().addScheduledTask(() -> {
                     EntityPlayerSP playerSP = Minecraft.getMinecraft().player;
@@ -67,7 +74,7 @@ public class MaschineStateUpdatePacket implements IMessage {
                         ((IMachineState) tileEntity).setMachineState(message.machineState);
                         tileEntity.markDirty();
                     } else {
-                        CoreLog.warn("Received MaschineStateUpdatePacket for Block at {} {} {}, but TileEntity " +
+                        CoreLog.warn("Received MachineStateUpdatePacket for Block at {} {} {}, but TileEntity " +
                                 "didn't support it!", message.blockPos.getX(), message.blockPos.getY(), message.blockPos.getZ());
                     }
                 });

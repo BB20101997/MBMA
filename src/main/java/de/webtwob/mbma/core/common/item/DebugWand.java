@@ -1,7 +1,7 @@
 package de.webtwob.mbma.core.common.item;
 
-import de.webtwob.mbma.api.interfaces.block.IDebugableBlock;
-import de.webtwob.mbma.api.interfaces.tileentity.IDebugableTile;
+import de.webtwob.mbma.api.interfaces.block.IDebuggableBlock;
+import de.webtwob.mbma.api.interfaces.tileentity.IDebuggableTile;
 import de.webtwob.mbma.core.common.creativetab.MBMACreativeTab;
 
 import net.minecraft.block.Block;
@@ -25,6 +25,9 @@ import javax.annotation.Nonnull;
  */
 public class DebugWand extends Item {
     
+    /**
+     * The Constructor to create a new DebugWand Instance
+     */
     public DebugWand() {
         super();
         setCreativeTab(MBMACreativeTab.MBMATab);
@@ -59,9 +62,9 @@ public class DebugWand extends Item {
     }
     
     private boolean debugBlock(Block block, World world, BlockPos pos, EntityPlayer player) {
-        if (block instanceof IDebugableBlock) {
+        if (block instanceof IDebuggableBlock) {
             player.sendStatusMessage(new TextComponentString("Debug Information for Block " + block.getLocalizedName()), false);
-            ((IDebugableBlock) block).performDebugOnBlock(world, pos, player, 0);
+            ((IDebuggableBlock) block).performDebugOnBlock(world, pos, player, 0);
             return true;
         }
         return false;
@@ -70,9 +73,9 @@ public class DebugWand extends Item {
     private boolean debugTile(Block block, IBlockState state, World world, BlockPos pos, EntityPlayer player) {
         if (block.hasTileEntity(state)) {
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof IDebugableTile) {
+            if (tileEntity instanceof IDebuggableTile) {
                 player.sendStatusMessage(new TextComponentString("Debug Information for TileEntity of Block " + block.getLocalizedName()), false);
-                ((IDebugableTile) tileEntity).performDebugOnTile(player);
+                ((IDebuggableTile) tileEntity).performDebugOnTile(player);
                 return true;
             }
         }

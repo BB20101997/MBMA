@@ -80,7 +80,10 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
             item.setTagCompound(compound);
         }
     };
-    
+
+    /**
+     * @param stack the ItemStack for which to provide an instance of ICraftingRequest
+     * */
     public CraftingRequestProvider(ItemStack stack) {
         item = stack;
     }

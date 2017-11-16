@@ -152,7 +152,7 @@ public class TileEntityQueue extends MultiBlockTileEntity {
             }
             
             //do we have room and is there even some thing to insert
-            if (requestList.size() >= MBMAConfiguration.queueLenght || stack.getCount() <= 0) {
+            if (requestList.size() >= MBMAConfiguration.queueLength || stack.getCount() <= 0) {
                 return stack;
             }
             

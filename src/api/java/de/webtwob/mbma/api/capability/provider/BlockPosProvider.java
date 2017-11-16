@@ -23,7 +23,7 @@ public class BlockPosProvider implements ICapabilitySerializable {
     
     private ItemStack item;
     private IBlockPosProvider provider = new IBlockPosProvider() {
-        
+       //why to we directly store to NBT? instead of just relying on deserialize and serialize? //TODO test
         @Override
         public BlockPos getBlockPos() {
             NBTTagCompound compound = item.getTagCompound();
@@ -48,6 +48,9 @@ public class BlockPosProvider implements ICapabilitySerializable {
         }
     };
     
+    /**
+     * @param stack the ItemStack for which to provide an instance of IBlockPosProvider
+     */
     public BlockPosProvider(ItemStack stack) {
         item = stack;
     }

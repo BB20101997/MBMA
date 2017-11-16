@@ -39,7 +39,10 @@ public class BlockStorageInterface extends Block {
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
         return state.getValue(MBMAProperties.CONNECTED) ? 10 : 0;
     }
-    
+
+    /**
+     * @deprecated
+     * */
     @SuppressWarnings("deprecation")
     @Deprecated
     @Nonnull

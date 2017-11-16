@@ -17,6 +17,9 @@ public class MBMARegistries {
     private MBMARegistries() {
     }
     
+    /**
+     * @param event the registry Event indicating that it's time to Register all Registries
+     */
     @SubscribeEvent
     public static void registerRegistries(RegistryEvent.NewRegistry event) {
         new RegistryBuilder<MultiBlockGroupType>()
@@ -36,7 +39,7 @@ public class MBMARegistries {
                 .setName(ResourceLocations.REG_RECIPE_TYPE)
                 .setType(RecipeType.class).set(
                 key -> {
-                    RecipeType type = new RecipeType.CustomtRecipeType();
+                    RecipeType type = new RecipeType.CustomRecipeType();
                     type.setRegistryName(key);
                     return type;
                 }).setDefaultKey(ResourceLocations.REG_RECIPE_CUSTOM)
@@ -44,12 +47,14 @@ public class MBMARegistries {
                 .disableSaving()
                 .create();
     }
-    
+    /**
+     * @param registryEvent the event indicating and granting access to register all our RecipeTypes
+     * */
     @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<RecipeType> registryEvent){
+    public static void registerRecipeTypes(RegistryEvent.Register<RecipeType> registryEvent){
         IForgeRegistry<RecipeType> registry = registryEvent.getRegistry();
         
-        RecipeType custom = new RecipeType.CustomtRecipeType();
+        RecipeType custom = new RecipeType.CustomRecipeType();
         custom.setRegistryName(ResourceLocations.REG_RECIPE_CUSTOM);
         registry.register(custom);
         

@@ -21,6 +21,9 @@ public abstract class RecipeType extends IForgeRegistryEntry.Impl<RecipeType> {
     
     private boolean autoFillAble;
     
+    /**
+     * @param autoFill whether  this can RecipeType automatically determine the Output from the Input
+     */
     public RecipeType(boolean autoFill) {
         autoFillAble = autoFill;
     }
@@ -32,21 +35,28 @@ public abstract class RecipeType extends IForgeRegistryEntry.Impl<RecipeType> {
      */
     abstract void configureICraftingRecipe(ICraftingRecipe icr);
     
+    /**
+     * @return if this RecipeType can automatically determine the Output from the Input
+     */
     public final boolean canAutoFillOutput() {
         return autoFillAble;
     }
     
+    /**
+     * @param request the recipe for which to determine the output
+     * @param world the world the player is in
+     */
     public void autoFill(ICraftingRecipe request, World world) {
         if (!canAutoFillOutput()) {
             throw new UnsupportedOperationException("autoFill was called on a RecipeType that was not autofillable");
         }else{
-            APILog.warn("Autofillable RecipeType did not override autoFill or did call super!");
+            APILog.error("Autofillable RecipeType did not override autoFill or did call super!");
         }
     }
     
     public static class VanillaCraftingRecipeType extends RecipeType {
         
-        public VanillaCraftingRecipeType() {
+        VanillaCraftingRecipeType() {
             super(true);
         }
     
@@ -81,9 +91,9 @@ public abstract class RecipeType extends IForgeRegistryEntry.Impl<RecipeType> {
         
     }
     
-    public static class CustomtRecipeType extends RecipeType {
+    public static class CustomRecipeType extends RecipeType {
         
-        CustomtRecipeType() {
+        CustomRecipeType() {
             super(false);
         }
         

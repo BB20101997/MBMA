@@ -33,7 +33,6 @@ public class TokenGui extends GuiContainer {
     
     public TokenGui(EntityPlayer player, EnumHand hand) {
         super(new TokenContainer(player, hand));
-        EntityPlayer player1 = player;
         xSize = 130;
         ySize = 56;
     }
@@ -99,8 +98,9 @@ public class TokenGui extends GuiContainer {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (isPointInRegion(103, 32, 18, 18, mouseX, mouseY)) {
             int old = amount;
+            String oldResource = itemNameTextField.getText();
             adjustCount(i-> this.amount=i,this::setItem,getItemStackFromTextField(itemNameTextField),amount, mouseButton, this.mc.player);
-            if (old != amount) {
+            if (old != amount||!oldResource.equals(itemNameTextField.getText())) {
                 updateToken();
             }
         }

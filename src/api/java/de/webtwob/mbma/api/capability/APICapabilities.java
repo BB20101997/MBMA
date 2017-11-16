@@ -1,9 +1,9 @@
 package de.webtwob.mbma.api.capability;
 
 import de.webtwob.mbma.api.APILog;
-import de.webtwob.mbma.api.capability.factory.BlockPosFactory;
-import de.webtwob.mbma.api.capability.factory.CraftingRecipeFactory;
-import de.webtwob.mbma.api.capability.factory.CraftingRequestFactory;
+import de.webtwob.mbma.api.capability.implementations.DefaultBlockPosProvider;
+import de.webtwob.mbma.api.capability.implementations.DefaultCraftingRecipe;
+import de.webtwob.mbma.api.capability.implementations.DefaultCraftingRequest;
 import de.webtwob.mbma.api.capability.storage.BlockPosStorage;
 import de.webtwob.mbma.api.capability.storage.CraftingRecipeStorage;
 import de.webtwob.mbma.api.capability.storage.CraftingRequestStorage;
@@ -43,12 +43,12 @@ public class APICapabilities {
         if (!registered) {
             registered = true;
             APILog.debug("Registering Capabilities");
-            CapabilityManager.INSTANCE.register(IBlockPosProvider.class, new BlockPosStorage(), new BlockPosFactory());
+            CapabilityManager.INSTANCE.register(IBlockPosProvider.class, new BlockPosStorage(), DefaultBlockPosProvider::new);
             CapabilityManager.INSTANCE.register(
-                    ICraftingRequest.class, new CraftingRequestStorage(), new CraftingRequestFactory());
+                    ICraftingRequest.class, new CraftingRequestStorage(), DefaultCraftingRequest::new);
             CapabilityManager.INSTANCE.register(
-                    ICraftingRecipe.class, new CraftingRecipeStorage(), new CraftingRecipeFactory());
-            CapabilityManager.INSTANCE.register(ICraftingRequestProvider.class, new ICraftingRequestProviderIStorage(),()-> require -> null);
+                    ICraftingRecipe.class, new CraftingRecipeStorage(), DefaultCraftingRecipe::new);
+            CapabilityManager.INSTANCE.register(ICraftingRequestProvider.class, new ICraftingRequestProviderIStorage(), () -> require -> null);
         }
     }
     

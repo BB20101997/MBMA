@@ -31,7 +31,10 @@ public class BlockCraftingStorage extends Block {
         state = state.withProperty(MBMAProperties.STATE, MachineState.IDLE);
         setDefaultState(state);
     }
-    
+
+    /**
+     * @deprecated
+     * */
     @SuppressWarnings("deprecation")
     @Nonnull
     @Deprecated

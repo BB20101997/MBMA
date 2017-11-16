@@ -22,10 +22,17 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
     WorldSavedData data;
     private Set<MultiBlockGroup> groupMap = new HashSet<>();
     
+    /**
+     * @param mbgmWorldSaveData the WorldSaveData Instance this MultiBlockGroupManager is saved in
+     */
     public MultiBlockGroupManager(WorldSavedData mbgmWorldSaveData) {
         data = mbgmWorldSaveData;
     }
     
+    /**
+     * @param world the world used to get access to the world Storage of the save
+     * @return the saves MultiBlockGroupManager Instance
+     */
     @Nullable
     public static MultiBlockGroupManager getInstance(World world) {
         MBGMWorldSaveData data = MBGMWorldSaveData.get(world);
@@ -37,6 +44,8 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
     
     /**
      * I do not expect an integer overflow to happen in any some what likely scenario
+     * @param type the type for which a new Group shall be created
+     * @return the created MultiBlockGroup instance
      */
     public MultiBlockGroup createNewGroup(MultiBlockGroupType type) {
         MultiBlockGroup group = new MultiBlockGroup(this, type);
@@ -45,6 +54,11 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
         return group;
     }
     
+    /**
+     * @param member the MultiBlockGroupMember for which to find the associated group
+     * @param type the type of group to search for
+     * @return any group containing member that is of the type type or null if none is found
+     */
     public MultiBlockGroup getGroupForMember(final MultiBlockMember member, final MultiBlockGroupType type) {
         return groupMap.stream()
                 .filter(MultiBlockGroup::isValid)
@@ -53,6 +67,9 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
                 .findAny().orElse(null);
     }
     
+    /**
+     * @param group the group that shall no longer be managed by this MultiBlockGroupManager
+     */
     public void removeGroup(MultiBlockGroup group) {
         group.voidGroup();
         groupMap.remove(group);
