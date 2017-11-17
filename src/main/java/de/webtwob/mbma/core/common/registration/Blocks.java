@@ -38,6 +38,7 @@ public class Blocks {
 
     /**
      * Register all Blocks when the Event occurs
+     * and at the end as recommended by LexManos {@Link https://github.com/MinecraftForge/MinecraftForge/pull/4046#issuecomment-310527404}
      * @param event the Register event
      * */
     @SubscribeEvent
@@ -58,6 +59,7 @@ public class Blocks {
         setNameAndRegister(CRAFTING_CONTROLLER, CRAFTING_CONTROLLER_RL, registry);
         setNameAndRegister(CRAFTING_PROCESSOR, CRAFTING_PROCESSOR_RL, registry);
         setNameAndRegister(CRAFTING_STORAGE, CRAFTING_STORAGE_RL, registry);
+        Tiles.registerTileEntities();
     }
 
     private static void setNameAndRegister(Block block, ResourceLocation rs, IForgeRegistry<Block> reg) {

@@ -3,7 +3,6 @@ package de.webtwob.mbma.core;
 import de.webtwob.mbma.core.common.CoreLog;
 import de.webtwob.mbma.core.common.proxy.CommonProxy;
 import de.webtwob.mbma.core.common.registration.PacketHandler;
-import de.webtwob.mbma.core.common.registration.Tiles;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -34,10 +33,8 @@ public class MBMACore {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CoreLog.info("Starting PreInit!");
-        Tiles.registerTileEntities();
         /*
          * other stuff that would go here:
-         * Ore-Dict assignment
          */
         CoreLog.info("Finished PreInit!");
     }
