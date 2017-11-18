@@ -38,7 +38,7 @@ public class Blocks {
 
     /**
      * Register all Blocks when the Event occurs
-     * and at the end as recommended by LexManos {@Link https://github.com/MinecraftForge/MinecraftForge/pull/4046#issuecomment-310527404}
+     * and at the end as recommended by LexManos <a href="https://github.com/MinecraftForge/MinecraftForge/pull/4046#issuecomment-310527404" >here</a>.
      * @param event the Register event
      * */
     @SubscribeEvent

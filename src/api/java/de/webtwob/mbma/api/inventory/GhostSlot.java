@@ -53,7 +53,6 @@ public class GhostSlot {
      * @param amount the currently held amount
      * @param mouseButton the mouse button that was pressed
      * @param player the player that pressed the Button
-     * @return if the amount or the ItemStack changed //TODO setAmount and setItem can check this therefor adjust to void
      */
     public static void adjustCount(IntConsumer setAmount, Consumer<ItemStack> setItem, ItemStack item, int amount, int mouseButton, EntityPlayerSP player) {
         //TODO update ItemStack if necessary
