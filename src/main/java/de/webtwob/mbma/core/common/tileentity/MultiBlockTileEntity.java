@@ -48,6 +48,7 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
         StringBuilder sb = new StringBuilder();
         sb.append("GroupType: ").append(group.getType().getRegistryName()).append('\n');
         sb.append("GroupHash: ").append(group.hashCode()).append('\n');
+        sb.append("GroupSize: ").append(group.getMembers().size()).append('\n');
         player.sendStatusMessage(new TextComponentString(sb.toString()), false);
     }
 }

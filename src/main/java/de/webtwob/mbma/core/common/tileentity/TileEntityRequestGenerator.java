@@ -33,7 +33,7 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     
     private final NonNullList<ItemStack> outputList = NonNullList.withSize(5, ItemStack.EMPTY);
     
-    //TODO use one list?
+    //we need different list so we can have different ItemHandlers later for the correct sidedness
     private final NonNullList<ItemStack> upList = NonNullList.withSize(1, ItemStack.EMPTY);
     private final NonNullList<ItemStack> northList = NonNullList.withSize(1, ItemStack.EMPTY);
     private final NonNullList<ItemStack> eastList = NonNullList.withSize(1, ItemStack.EMPTY);

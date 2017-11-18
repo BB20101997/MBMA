@@ -41,12 +41,12 @@ public class DefaultCraftingRecipe implements ICraftingRecipe {
     }
     
     @Override
-    public void setInput(int slot, @Nonnull ItemStack stack, boolean oredict, @Nonnull NBTMatchType ignoreNBT) {
+    public void setInput(int slot, @Nonnull ItemStack stack, boolean oreDict, @Nonnull NBTMatchType ignoreNBT) {
         if (slot >= inputs.length) {
             resizeInputCount(slot + 1);
         }
         inputs[slot] = stack;
-        oreDict[slot] = oredict;
+        this.oreDict[slot] = oreDict;
         inputMatch[slot] = ignoreNBT;
     }
     

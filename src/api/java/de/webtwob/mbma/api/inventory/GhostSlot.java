@@ -55,8 +55,6 @@ public class GhostSlot {
      * @param player the player that pressed the Button
      */
     public static void adjustCount(IntConsumer setAmount, Consumer<ItemStack> setItem, ItemStack item, int amount, int mouseButton, EntityPlayerSP player) {
-        //TODO update ItemStack if necessary
-        boolean dirty = false;
         if(mouseButton>1){
             return;
         }
@@ -67,8 +65,15 @@ public class GhostSlot {
         if(GuiScreen.isCtrlKeyDown()){
             diff*=64;
         }
-        if(mouseButton==1)
+        if(mouseButton==1) {
             diff*=-1;
+        }
+        //IDE is sure that stackAtCursor!=null is always true
+        ItemStack stackAtCursor = player.inventory.getItemStack();
+        if(!stackAtCursor.isEmpty() && !item.equals(stackAtCursor)){
+            setItem.accept(stackAtCursor.copy());
+            diff = stackAtCursor.getCount()-amount;
+        }
         if(diff!=0){
             setAmount.accept(Math.max(amount+diff,0));
         }

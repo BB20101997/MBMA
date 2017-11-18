@@ -2,10 +2,10 @@ package de.webtwob.mbma.core.common.tileentity;
 
 import de.webtwob.mbma.api.enums.MachineState;
 import de.webtwob.mbma.api.interfaces.capability.IBlockPosProvider;
+import de.webtwob.mbma.api.interfaces.capability.ICraftingRecipe;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mbma.api.interfaces.capability.ICraftingRequestProvider;
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
@@ -13,6 +13,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -26,32 +27,44 @@ import java.util.stream.Stream;
 public class TileEntityCraftingController extends MultiBlockTileEntity {
     
     @ObjectHolder("mbmacore:crafting")
-    public static final MultiBlockGroupType MANAGER_CRAFTING = null;
+    public static final  MultiBlockGroupType                                  MANAGER_CRAFTING          = null;
+    private static final int                                                  WAIT_TIME                 = 20;
+    private static       Capability<ICraftingRecipe>                          capabilityRecipe          = null;
+    private static       Capability<ICraftingRequestProvider>                 capabilityRequestProvider = null;
+    private static       Capability<ICraftingRequest>                         capabilityRequest         = null;
+    private final        List<Function<TileEntityCraftingController, String>> ERROR_SOLVED              = new LinkedList<>();
+    private final        List<Function<TileEntityCraftingController, String>> WAIT_CONDITION            = new LinkedList<>();
+    private final        List<String>                                         errors                    = new LinkedList<>();
+    private final        List<String>                                         waiting                   = new LinkedList<>();
+    @Nonnull
+    private              MachineState                                         state                     = MachineState.IDLE;
+    private              int                                                  pause                     = WAIT_TIME;
+    private              NonNullList<ItemStack>                               queueLinkCards            = NonNullList.create();
+    private              NonNullList<ItemStack>                               patternLinkCards          = NonNullList.create();
+    @Nonnull
+    private              ItemStack                                            currentRequest            = ItemStack.EMPTY;
+    
+    @CapabilityInject(ICraftingRecipe.class)
+    private static void setCapabilityRecipe(Capability<ICraftingRecipe> recipeCapability) {
+        capabilityRecipe = recipeCapability;
+    }
+    
+    @CapabilityInject(ICraftingRequest.class)
+    private static void setRequestCapability(Capability<ICraftingRequest> requestCapability) {
+        capabilityRequest = requestCapability;
+    }
     
     @CapabilityInject(ICraftingRequestProvider.class)
-    private static final Capability<ICraftingRequestProvider> REQUEST_PROVIDER = null;
-    @CapabilityInject(ICraftingRequest.class)
-    private static final Capability<ICraftingRequest> CAPABILITY_REQUEST = null;
-    
-    private static final int WAIT_TIME = 20;
-    private final List<Function<TileEntityCraftingController, String>> ERROR_SOLVED = new LinkedList<>();
-    private final List<Function<TileEntityCraftingController, String>> WAIT_CONDITION = new LinkedList<>();
-    private final List<String> errors = new LinkedList<>();
-    private final List<String> waiting = new LinkedList<>();
-    @Nonnull
-    private MachineState state = MachineState.IDLE;
-    private int pause = WAIT_TIME;
-    private NonNullList<ItemStack> queueLinkCards = NonNullList.create();
-    private NonNullList<ItemStack> patternLinkCards = NonNullList.create();
-    @Nonnull
-    private ItemStack currentRequest = ItemStack.EMPTY;
+    private static void setRequestProviderCapability(Capability<ICraftingRequestProvider> requestProviderCapability) {
+        capabilityRequestProvider = requestProviderCapability;
+    }
     
     @Nonnull
     public MachineState getState() {
         return state;
     }
     
-    private void setState(MachineState state) {
+    private void setState(@Nonnull MachineState state) {
         this.state = state;
         markDirty();
     }
@@ -64,13 +77,13 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     @Override
     public void update() {
         super.update();
-        if (pause <= 0) {
-            switch (state) {
+        if(pause <= 0) {
+            switch(state){
                 case IDLE:
                     idle();
                     break;
                 case RUNNING:
-                    if (currentRequest.isEmpty()) {
+                    if(currentRequest.isEmpty()) {
                         //we don't have a task therefor we stop working
                         setState(MachineState.IDLE);
                         markDirty();
@@ -91,13 +104,16 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
         }
     }
     
-    private void waitOrError(final List<String> descriptions, final List<Function<TileEntityCraftingController, String>> functions) {
+    private void waitOrError(
+            final List<String> descriptions, final List<Function<TileEntityCraftingController, String>> functions
+    ) {
         descriptions.clear();
+        //noinspection ResultOfMethodCallIgnored
         functions.stream()
-                .map(e -> e.apply(this))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(() -> descriptions));
-        if (descriptions.isEmpty()) {
+                 .map(e -> e.apply(this))
+                 .filter(Objects::nonNull)
+                 .collect(Collectors.toCollection(() -> descriptions));
+        if(descriptions.isEmpty()) {
             functions.clear();
             setState(MachineState.IDLE);
         } else {
@@ -109,17 +125,18 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
      * What to do in update when in the IDLE state
      */
     private void idle() {
-        if (currentRequest.isEmpty()) {
+        if(currentRequest.isEmpty()) {
             
             //do we have at least one linked queue
-            if (!getRequestProviders().findAny().isPresent()) {
-                ERROR_SOLVED.add(t -> !t.getRequestProviders().findAny().isPresent() ? "mbmacor:error.desc.noqueues" : null);
+            if(!getRequestProviders().findAny().isPresent()) {
+                ERROR_SOLVED.add(
+                        t -> !t.getRequestProviders().findAny().isPresent() ? "mbmacor:error.desc.noqueues" : null);
                 setState(MachineState.PROBLEM);
                 return;
             }
             
             //find and get first request
-            if (getNewRequest()) {
+            if(getNewRequest()) {
                 setState(MachineState.RUNNING);
                 return;
             }
@@ -129,33 +146,50 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
         }
     }
     
-    private boolean canHandleRequest(ItemStack stack) {
+    private boolean canHandleRequest(final ItemStack stack) {
         ICraftingRequest request;
-        if (CAPABILITY_REQUEST!=null&&(request = stack.getCapability(CAPABILITY_REQUEST, null)) != null && !request.isCompleted()) {
-        /*
-        TODO:
-            return true if a PatternStore contains a Pattern resulting in the requests requested item
-        * */
+        if(capabilityRecipe != null && capabilityRequest != null) {
+            if((request = stack.getCapability(capabilityRequest, null)) != null) {
+                if(!request.isCompleted()) {
+                    return (patternLinkCards.stream()
+                                            .map(IBlockPosProvider::getBlockPos)
+                                            .map(world::getTileEntity)
+                                            .filter(te -> te instanceof TileEntityPatternStore)
+                                            .map(te -> (TileEntityPatternStore) te)
+                                            .map(TileEntityPatternStore::getPatternList)
+                                            .flatMap(List::stream)
+                                            .map(itemStack -> itemStack.getCapability(capabilityRecipe, null))
+                                            .anyMatch(recipe -> doesRecipeProduceProduct(recipe, stack)));
+                }
+            }
         }
+        
         return false;
     }
     
+    private boolean doesRecipeProduceProduct(ICraftingRecipe recipe, ItemStack stack) {
+        return Arrays.stream(recipe.getOutputs()).anyMatch(itemStack->itemStack.equals(stack));
+    }
+    
     private Stream<ICraftingRequestProvider> getRequestProviders() {
+        if(capabilityRequestProvider == null) {
+            return Stream.empty();
+        }
         return queueLinkCards.stream()
-                .map(IBlockPosProvider::getBlockPos)
-                .filter(Objects::nonNull)
-                .map(world::getTileEntity)
-                .filter(Objects::nonNull)
-                .map(te -> te.getCapability(REQUEST_PROVIDER, null))
-                .filter(Objects::nonNull);
+                             .map(IBlockPosProvider::getBlockPos)
+                             .filter(Objects::nonNull)
+                             .map(world::getTileEntity)
+                             .filter(Objects::nonNull)
+                             .map(te -> te.getCapability(capabilityRequestProvider, null))
+                             .filter(Objects::nonNull);
     }
     
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean getNewRequest() {
-        currentRequest = getRequestProviders()
-                .map(cap -> cap.getRequestIfRequirementHolds(this::canHandleRequest))
-                .filter(Objects::nonNull)
-                .findFirst().orElse(ItemStack.EMPTY);
+        currentRequest = getRequestProviders().map(cap -> cap.getRequestIfRequirementHolds(this::canHandleRequest))
+                                              .filter(Objects::nonNull)
+                                              .findFirst()
+                                              .orElse(ItemStack.EMPTY);
         return !currentRequest.isEmpty();
     }
     

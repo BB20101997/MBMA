@@ -1,6 +1,12 @@
 package de.webtwob.mbma.core.common.tileentity;
 
 import de.webtwob.mbma.api.registries.MultiBlockGroupType;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -9,12 +15,20 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  */
 public class TileEntityPatternStore extends MultiBlockTileEntity {
     
+    @Nonnull
+    private List<ItemStack> patternList = new ArrayList<>();
+    
+    
     @ObjectHolder("mbmacore:recipes")
     public static final MultiBlockGroupType MANAGER_RECIPES = null;
-
-
+    
     @Override
     public MultiBlockGroupType getGroupType() {
         return MANAGER_RECIPES;
+    }
+    
+    @Nonnull
+    public List<ItemStack> getPatternList() {
+        return Collections.unmodifiableList(patternList);
     }
 }

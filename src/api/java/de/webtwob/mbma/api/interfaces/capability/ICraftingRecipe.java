@@ -43,15 +43,16 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     /**
      * @param slot the index to change
      * @param stack the stack to set at the index
-     * @param oredict should the OreDictionary be used for this input
+     * @param oreDict should the OreDictionary be used for this input
      * @param ignoreNBT the setting for matching NBT for this index
      */
-    void setInput(int slot, @Nonnull ItemStack stack, boolean oredict, @Nonnull NBTMatchType ignoreNBT);
+    void setInput(int slot, @Nonnull ItemStack stack, boolean oreDict, @Nonnull NBTMatchType ignoreNBT);
     
     /**
      * @param slot the index to change
      * @param stack the stack to set at the index
-     * @param chance how likely is this output, range from 0 to 1, a valid recipe should contain at least one Output of chance 1
+     * @param chance how likely is this output in range (0,1] , a valid recipe should contain at least one Output of chance 1,
+     *               0 is only a valid range value for Empty Outputs
      * @param ignoreNBT the setting for matching NBT for this index
      */
     void setOutput(int slot, @Nonnull ItemStack stack, double chance, @Nonnull NBTMatchType ignoreNBT);
