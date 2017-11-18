@@ -27,7 +27,7 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     public final List<ItemStackContainer> containerList;
     
     /**
-     * Creates a new TileEntityCraftingStorage with a fixed Size unmodifiable List<ItemStackContainer>
+     * Creates a new TileEntityCraftingStorage with a fixed Size unmodifiable {@literal List<ItemStackContainer>}
      *     with size based on the value found in the configuration file
      */
     public TileEntityCraftingStorage(){

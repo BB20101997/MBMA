@@ -17,15 +17,15 @@ import net.minecraftforge.items.ItemStackHandler;
 public abstract class ItemHandlerWrapper extends ItemStackHandler {
 
     /**
-     *  An ItemHandler that doesn't rely on the NonNullList<ItemStack> directly for saving to/loading from NBT
+     *  An ItemHandler that doesn't rely on the {@literal NonNullList<ItemStack>} directly for saving to/loading from NBT
      * */
     public ItemHandlerWrapper() {
         super();
     }
     
     /**
-     *  An ItemHandler that doesn't rely on the NonNullList<ItemStack> directly for saving to/loading from NBT
-     *  @param stacks a NonNullList<ItemStacks> to store the ItemStacks for this ItemStackHandler in
+     *  An ItemHandler that doesn't rely on the {@literal NonNullList<ItemStack>} directly for saving to/loading from NBT
+     *  @param stacks a {@literal NonNullList<ItemStacks>} to store the ItemStacks for this ItemStackHandler in
      * */
     public ItemHandlerWrapper(NonNullList<ItemStack> stacks) {
         super(stacks);
