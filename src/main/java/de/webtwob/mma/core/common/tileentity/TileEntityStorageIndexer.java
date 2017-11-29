@@ -17,9 +17,8 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
@@ -27,31 +26,31 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * Created by BB20101997 on 25. Okt. 2017.
  */
 public class TileEntityStorageIndexer extends MultiBlockTileEntity {
-
+    
     @ObjectHolder("mmacore:storage")
-    private static final MultiBlockGroupType          MANAGER_STORAGE       = null;
-    private static       Capability<IItemHandler>     capabilityItemHandler = null;
-    private              LinkedList<IItemMoveRequest> requests              = new LinkedList<>();
-    private              NonNullList<ItemStack>       storageLinks          = NonNullList.create();
-
+    private static final MultiBlockGroupType MANAGER_STORAGE = null;
+    private static Capability<IItemHandler> capabilityItemHandler = null;
+    private LinkedList<IItemMoveRequest> requests = new LinkedList<>();
+    private NonNullList<ItemStack> storageLinks = NonNullList.create();
+    
     @CapabilityInject(IItemHandler.class)
     private static void setCapabilityItemHandler(Capability<IItemHandler> itemHandlerCapability) {
         capabilityItemHandler = itemHandlerCapability;
     }
-
+    
     @Override
     public MultiBlockGroupType getGroupType() {
         return MANAGER_STORAGE;
     }
-
+    
     @Override
     public void update() {
         super.update();
-
-        if(!requests.isEmpty()) {
+        
+        if (!requests.isEmpty()) {
             IItemMoveRequest request = requests.pollFirst();
-            switch(request.getType()){
-
+            switch (request.getType()) {
+                
                 case REQUEST_ITEMS:
                     handleRequest(request);
                     break;
@@ -63,67 +62,69 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
             }
             request.passOnRequest();
         }
-
+        
     }
-
+    
     private void handleDeposit(final IItemMoveRequest request) {
         ItemStackContainer container = request.getItemContainer();
-        for(IItemHandler handler : getInventories()){
+        for (IItemHandler handler : getInventories()) {
             container.setItemStack(ItemHandlerHelper.insertItem(handler, container.getItemStack(), false));
-            if(container.getItemStack().isEmpty()) {
+            if (container.getItemStack().isEmpty()) {
                 return;
             }
         }
     }
-
+    
     private void handleRequest(final IItemMoveRequest request) {
+        //TODO simplify
         ItemStackContainer container = request.getItemContainer();
-        for(IItemHandler handler : getInventories()){
-            for(int i = 0; i < handler.getSlots(); i++){
+        for (IItemHandler handler : getInventories()) {
+            for (int i = 0; i < handler.getSlots(); i++) {
                 ItemStack stackInSlot = handler.getStackInSlot(i);
                 ItemStack inContainer = container.getItemStack();
-                if(stackInSlot.isItemEqual(request.getRequest()) && (inContainer.isEmpty()||ItemHandlerHelper.canItemStacksStack(stackInSlot,inContainer))){
-                    if(!inContainer.isEmpty()){
-                        int spaceLeft = inContainer.getMaxStackSize()-inContainer.getCount();
-                        inContainer.grow(handler.extractItem(i,spaceLeft,false).getCount());
-                    }else{
-                        container.setItemStack(inContainer = handler.extractItem(i,request.getRequest().getMaxStackSize(),false));
+                if (stackInSlot.isItemEqual(request.getRequest()) && (inContainer.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackInSlot, inContainer))) {
+                    if (!inContainer.isEmpty()) {
+                        int spaceLeft = inContainer.getMaxStackSize() - inContainer.getCount();
+                        inContainer.grow(handler.extractItem(i, spaceLeft, false).getCount());
+                    } else {
+                        container.setItemStack(inContainer = handler.extractItem(i, request.getRequest().getMaxStackSize(), false));
                     }
                 }
-                if(inContainer.getCount()>=inContainer.getMaxStackSize()){
+                if (inContainer.getCount() >= inContainer.getMaxStackSize()) {
                     return;
                 }
             }
         }
     }
-
+    
     private List<IItemHandler> getInventories() {
         List<IItemHandler> handlerList = new ArrayList<>();
-        if(capabilityItemHandler == null) {
+        if (capabilityItemHandler == null) {
             return handlerList;
         }
-        for(ItemStack stack : storageLinks){
-            BlockPos pos = IBlockPosProvider.getBlockPos(stack);
-            if(pos != null) {
-                IBlockState state = world.getBlockState(pos);
-                if(state.getPropertyKeys().contains(MMAProperties.CONNECTED) && state.getValue(
-                        MMAProperties.CONNECTED)) {
-                    if(state.getPropertyKeys().contains(MMAProperties.FACING)) {
-                        EnumFacing facing = state.getValue(MMAProperties.FACING);
-                        TileEntity te     = world.getTileEntity(pos.offset(facing));
-                        if(te != null) {
-                            IItemHandler handler = te.getCapability(capabilityItemHandler, facing.getOpposite());
-                            if(handler != null) {
-                                handlerList.add(handler);
-                            }
+        return storageLinks.stream()
+                .map(IBlockPosProvider::getBlockPos)
+                .filter(Objects::nonNull)
+                .map(
+                        p -> new Object() {
+                            final BlockPos pos = p;
+                            final IBlockState state = world.getBlockState(pos);
                         }
-                    }
-                }
-            }
-        }
-        return handlerList;
+                )
+                .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.CONNECTED))
+                .filter(o -> o.state.getValue(MMAProperties.CONNECTED))
+                .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.FACING))
+                .map(
+                        o -> new Object() {
+                            final EnumFacing facing = o.state.getValue(MMAProperties.FACING);
+                            final TileEntity tileEntity = world.getTileEntity(o.pos.offset(facing));
+                        }
+                )
+                .filter(o -> o.tileEntity != null)
+                .map(o -> o.tileEntity.getCapability(capabilityItemHandler, o.facing.getOpposite()))
+                .filter(Objects::nonNull).collect(Collectors.toList());
     }
-
+    
     /**
      * Adds a IItemMoveRequest to the queue of requests to be handled
      * Requests are handled on this TileEntity update Method being called  usually every Tick
@@ -133,5 +134,5 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
     public void addItemMoveRequest(IItemMoveRequest request) {
         requests.add(request);
     }
-
+    
 }
