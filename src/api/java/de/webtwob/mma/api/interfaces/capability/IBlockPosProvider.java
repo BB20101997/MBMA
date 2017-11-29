@@ -22,7 +22,8 @@ public interface IBlockPosProvider {
         return bpp != null ? bpp.getBlockPos() : null;
     }
 
+    @Nullable
     BlockPos getBlockPos();
 
-    void setBlockPos(BlockPos pos);
+    void setBlockPos(@Nullable BlockPos pos);
 }
