@@ -138,20 +138,20 @@ sourceJar{
     classifier "src"
 }
 
-task javadocJar(type: Jar,dependsOn: 'javadoc',group: 'mbma') {
+task javadocJar(type: Jar,dependsOn: 'javadoc',group: 'mma') {
     from javadoc.destinationDir
     classifier "javadoc"
 }
 
-task apiSrcJar(type: Jar,dependsOn: 'sourceApiJava',group: 'mbma'){
+task apiSrcJar(type: Jar,dependsOn: 'sourceApiJava',group: 'mma'){
     from sourceSets.api.allSource
     appendix "api"
     classifier "src"
 }
 
-task coreJar(type: Jar,dependsOn: 'reobfJar',group:  'mbma'){
+task coreJar(type: Jar,dependsOn: 'reobfJar',group:  'mma'){
     from(zipTree(jar.archivePath)){
-        includes.addAll(["assets/mbmacore/**","de/webtwob/mma/core/**"])
+        includes.addAll(["assets/mmacore/**","de/webtwob/mma/core/**"])
     }
     from(sourceSets.main.output.resourcesDir){
         include "mcmod.info"
@@ -159,9 +159,9 @@ task coreJar(type: Jar,dependsOn: 'reobfJar',group:  'mbma'){
     appendix "core"
 }
 
-task apiJar(type:  Jar,dependsOn: 'reobfJar',group: 'mbma'){
+task apiJar(type:  Jar,dependsOn: 'reobfJar',group: 'mma'){
     from(zipTree(jar.archivePath)){
-        includes.addAll(["assets/mbmaapi/**","de/webtwob/mma/api/**"],)
+        includes.addAll(["assets/mmaapi/**","de/webtwob/mma/api/**"],)
     }
     from(sourceSets.api.output.resourcesDir){
         include "mcmod.info"

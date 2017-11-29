@@ -1,4 +1,4 @@
-Multi Block Maschine Automation (MBMA)
+Multi Block Maschine Automation (MMA)
 
 	Main Machine Interface (MMI):
 		Connects to a machine to interface with it,
