@@ -78,13 +78,13 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     @Override
     public void update() {
         super.update();
-        if(pause <= 0) {
-            switch(state){
+        if (pause <= 0) {
+            switch (state) {
                 case IDLE:
                     idle();
                     break;
                 case RUNNING:
-                    if(currentRequest.isEmpty()) {
+                    if (currentRequest.isEmpty()) {
                         //we don't have a task therefor we stop working
                         setState(MachineState.IDLE);
                         markDirty();
@@ -114,7 +114,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
                  .map(e -> e.apply(this))
                  .filter(Objects::nonNull)
                  .collect(Collectors.toCollection(() -> descriptions));
-        if(descriptions.isEmpty()) {
+        if (descriptions.isEmpty()) {
             functions.clear();
             setState(MachineState.IDLE);
         } else {
@@ -126,7 +126,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
      * What to do in update when in the IDLE state
      */
     private void idle() {
-        if(currentRequest.isEmpty()) {
+        if (currentRequest.isEmpty()) {
 
             //do we have at least one linked queue
             if(!getRequestProviders().findAny().isPresent()) {
