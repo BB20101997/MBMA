@@ -1,14 +1,14 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "mbmacore:items/linkcard_unlinked"
+    "layer0": "mmacore:items/linkcard_unlinked"
   },
   "overrides": [
     {
       "predicate": {
-        "mbmacore:islinked": 1
+        "mmacore:islinked": 1
       },
-     "model":"mbmacore:item/linkcard_linked"
+     "model":"mmacore:item/linkcard_linked"
     }
   ]
 }

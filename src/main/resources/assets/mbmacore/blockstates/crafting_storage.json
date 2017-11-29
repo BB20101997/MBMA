@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "mbmacore:crafting/storage/idle",
+    "model": "mmacore:crafting/storage/idle",
     "uvlock": true
   },
   "variants": {
@@ -16,13 +16,13 @@
       "idle": {
       },
       "running": {
-        "model": "mbmacore:crafting/storage/running"
+        "model": "mmacore:crafting/storage/running"
       },
       "waiting": {
-        "model": "mbmacore:crafting/storage/waiting"
+        "model": "mmacore:crafting/storage/waiting"
       },
       "problem": {
-        "model": "mbmacore:crafting/storage/problem"
+        "model": "mmacore:crafting/storage/problem"
       }
     }
   }

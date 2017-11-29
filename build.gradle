@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 version = "0.0.1"
 group = "de.webtwob.minecraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 
-archivesBaseName = "mbma"
+archivesBaseName = "mma"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
 
@@ -24,7 +24,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.0.2491"
+    version = "1.12.2-14.23.1.2555"
     runDir = "run"
 
     // the mappings can be changed at any time, and must be in the following format.
@@ -57,7 +57,6 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
 }
 
 processResources {
@@ -151,12 +150,22 @@ task apiSrcJar(type: Jar,dependsOn: 'sourceApiJava',group: 'mbma'){
 }
 
 task coreJar(type: Jar,dependsOn: 'reobfJar',group:  'mbma'){
-    from sourceSets.main.output
+    from(zipTree(jar.archivePath)){
+        includes.addAll(["assets/mbmacore/**","de/webtwob/mma/core/**"])
+    }
+    from(sourceSets.main.output.resourcesDir){
+        include "mcmod.info"
+    }
     appendix "core"
 }
 
 task apiJar(type:  Jar,dependsOn: 'reobfJar',group: 'mbma'){
-    from sourceSets.api.output
+    from(zipTree(jar.archivePath)){
+        includes.addAll(["assets/mbmaapi/**","de/webtwob/mma/api/**"],)
+    }
+    from(sourceSets.api.output.resourcesDir){
+        include "mcmod.info"
+    }
     appendix "api"
 }
 

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube_top",
   "textures":{
-    "top":"mbmacore:blocks/pattern_storage_top",
-    "side":"mbmacore:blocks/crafting/idle"
+    "top":"mmacore:blocks/pattern_storage_top",
+    "side":"mmacore:blocks/crafting/idle"
   }
 }

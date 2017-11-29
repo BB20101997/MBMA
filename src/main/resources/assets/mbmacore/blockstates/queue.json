@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "mbmacore:queue",
+    "model": "mmacore:queue",
     "uvlock": true
   },
   "variants": {

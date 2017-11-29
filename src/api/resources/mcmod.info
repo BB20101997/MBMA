@@ -1,13 +1,13 @@
 [
   {
-    "modid": "mbmaapi",
+    "modid": "mmaapi",
     "name": "Multiblock Machine Automation API",
     "description": "Let's you easily automate Multiblock Maschines!",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "logoFile": "assets/mbma/textures/logo.png",
+    "logoFile": "assets/mma/textures/logo.png",
     "url": "TODO",
-    "updateJSON": "https://github.com/BB20101997/MBMA/blob/master/update.json",
+    "updateJSON": "https://github.com/BB20101997/MMA/blob/master/update.json",
     "authorList": [
       "BB20101997"
     ],

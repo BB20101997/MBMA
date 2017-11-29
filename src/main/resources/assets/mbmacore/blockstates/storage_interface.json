@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "mbmacore:psi"
+    "model": "mmacore:psi"
   },
   "variants": {
     "inventory": [{}],
@@ -32,7 +32,7 @@
     },
     "connected": {
       "true": {
-        "model": "mbmacore:psi_connected"
+        "model": "mmacore:psi_connected"
       },
       "false": {
       }

@@ -1,7 +1,7 @@
 {
     "parent": "minecraft:block/cube_top",
     "textures":{
-        "top":"mbmacore:blocks/crafting/storage/waiting_top",
-        "side":"mbmacore:blocks/crafting/waiting"
+        "top":"mmacore:blocks/crafting/storage/waiting_top",
+        "side":"mmacore:blocks/crafting/waiting"
     }
 }
