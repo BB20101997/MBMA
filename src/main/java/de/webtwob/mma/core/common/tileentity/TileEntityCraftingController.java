@@ -26,55 +26,55 @@ import java.util.stream.Stream;
  * Created by BB20101997 on 25. Okt. 2017.
  */
 public class TileEntityCraftingController extends MultiBlockTileEntity {
-
+    
     @ObjectHolder("mmacore:crafting")
-    public static final  MultiBlockGroupType                                  MANAGER_CRAFTING          = null;
-    private static final int                                                  WAIT_TIME                 = 20;
-    private static       Capability<ICraftingRecipe>                          capabilityRecipe          = null;
-    private static       Capability<ICraftingRequestProvider>                 capabilityRequestProvider = null;
-    private static       Capability<ICraftingRequest>                         capabilityRequest         = null;
-    private final        List<Function<TileEntityCraftingController, String>> ERROR_SOLVED              = new LinkedList<>();
-    private final        List<Function<TileEntityCraftingController, String>> WAIT_CONDITION            = new LinkedList<>();
-    private final        List<String>                                         errors                    = new LinkedList<>();
-    private final        List<String>                                         waiting                   = new LinkedList<>();
+    public static final MultiBlockGroupType MANAGER_CRAFTING = null;
+    private static final int WAIT_TIME = 20;
+    private static Capability<ICraftingRecipe> capabilityRecipe = null;
+    private static Capability<ICraftingRequestProvider> capabilityRequestProvider = null;
+    private static Capability<ICraftingRequest> capabilityRequest = null;
+    private final List<Function<TileEntityCraftingController, String>> ERROR_SOLVED = new LinkedList<>();
+    private final List<Function<TileEntityCraftingController, String>> WAIT_CONDITION = new LinkedList<>();
+    private final List<String> errors = new LinkedList<>();
+    private final List<String> waiting = new LinkedList<>();
     @Nonnull
-    private              MachineState                                         state                     = MachineState.IDLE;
-    private              int                                                  pause                     = WAIT_TIME;
-    private              NonNullList<ItemStack>                               queueLinkCards            = NonNullList.create();
-    private              NonNullList<ItemStack>                               patternLinkCards          = NonNullList.create();
+    private MachineState state = MachineState.IDLE;
+    private int pause = WAIT_TIME;
+    private NonNullList<ItemStack> queueLinkCards = NonNullList.create();
+    private NonNullList<ItemStack> patternLinkCards = NonNullList.create();
     @Nonnull
-    private              ItemStack                                            currentRequest            = ItemStack.EMPTY;
-
+    private ItemStack currentRequest = ItemStack.EMPTY;
+    
     @CapabilityInject(ICraftingRecipe.class)
     private static void setCapabilityRecipe(Capability<ICraftingRecipe> recipeCapability) {
         capabilityRecipe = recipeCapability;
     }
-
+    
     @CapabilityInject(ICraftingRequest.class)
     private static void setRequestCapability(Capability<ICraftingRequest> requestCapability) {
         capabilityRequest = requestCapability;
     }
-
+    
     @CapabilityInject(ICraftingRequestProvider.class)
     private static void setRequestProviderCapability(Capability<ICraftingRequestProvider> requestProviderCapability) {
         capabilityRequestProvider = requestProviderCapability;
     }
-
+    
     @Nonnull
     public MachineState getState() {
         return state;
     }
-
+    
     private void setState(@Nonnull MachineState state) {
         this.state = state;
         markDirty();
     }
-
+    
     @Override
     public MultiBlockGroupType getGroupType() {
         return MANAGER_CRAFTING;
     }
-
+    
     @Override
     public void update() {
         super.update();
@@ -104,16 +104,16 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
             pause--;
         }
     }
-
+    
     private void waitOrError(
             final List<String> descriptions, final List<Function<TileEntityCraftingController, String>> functions
     ) {
         descriptions.clear();
         //noinspection ResultOfMethodCallIgnored
         functions.stream()
-                 .map(e -> e.apply(this))
-                 .filter(Objects::nonNull)
-                 .collect(Collectors.toCollection(() -> descriptions));
+                .map(e -> e.apply(this))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(() -> descriptions));
         if (descriptions.isEmpty()) {
             functions.clear();
             setState(MachineState.IDLE);
@@ -121,23 +121,23 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
             pause = WAIT_TIME;
         }
     }
-
+    
     /**
      * What to do in update when in the IDLE state
      */
     private void idle() {
         if (currentRequest.isEmpty()) {
-
+            
             //do we have at least one linked queue
-            if(!getRequestProviders().findAny().isPresent()) {
+            if (!getRequestProviders().findAny().isPresent()) {
                 ERROR_SOLVED.add(
                         t -> !t.getRequestProviders().findAny().isPresent() ? "mmacor:error.desc.noqueues" : null);
                 setState(MachineState.PROBLEM);
                 return;
             }
-
+            
             //find and get first request
-            if(getNewRequest()) {
+            if (getNewRequest()) {
                 setState(MachineState.RUNNING);
                 return;
             }
@@ -146,52 +146,50 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
             setState(MachineState.RUNNING);
         }
     }
-
+    
     private boolean canHandleRequest(final ItemStack stack) {
-        ICraftingRequest request;
-        if(capabilityRecipe != null && capabilityRequest != null) {
-            if((request = stack.getCapability(capabilityRequest, null)) != null) {
-                if(!request.isCompleted()) {
-                    return (patternLinkCards.stream()
-                                            .map(IBlockPosProvider::getBlockPos)
-                                            .map(world::getTileEntity)
-                                            .filter(te -> te instanceof TileEntityPatternStore)
-                                            .map(te -> (TileEntityPatternStore) te)
-                                            .map(TileEntityPatternStore::getPatternList)
-                                            .flatMap(List::stream)
-                                            .map(itemStack -> itemStack.getCapability(capabilityRecipe, null))
-                                            .anyMatch(recipe -> doesRecipeProduceProduct(recipe, stack)));
-                }
-            }
+        ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
+        //noinspection SimplifiableIfStatement
+        if (request.isCompleted()) {
+            return false;
         }
-
-        return false;
+        return (patternLinkCards.stream()
+                .map(IBlockPosProvider::getBlockPos)
+                .filter(Objects::nonNull)
+                .map(world::getTileEntity)
+                .filter(TileEntityPatternStore.class::isInstance) //TODO not nice to have hardcoded PatternStore should be expandable
+                .map(TileEntityPatternStore.class::cast)
+                .map(TileEntityPatternStore::getPatternList)
+                .flatMap(List::stream)
+                .map(itemStack -> itemStack.getCapability(capabilityRecipe, null))
+                .filter(Objects::nonNull)
+                .anyMatch(recipe -> doesRecipeProduceProduct(recipe, stack)));
     }
-
+    
     private boolean doesRecipeProduceProduct(ICraftingRecipe recipe, ItemStack stack) {
-        return Arrays.stream(recipe.getOutputs()).anyMatch(itemStack->itemStack.equals(stack));
+        return Arrays.stream(recipe.getOutputs()).anyMatch(itemStack -> itemStack.equals(stack));
     }
-
+    
     private Stream<ICraftingRequestProvider> getRequestProviders() {
-        if(capabilityRequestProvider == null) {
+        if (capabilityRequestProvider == null) {
             return Stream.empty();
         }
         return queueLinkCards.stream()
-                             .map(IBlockPosProvider::getBlockPos)
-                             .filter(Objects::nonNull)
-                             .map(world::getTileEntity)
-                             .filter(Objects::nonNull)
-                             .map(te -> te.getCapability(capabilityRequestProvider, null))
-                             .filter(Objects::nonNull);
+                .map(IBlockPosProvider::getBlockPos)
+                .filter(Objects::nonNull)
+                .map(world::getTileEntity)
+                .filter(Objects::nonNull)
+                .map(te -> te.getCapability(capabilityRequestProvider, null))
+                .filter(Objects::nonNull);
     }
-
+    
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean getNewRequest() {
         currentRequest = getRequestProviders().map(cap -> cap.getRequestIfRequirementHolds(this::canHandleRequest))
-                                              .filter(Objects::nonNull)
-                                              .findFirst()
-                                              .orElse(ItemStack.EMPTY);
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(ItemStack.EMPTY);
         return !currentRequest.isEmpty();
     }
-
+    
 }
