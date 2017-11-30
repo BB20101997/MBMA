@@ -17,7 +17,10 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -28,10 +31,10 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class TileEntityStorageIndexer extends MultiBlockTileEntity {
     
     @ObjectHolder("mmacore:storage")
-    private static final MultiBlockGroupType MANAGER_STORAGE = null;
-    private static Capability<IItemHandler> capabilityItemHandler = null;
-    private LinkedList<IItemMoveRequest> requests = new LinkedList<>();
-    private NonNullList<ItemStack> storageLinks = NonNullList.create();
+    private static final MultiBlockGroupType          MANAGER_STORAGE       = null;
+    private static       Capability<IItemHandler>     capabilityItemHandler = null;
+    private              LinkedList<IItemMoveRequest> requests              = new LinkedList<>();
+    private              NonNullList<ItemStack>       storageLinks          = NonNullList.create();
     
     @CapabilityInject(IItemHandler.class)
     private static void setCapabilityItemHandler(Capability<IItemHandler> itemHandlerCapability) {
@@ -76,22 +79,38 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
     }
     
     private void handleRequest(final IItemMoveRequest request) {
-        //TODO simplify
         ItemStackContainer container = request.getItemContainer();
         for (IItemHandler handler : getInventories()) {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack stackInSlot = handler.getStackInSlot(i);
-                ItemStack inContainer = container.getItemStack();
-                if (stackInSlot.isItemEqual(request.getRequest()) && (inContainer.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackInSlot, inContainer))) {
-                    if (!inContainer.isEmpty()) {
-                        int spaceLeft = inContainer.getMaxStackSize() - inContainer.getCount();
-                        inContainer.grow(handler.extractItem(i, spaceLeft, false).getCount());
-                    } else {
-                        container.setItemStack(inContainer = handler.extractItem(i, request.getRequest().getMaxStackSize(), false));
-                    }
-                }
-                if (inContainer.getCount() >= inContainer.getMaxStackSize()) {
-                    return;
+            handleRequestByItemHandler(request, handler);
+            ItemStack inContainer = container.getItemStack();
+            if (inContainer.getCount() >= inContainer.getMaxStackSize() || inContainer.getCount() >= request.getRequest()
+                                                                                                            .getCount()) {
+                return; //the ItemStackContainer is full or we have enough
+            }
+        }
+    }
+    
+    private void handleRequestByItemHandler(final IItemMoveRequest request, final IItemHandler handler) {
+        ItemStackContainer container = request.getItemContainer();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stackInSlot = handler.getStackInSlot(i);
+            ItemStack inContainer = container.getItemStack();
+            if (stackInSlot.isItemEqual(
+                    request.getRequest()) && (inContainer.isEmpty() || ItemHandlerHelper.canItemStacksStack(stackInSlot,
+                                                                                                            inContainer
+            ))) {//do we want the Item in slot i and can it stack with what we already have
+                if (!inContainer.isEmpty()) {
+                    //we already have some thing so we get what's in the slot and add it to what we have
+                    int spaceLeft = inContainer.getMaxStackSize() - inContainer.getCount(); //get no more than we have space left
+                    spaceLeft = Math.min(spaceLeft,
+                                         request.getRequest().getCount() - inContainer.getCount()
+                    ); //don't get more than requested
+                    spaceLeft = Math.max(spaceLeft, 0); //get at least 0
+                    inContainer.grow(handler.extractItem(i, spaceLeft, false).getCount());
+                } else {
+                    //we currently have nothing so we just take what we can get
+                    inContainer = handler.extractItem(i, request.getRequest().getCount(), false);
+                    container.setItemStack(inContainer);
                 }
             }
         }
@@ -103,25 +122,22 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
             return handlerList;
         }
         return storageLinks.stream()
-                .map(IBlockPosProvider::getBlockPos)
-                .filter(Objects::nonNull)
-                .map(
-                        p -> new Object() {
-                            final BlockPos pos = p;
-                            final IBlockState state = world.getBlockState(pos);
-                        }
-                )
-                .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.CONNECTED))
-                .filter(o -> o.state.getValue(MMAProperties.CONNECTED))
-                .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.FACING))
-                .map(
-                        o -> new Object() {
-                            final EnumFacing facing = o.state.getValue(MMAProperties.FACING);
-                            final TileEntity tileEntity = world.getTileEntity(o.pos.offset(facing));
-                        }
-                )
-                .map(o -> o.tileEntity != null ? o.tileEntity.getCapability(capabilityItemHandler, o.facing.getOpposite()) : null)
-                .filter(Objects::nonNull).collect(Collectors.toList());
+                           .map(IBlockPosProvider::getBlockPos)
+                           .filter(Objects::nonNull)
+                           .map(p -> new Object() {
+                               final BlockPos pos = p;
+                               final IBlockState state = world.getBlockState(pos);
+                           })
+                           .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.CONNECTED))
+                           .filter(o -> o.state.getValue(MMAProperties.CONNECTED))
+                           .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.FACING))
+                           .map(o -> new Object() {
+                               final EnumFacing facing = o.state.getValue(MMAProperties.FACING);
+                               final TileEntity tileEntity = world.getTileEntity(o.pos.offset(facing));
+                           })
+                           .map(o -> o.tileEntity != null ? o.tileEntity.getCapability(capabilityItemHandler, o.facing.getOpposite()) : null)
+                           .filter(Objects::nonNull)
+                           .collect(Collectors.toList());
     }
     
     /**
