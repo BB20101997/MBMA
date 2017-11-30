@@ -140,7 +140,7 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
                            .collect(Collectors.toList());
     }
     
-    private IItemHandler getItemHandlerForTileEntity(TileEntity tileEntity,EnumFacing facing){
+    private static IItemHandler getItemHandlerForTileEntity(TileEntity tileEntity,EnumFacing facing){
         if(tileEntity==null)
             return null;
         return tileEntity.getCapability(capabilityItemHandler,facing);
