@@ -135,9 +135,15 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
                                final EnumFacing facing = o.state.getValue(MMAProperties.FACING);
                                final TileEntity tileEntity = world.getTileEntity(o.pos.offset(facing));
                            })
-                           .map(o -> o.tileEntity != null ? o.tileEntity.getCapability(capabilityItemHandler, o.facing.getOpposite()) : null)
+                           .map(o->getItemHandlerForTileEntity(o.tileEntity,o.facing.getOpposite()))
                            .filter(Objects::nonNull)
                            .collect(Collectors.toList());
+    }
+    
+    private IItemHandler getItemHandlerForTileEntity(TileEntity tileEntity,EnumFacing facing){
+        if(tileEntity==null)
+            return null;
+        return tileEntity.getCapability(capabilityItemHandler,facing);
     }
     
     /**
