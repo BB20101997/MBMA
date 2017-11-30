@@ -120,8 +120,7 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
                             final TileEntity tileEntity = world.getTileEntity(o.pos.offset(facing));
                         }
                 )
-                .filter(o -> o.tileEntity != null)
-                .map(o -> o.tileEntity.getCapability(capabilityItemHandler, o.facing.getOpposite()))
+                .map(o -> o.tileEntity != null ? o.tileEntity.getCapability(capabilityItemHandler, o.facing.getOpposite()) : null)
                 .filter(Objects::nonNull).collect(Collectors.toList());
     }
     
