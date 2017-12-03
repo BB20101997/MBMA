@@ -103,6 +103,9 @@ public class TileEntityQueue extends MultiBlockTileEntity {
      */
     @Nonnull
     private ItemStack groupGetRequestIfRequirementHolds(@Nonnull final Predicate<ItemStack> requirement) {
+        if(group==null){
+            return ItemStack.EMPTY;
+        }
         return group.getMembers().stream()
                 .map(MultiBlockMember::getPos)
                 .sorted(BlockPos::compareTo)
