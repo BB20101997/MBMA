@@ -1,11 +1,9 @@
 package de.webtwob.mma.core.common.tileentity;
 
 import de.webtwob.mma.api.enums.MachineState;
-import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
-import de.webtwob.mma.api.interfaces.capability.ICraftingRecipe;
-import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
-import de.webtwob.mma.api.interfaces.capability.ICraftingRequestProvider;
+import de.webtwob.mma.api.interfaces.capability.*;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
+import de.webtwob.mma.core.common.config.MMAConfiguration;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -30,7 +28,6 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     @ObjectHolder("mmacore:crafting")
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
     private static final int WAIT_TIME = 20;
-    private static Capability<ICraftingRecipe> capabilityRecipe = null;
     private static Capability<ICraftingRequestProvider> capabilityRequestProvider = null;
     private final List<Function<TileEntityCraftingController, String>> ERROR_SOLVED = new LinkedList<>();
     private final List<Function<TileEntityCraftingController, String>> WAIT_CONDITION = new LinkedList<>();
@@ -43,11 +40,6 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     private NonNullList<ItemStack> patternLinkCards = NonNullList.create();
     @Nonnull
     private ItemStack currentRequest = ItemStack.EMPTY;
-    
-    @CapabilityInject(ICraftingRecipe.class)
-    private static void setCapabilityRecipe(Capability<ICraftingRecipe> recipeCapability) {
-        capabilityRecipe = recipeCapability;
-    }
     
     @CapabilityInject(ICraftingRequestProvider.class)
     private static void setRequestProviderCapability(Capability<ICraftingRequestProvider> requestProviderCapability) {
@@ -151,11 +143,10 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
                 .map(IBlockPosProvider::getBlockPos)
                 .filter(Objects::nonNull)
                 .map(world::getTileEntity)
-                .filter(TileEntityPatternStore.class::isInstance) //TODO not nice to have hardcoded PatternStore should be expandable
-                .map(TileEntityPatternStore.class::cast)
-                .map(TileEntityPatternStore::getPatternList)
+                .map(IPatternProvider::getIPatternProviderForTileEntity)
+                .filter(Objects::nonNull)
+                .map(IPatternProvider::getPatternList)
                 .flatMap(List::stream)
-                .map(itemStack -> itemStack.getCapability(capabilityRecipe, null))
                 .filter(Objects::nonNull)
                 .anyMatch(recipe -> doesRecipeProduceProduct(recipe, stack)));
     }
@@ -186,4 +177,17 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
         return !currentRequest.isEmpty();
     }
     
+    
+    public boolean canAddLinkCard() {
+        return MMAConfiguration.controllerQueueCount>queueLinkCards.size();
+    }
+    
+    public void addLinkCard(ItemStack stack){
+        queueLinkCards.add(stack);
+        markDirty();
+    }
+    
+    public NonNullList<ItemStack> getQueueLinkCards() {
+        return queueLinkCards;
+    }
 }

@@ -41,12 +41,6 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
         return MANAGER_CRAFTING;
     }
 
-    @Override
-    public void update() {
-        super.update();
-        //TODO
-    }
-
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound nbtc) {

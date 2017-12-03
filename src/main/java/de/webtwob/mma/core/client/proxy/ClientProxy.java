@@ -1,8 +1,10 @@
 package de.webtwob.mma.core.client.proxy;
 
+import de.webtwob.mma.core.client.gui.CraftingControllerGui;
 import de.webtwob.mma.core.client.gui.TokenGeneratorGui;
 import de.webtwob.mma.core.client.gui.TokenGui;
 import de.webtwob.mma.core.common.proxy.CommonProxy;
+import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
 import de.webtwob.mma.core.common.tileentity.TileEntityRequestGenerator;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +30,7 @@ public class ClientProxy extends CommonProxy {
             case OFF_HAND_ITEM_GUI: {
                 ItemStack held = player.getHeldItem(EnumHand.values()[id - 1]);
                 if (requestCapability != null && held.hasCapability(requestCapability, null)) {
-                        return new TokenGui(player,EnumHand.values()[id-1]);
+                    return new TokenGui(player, EnumHand.values()[id - 1]);
                 }
                 //add other Items here possibly
                 break;
@@ -36,6 +38,12 @@ public class ClientProxy extends CommonProxy {
             case TOKEN_GENERATOR_GUI: {
                 if (tileEntity instanceof TileEntityRequestGenerator) {
                     return new TokenGeneratorGui(player, (TileEntityRequestGenerator) tileEntity);
+                }
+                break;
+            }
+            case CRAFTING_CONTROLLER_GUI: {
+                if (tileEntity instanceof TileEntityCraftingController) {
+                    return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);
                 }
                 break;
             }

@@ -1,5 +1,6 @@
 package de.webtwob.mma.api.interfaces.capability;
 
+import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.enums.NBTMatchType;
 import de.webtwob.mma.api.registries.RecipeType;
 import de.webtwob.mma.api.references.NBTKeys;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -23,6 +25,13 @@ import java.util.Arrays;
  */
 public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
 
+    static ICraftingRecipe getRecipeForStack(ItemStack stack){
+        if(stack!=null){
+            return stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_RECIPE,null);
+        }
+        return null;
+    }
+    
     /**
      * Resize the the internal data structure to accommodate i ItemStacks for the input
      * this should defiantly extend the data structure if it can't currently accommodate at least i
@@ -83,7 +92,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     @Nonnull
     NBTMatchType[] shouldNBTBeIgnoredForOutput();
 
-    @Nonnull
+    @Nullable
     RecipeType getRecipeType();
 
     void setRecipeType(@Nonnull RecipeType r);

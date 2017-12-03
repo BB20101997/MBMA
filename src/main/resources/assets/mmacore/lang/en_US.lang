@@ -5,6 +5,9 @@ tile.mmacore:playertokengenerator.name=Player Token Generator
 tile.mmacore:crafting_controller.name=Crafting Controller
 tile.mmacore:crafting_processor.name=Crafting Processor
 tile.mmacore:crafting_storage.name=Crafting Storage
+tile.mmacore:queue.name=Queue
+tile.mmacore:pattern_storage.name=Pattern Storage
+tile.mmacore:storage_indexer.name=Storage Indexer
 
 #creativetab localisation
 itemGroup.mma=Multiblock Maschine Automation
@@ -15,3 +18,4 @@ item.mmacore:linkcard.linked.name=Linked Link Card
 item.mmacore:linkcard.unlinked.name=Unlinked Link Card
 item.mmacore:token.name=Token
 item.mmacore:recipe_pattern.name=Recipe Pattern
+item.mmacore:debugwand.name=Debug Wand

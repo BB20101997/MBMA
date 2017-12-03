@@ -3,14 +3,19 @@ package de.webtwob.mma.core.common.block;
 import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.property.MMAProperties;
+import de.webtwob.mma.core.MMACore;
 import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
+import de.webtwob.mma.core.common.proxy.CommonProxy;
 import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -41,6 +46,14 @@ public class BlockCraftingController extends Block {
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, MMAProperties.STATE);
+    }
+    
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote) {
+            player.openGui(MMACore.INSTANCE, CommonProxy.CRAFTING_CONTROLLER_GUI, world, pos.getX(), pos.getY(), pos.getZ());
+        }
+        return true;
     }
     
     @Override
