@@ -1,6 +1,7 @@
 package de.webtwob.mma.core.client.gui;
 
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
+import de.webtwob.mma.api.inventory.GuiSlider;
 import de.webtwob.mma.core.common.inventory.CraftingControllerContainer;
 import de.webtwob.mma.core.common.references.ResourceLocations;
 import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
@@ -21,17 +22,27 @@ import java.io.IOException;
  */
 public class CraftingControllerGui extends GuiContainer {
     
-    TileEntityCraftingController tileEntityCraftingController;
+    private TileEntityCraftingController tileEntityCraftingController;
     
-    int selected = -1;
-    int offset = 0;
-    int sliderOffset = 0;
+    private GuiSlider slider = new GuiSlider(0, GuiSlider.Orientation.VERTICAL, 0, 0, 8, 103, 15, ResourceLocations.Textures.GUI_COMPONENTS, 100, 0, 108, 0);
+    
+    private int selected = -1;
+    private int offset = 0;
+    private int listLength = 0;
     
     public CraftingControllerGui(EntityPlayer player, TileEntityCraftingController tecc) {
         super(new CraftingControllerContainer(player, tecc));
         tileEntityCraftingController = tecc;
         xSize = 176;
         ySize = 220;
+    }
+    
+    @Override
+    public void initGui() {
+        super.initGui();
+        slider.x = guiLeft + 160;
+        slider.y = guiTop + 29;
+        addButton(slider);
     }
     
     @Override
@@ -43,16 +54,16 @@ public class CraftingControllerGui extends GuiContainer {
         if (selected >= linkList.size()) {
             selected = -1;
         }
-        
-        for (int i = offset/12; i < linkList.size(); i++) {
-            if (i * 12 - offset <108) {
+        listLength = linkList.size();
+        for (int i = offset / 12; i < listLength; i++) {
+            if (i * 12 - offset < 104) {
                 mc.getTextureManager().bindTexture(ResourceLocations.Textures.GUI_COMPONENTS);
                 if (selected != i) {
                     //not selected
-                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * 12, 0, 18, 147, 12);
+                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * 12 - offset, 0, 18, 147, 12);
                 } else {
                     //selected
-                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * 12, 0, 30, 147, 12);
+                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * 12 - offset, 0, 30, 147, 12);
                 }
                 ItemStack stack = linkList.get(i);
                 BlockPos pos = IBlockPosProvider.getBlockPos(stack);
@@ -62,7 +73,7 @@ public class CraftingControllerGui extends GuiContainer {
                 } else {
                     text = i + ": " + stack.getDisplayName();
                 }
-                GuiLabel label = new GuiLabel(fontRenderer, i, guiLeft + 10, guiTop + 31 + i * 12, 144, 10, Color.WHITE.getRGB());
+                GuiLabel label = new GuiLabel(fontRenderer, i, guiLeft + 10, guiTop + 31 + i * 12 - offset, 144, 10, Color.WHITE.getRGB());
                 label.addLine(text);
                 label.drawLabel(mc, mouseX, mouseY);
             }
@@ -71,13 +82,7 @@ public class CraftingControllerGui extends GuiContainer {
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.LINKING_INTERFACE);
         drawTexturedModalRect(guiLeft, guiTop + 132, 0, 132, xSize, 12);
         drawTexturedModalRect(guiLeft, guiTop + 17, 0, 17, xSize, 12);
-    
-        mc.getTextureManager().bindTexture(ResourceLocations.Textures.GUI_COMPONENTS);
-        if(linkList.size()<9){
-        
-        }else{
-        
-        }
+        slider.setEnabled(linkList.size() >= 9);
     }
     
     @Override
@@ -88,11 +93,11 @@ public class CraftingControllerGui extends GuiContainer {
         }
     }
     
+    
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        if(isPointInRegion()){
-        
-        }
+        slider.mouseDragged(mc,mouseX,mouseY);
+        offset = (int) Math.max(Math.min(slider.getSliderPosition() * (12 * (listLength - 8) - 7), (listLength - 8) * 12 - 7),0);
     }
 }
