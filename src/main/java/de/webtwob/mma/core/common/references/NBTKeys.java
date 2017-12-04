@@ -25,7 +25,8 @@ public class NBTKeys {
 
     public static final String CRAFTING_STORAGE_LIST = MODID + ":cslist";
     public static final String QUEUE_STACKS = MODID+":queueStacks";
-
+    public static final String CRAFTING_CONTROLLER_QUEUE_LINKS = MODID + ":queueLinks";
+    
     private NBTKeys() {
     }
 }

@@ -4,18 +4,20 @@ import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.capability.*;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
+import de.webtwob.mma.core.common.references.NBTKeys;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -179,15 +181,50 @@ public class TileEntityCraftingController extends MultiBlockTileEntity {
     
     
     public boolean canAddLinkCard() {
-        return MMAConfiguration.controllerQueueCount>queueLinkCards.size();
+        return MMAConfiguration.controllerQueueCount > queueLinkCards.size();
     }
     
-    public void addLinkCard(ItemStack stack){
+    public void addLinkCard(ItemStack stack) {
         queueLinkCards.add(stack);
         markDirty();
     }
     
     public NonNullList<ItemStack> getQueueLinkCards() {
         return queueLinkCards;
+    }
+    
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound tileData = getTileData();
+        
+        //write linkCards to tileData
+        
+        NBTTagList itemList = new NBTTagList();
+        
+        for (ItemStack stack : queueLinkCards) {
+            if(!stack.isEmpty())
+            itemList.appendTag(stack.serializeNBT());
+        }
+        
+        tileData.setTag(NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, itemList);
+        
+        return super.writeToNBT(compound);
+    }
+    
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        NBTTagCompound tileData = getTileData();
+        
+        //read linkCards from tileData
+        if (tileData.hasKey(NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, Constants.NBT.TAG_LIST)) {
+            NBTTagList itemList = tileData.getTagList(NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, Constants.NBT.TAG_COMPOUND);
+            for (NBTBase  itemNBT :itemList) {
+                if(itemNBT instanceof NBTTagCompound){
+                    queueLinkCards.add(new ItemStack((NBTTagCompound) itemNBT));
+                }
+            }
+            
+        }
     }
 }
