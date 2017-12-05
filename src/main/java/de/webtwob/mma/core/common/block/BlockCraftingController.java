@@ -74,7 +74,7 @@ public class BlockCraftingController extends Block {
     @SuppressWarnings("deprecation")
     @Deprecated
     @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {//NOSONAR
         return getExtendedState(state, worldIn, pos);
     }
     

@@ -39,7 +39,7 @@ public class BlockCraftingStorage extends Block {
     @Nonnull
     @Deprecated
     @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {//NOSONAR
         return super.getActualState(state, worldIn, pos);
     }
 

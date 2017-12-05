@@ -47,7 +47,7 @@ public class BlockStorageInterface extends Block {
     @Deprecated
     @Nonnull
     @Override
-    public IBlockState getStateFromMeta(int meta) {
+    public IBlockState getStateFromMeta(int meta) {//NOSONAR
         return getDefaultState().withProperty(MMAProperties.FACING, EnumFacing.values()[meta >> 1]).withProperty(MMAProperties.CONNECTED, (meta & 1) != 0);
     }
 
