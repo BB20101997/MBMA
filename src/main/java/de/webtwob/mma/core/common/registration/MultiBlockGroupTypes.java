@@ -25,7 +25,7 @@ public class MultiBlockGroupTypes {
 
     @SubscribeEvent
     public static void registerMBGT(RegistryEvent.Register<MultiBlockGroupType> event) {
-        CoreLog.info("Registering MultiBlockGroupManagers");
+        CoreLog.info("Registering MultiBlockGroupTypes");
 
         STORAGE.setRegistryName(MBGM_STORAGE);
         CRAFTING.setRegistryName(MBGM_CRAFTING);

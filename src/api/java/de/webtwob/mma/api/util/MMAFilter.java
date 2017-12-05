@@ -28,7 +28,7 @@ public class MMAFilter {
     private MMAFilter() {
     }
 
-    private static <T> boolean checkIfNotNull(T o, Predicate<T> cond) {
+    public static <T> boolean checkIfNotNull(T o, Predicate<T> cond) {
         return o != null && cond.test(o);
     }
 

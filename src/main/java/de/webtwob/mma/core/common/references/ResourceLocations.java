@@ -54,7 +54,8 @@ public class ResourceLocations {
         public static final ResourceLocation RECIPE_PATTERN_REGISTRY_NAME = new ResourceLocation(MODID, "recipe_pattern");
         public static final ResourceLocation LINKED = new ResourceLocation(MODID, "islinked");
         public static final ResourceLocation DEBUG_WAND_REGISTRY_NAME = new ResourceLocation(MODID, "debugWand");
-
+        public static final ResourceLocation IN_WORLD_CRAFTER_REGISTRY_NAME = new ResourceLocation(MODID,"inWorldCrafter");
+    
         private Items() {
         }
     }

@@ -15,7 +15,8 @@ public class ResourceLocations {
 
     public static final ResourceLocation REG_RECIPE_VANILLA = new ResourceLocation(MODID,"vanillaRecipe");
     public static final ResourceLocation REG_RECIPE_CUSTOM = new ResourceLocation(MODID,"customRecipe");
-
+    public static final ResourceLocation REG_IN_WORLD_RECIPE = new ResourceLocation(MODID,"inWorldRecipe");
+    
     private ResourceLocations() {
     }
 }

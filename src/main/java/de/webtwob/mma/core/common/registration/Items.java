@@ -4,10 +4,7 @@ import de.webtwob.mma.api.capability.provider.BlockPosProvider;
 import de.webtwob.mma.api.capability.provider.CraftingRecipeProvider;
 import de.webtwob.mma.api.capability.provider.CraftingRequestProvider;
 import de.webtwob.mma.core.common.CoreLog;
-import de.webtwob.mma.core.common.item.DebugWand;
-import de.webtwob.mma.core.common.item.LinkCardItem;
-import de.webtwob.mma.core.common.item.RecipePattern;
-import de.webtwob.mma.core.common.item.Token;
+import de.webtwob.mma.core.common.item.*;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -53,7 +50,8 @@ public class Items {
     public static final Item TOKEN = new Token();
     public static final Item RECIPE_PATTERN = new RecipePattern();
     public static final Item DEBUG_WAND = new DebugWand();
-
+    public static final Item IN_WORLD_CRAFTER = new InWorldCrafterItem();
+    
     private Items() {
     }
 
@@ -68,6 +66,7 @@ public class Items {
         setNameAndRegister(TOKEN,TOKEN_REGISTRY_NAME,registry);
         setNameAndRegister(RECIPE_PATTERN,RECIPE_PATTERN_REGISTRY_NAME,registry);
         setNameAndRegister(DEBUG_WAND,DEBUG_WAND_REGISTRY_NAME,registry);
+        setNameAndRegister(IN_WORLD_CRAFTER,IN_WORLD_CRAFTER_REGISTRY_NAME,registry);
 
         setNameAndRegister(STORAGE_INTERFACE_ITEM,STORAGE_INTERFACE_RL,registry);
         setNameAndRegister(STORAGE_INDEXER_ITEM,STORAGE_INDEXER_RL,registry);
