@@ -2,8 +2,11 @@ package de.webtwob.mma.api.util;
 
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 import static de.webtwob.mma.api.capability.APICapabilities.*;
@@ -26,6 +29,10 @@ public class MMAFilter {
             e.getCapability(CAPABILITY_CRAFTING_REQUEST, null), REQUEST_COMPLETE);
 
     private MMAFilter() {
+    }
+    
+    public static Predicate<BlockWorldState> areBlocksEqual(@Nonnull Block b){
+        return BlockWorldState.hasState(state->state!=null&&b.equals(state.getBlock()));
     }
 
     public static <T> boolean checkIfNotNull(T o, Predicate<T> cond) {

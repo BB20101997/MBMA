@@ -121,6 +121,7 @@ public class Items {
         registerDefaultModel(TOKEN);
         registerDefaultModel(RECIPE_PATTERN);
         registerDefaultModel(DEBUG_WAND);
+        registerDefaultModel(IN_WORLD_CRAFTER);
     }
 
     @SideOnly(Side.CLIENT)

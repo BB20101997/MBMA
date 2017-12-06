@@ -5,8 +5,6 @@ import de.webtwob.mma.api.references.ResourceLocations;
 
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.block.state.pattern.FactoryBlockPattern;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
@@ -15,8 +13,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by BB20101997 on 25. Okt. 2017.
@@ -61,19 +59,21 @@ public class MMARegistries {
                 .setType(InWorldRecipe.class)
                 .set(key ->
                         new InWorldRecipe() {
+    
                             @Override
-                            public void spawResultAt(World world, BlockPos pos, EnumFacing facing) {
-                            
+                            public Map<BlockPos, Object> determinResult(World world, BlockPattern.PatternHelper patternHelper) {
+                                return new HashMap<>();
                             }
-                            
+    
+                            @Override
+                            public void clearArea(World world, BlockPattern.PatternHelper patternHelper) {
+                                //NOOP this is a dummy
+                            }
+    
                             @Override
                             public BlockPattern getBlockPattern() {
-                                return FactoryBlockPattern.start().aisle("").build();
-                            }
-                            
-                            @Override
-                            public List<ItemStack> getResults(World world, BlockPos pos, EnumFacing facing) {
-                                return new ArrayList<>();
+                                //Always failing as this is a dummy
+                                return FactoryBlockPattern.start().aisle("A").where('A',o->false).build();
                             }
                         }
                 
