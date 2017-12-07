@@ -20,9 +20,7 @@ public class DefaultRecipes {
     private static final String[][] CRAFTING_PROCESSOR_PATTERN = {{"BBB", "BBB", "BBB"}, {"BAB", "BFB", "BWB"}, {"BBB", "BBB", "BBB"}};
     private static final Map<Character, Predicate<BlockWorldState>> RECIPE_PREDICATES = new HashMap<>();
     private static final Map<BlockPos, Object> CRAFTING_STORAGE_RESULT = new HashMap<>();
-    public static final BasicInWorldRecipe CRAFTING_STORAGE_RECIPE = new BasicInWorldRecipe(CRAFTING_STORAGE_PATTERN, RECIPE_PREDICATES, CRAFTING_STORAGE_RESULT);
     private static final Map<BlockPos, Object> CRAFTING_PROCESSOR_RESULT = new HashMap<>();
-    public static final BasicInWorldRecipe CRAFTING_PROCESSOR_RECIPE = new BasicInWorldRecipe(CRAFTING_PROCESSOR_PATTERN, RECIPE_PREDICATES, CRAFTING_PROCESSOR_RESULT);
     
     static {
         RECIPE_PREDICATES.put('A', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(net.minecraft.init.Blocks.ANVIL));
@@ -34,5 +32,8 @@ public class DefaultRecipes {
         CRAFTING_STORAGE_RESULT.put(new BlockPos(1, 1, 1), Blocks.CRAFTING_STORAGE);
         CRAFTING_PROCESSOR_RESULT.put(new BlockPos(1, 1, 1), Blocks.CRAFTING_PROCESSOR);
     }
+    
+    public static final BasicInWorldRecipe CRAFTING_PROCESSOR_RECIPE = new BasicInWorldRecipe(CRAFTING_PROCESSOR_PATTERN, RECIPE_PREDICATES, CRAFTING_PROCESSOR_RESULT);
+    public static final BasicInWorldRecipe CRAFTING_STORAGE_RECIPE = new BasicInWorldRecipe(CRAFTING_STORAGE_PATTERN, RECIPE_PREDICATES, CRAFTING_STORAGE_RESULT);
     
 }
