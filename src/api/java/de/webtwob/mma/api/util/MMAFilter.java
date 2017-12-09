@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 import static de.webtwob.mma.api.capability.APICapabilities.*;
@@ -31,8 +30,8 @@ public class MMAFilter {
     private MMAFilter() {
     }
     
-    public static Predicate<BlockWorldState> areBlocksEqual(@Nonnull Block b){
-        return BlockWorldState.hasState(state->state!=null&&b.equals(state.getBlock()));
+    public static Predicate<BlockWorldState> areBlocksEqual(Block b){
+        return BlockWorldState.hasState(state->state!=null&&b!=null&&b.equals(state.getBlock()));
     }
 
     public static <T> boolean checkIfNotNull(T o, Predicate<T> cond) {
