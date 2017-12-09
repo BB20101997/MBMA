@@ -4,33 +4,20 @@ import com.google.common.base.Predicate;
 
 import de.webtwob.mma.api.crafting.BasicInWorldRecipe;
 import de.webtwob.mma.api.util.MMAFilter;
+import de.webtwob.mma.core.common.references.BlockHolder;
 import de.webtwob.mma.core.common.registration.Blocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-
 /**
  * Created by BB20101997 on 06. Dez. 2017.
  */
 @SuppressWarnings("WeakerAccess")
 public class DefaultRecipes {
-    
-    @ObjectHolder("minecraft:anvil")
-    public static final Block ANVIL          = null;
-    @ObjectHolder("minecraft:iron_bars")
-    public static final Block IRON_BARS      = null;
-    @ObjectHolder("minecraft:chest")
-    public static final Block CHEST          = null;
-    @ObjectHolder("minecraft:furnace")
-    public static final Block FURNACE        = null;
-    @ObjectHolder("minecraft:crafting_table")
-    public static final Block CRAFTING_TABLE = null;
     
     public static final BasicInWorldRecipe CRAFTING_PROCESSOR_RECIPE;
     public static final BasicInWorldRecipe CRAFTING_STORAGE_RECIPE;
@@ -45,11 +32,11 @@ public class DefaultRecipes {
     private static final Map<BlockPos, Object>                      CRAFTING_PROCESSOR_RESULT = new HashMap<>();
     
     static {
-        RECIPE_PREDICATES.put('A', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(ANVIL));
-        RECIPE_PREDICATES.put('B', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(IRON_BARS));
-        RECIPE_PREDICATES.put('C', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(CHEST));
-        RECIPE_PREDICATES.put('F', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(FURNACE));
-        RECIPE_PREDICATES.put('W', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(CRAFTING_TABLE));
+        RECIPE_PREDICATES.put('A', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(BlockHolder.ANVIL));
+        RECIPE_PREDICATES.put('B', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(BlockHolder.IRON_BARS));
+        RECIPE_PREDICATES.put('C', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(BlockHolder.CHEST));
+        RECIPE_PREDICATES.put('F', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(BlockHolder.FURNACE));
+        RECIPE_PREDICATES.put('W', (Predicate<BlockWorldState>) MMAFilter.areBlocksEqual(BlockHolder.CRAFTING_TABLE));
         
         CRAFTING_STORAGE_RESULT.put(new BlockPos(1, 1, 1), Blocks.CRAFTING_STORAGE);
         CRAFTING_PROCESSOR_RESULT.put(new BlockPos(1, 1, 1), Blocks.CRAFTING_PROCESSOR);
