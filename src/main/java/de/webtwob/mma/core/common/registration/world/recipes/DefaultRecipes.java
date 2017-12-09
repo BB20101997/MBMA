@@ -16,7 +16,6 @@ import java.util.Map;
 /**
  * Created by BB20101997 on 06. Dez. 2017.
  */
-@SuppressWarnings("WeakerAccess")
 public class DefaultRecipes {
     
     public static final BasicInWorldRecipe CRAFTING_PROCESSOR_RECIPE;
