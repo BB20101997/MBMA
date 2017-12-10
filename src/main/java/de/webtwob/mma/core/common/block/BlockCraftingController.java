@@ -4,11 +4,9 @@ import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.property.MMAProperties;
 import de.webtwob.mma.core.MMACore;
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
 import de.webtwob.mma.core.common.proxy.CommonProxy;
 import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -16,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -26,11 +25,10 @@ import javax.annotation.Nullable;
 /**
  * Created by BB20101997 on 28. Okt. 2017.
  */
-public class BlockCraftingController extends Block {
+public class BlockCraftingController extends MMABlock {
     
-    public BlockCraftingController() {
-        super(Material.IRON);
-        setCreativeTab(MMACreativeTab.MMATab);
+    public BlockCraftingController(ResourceLocation rl) {
+        super(Material.IRON,rl);
         
         IBlockState state = blockState.getBaseState();
         state = state.withProperty(MMAProperties.STATE, MachineState.IDLE);

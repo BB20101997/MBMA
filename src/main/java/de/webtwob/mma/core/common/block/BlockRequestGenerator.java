@@ -1,17 +1,16 @@
 package de.webtwob.mma.core.common.block;
 
 import de.webtwob.mma.core.MMACore;
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
 import de.webtwob.mma.core.common.proxy.CommonProxy;
 import de.webtwob.mma.core.common.tileentity.TileEntityRequestGenerator;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -21,11 +20,10 @@ import javax.annotation.Nullable;
 /**
  * Created by bennet on 23.03.17.
  */
-public class BlockRequestGenerator extends Block {
+public class BlockRequestGenerator extends MMABlock {
 
-    public BlockRequestGenerator() {
-        super(Material.IRON);
-        setCreativeTab(MMACreativeTab.MMATab);
+    public BlockRequestGenerator(ResourceLocation rl) {
+        super(Material.IRON,rl);
     }
 
     @Override

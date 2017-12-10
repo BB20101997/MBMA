@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -23,7 +22,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Objects;
 
-import static de.webtwob.mma.core.common.references.ResourceLocations.Blocks.*;
 import static de.webtwob.mma.core.common.references.ResourceLocations.Capabilities.*;
 import static de.webtwob.mma.core.common.references.ResourceLocations.Items.*;
 
@@ -32,60 +30,58 @@ import static de.webtwob.mma.core.common.references.ResourceLocations.Items.*;
  */
 @Mod.EventBusSubscriber(modid = "mmacore")
 public class Items {
-
+    
     //ItemBlocks
-    public static final ItemBlock STORAGE_INTERFACE_ITEM = new ItemBlock(Blocks.STORAGE_INTERFACE);
-    public static final ItemBlock STORAGE_INDEXER_ITEM = new ItemBlock(Blocks.STORAGE_INDEXER);
-
-    public static final ItemBlock TOKEN_GENERATOR_ITEM = new ItemBlock(Blocks.TOKEN_GENERATOR);
-    public static final ItemBlock QUEUE_ITEM = new ItemBlock(Blocks.QUEUE);
-    public static final ItemBlock PATTERN_STORAGE_ITEM = new ItemBlock(Blocks.PATTERN_STORAGE);
-
-    public static final ItemBlock CRAFTING_STORAGE_ITEM = new ItemBlock(Blocks.CRAFTING_STORAGE);
-    public static final ItemBlock CRAFTING_PROCESSOR_ITEM = new ItemBlock(Blocks.CRAFTING_PROCESSOR);
-    public static final ItemBlock CRAFTING_CONTROLLER_ITEM = new ItemBlock(Blocks.CRAFTING_CONTROLLER);
-
+    public static final ItemBlock STORAGE_INTERFACE_ITEM = new MMAItemBlock(Blocks.STORAGE_INTERFACE);
+    public static final ItemBlock STORAGE_INDEXER_ITEM = new MMAItemBlock(Blocks.STORAGE_INDEXER);
+    
+    public static final ItemBlock TOKEN_GENERATOR_ITEM = new MMAItemBlock(Blocks.TOKEN_GENERATOR);
+    public static final ItemBlock QUEUE_ITEM = new MMAItemBlock(Blocks.QUEUE);
+    public static final ItemBlock PATTERN_STORAGE_ITEM = new MMAItemBlock(Blocks.PATTERN_STORAGE);
+    
+    public static final ItemBlock CRAFTING_STORAGE_ITEM = new MMAItemBlock(Blocks.CRAFTING_STORAGE);
+    public static final ItemBlock CRAFTING_PROCESSOR_ITEM = new MMAItemBlock(Blocks.CRAFTING_PROCESSOR);
+    public static final ItemBlock CRAFTING_CONTROLLER_ITEM = new MMAItemBlock(Blocks.CRAFTING_CONTROLLER);
+    
     //Items
-    public static final Item LINKCARD = new LinkCardItem();
-    public static final Item TOKEN = new Token();
-    public static final Item RECIPE_PATTERN = new RecipePattern();
-    public static final Item DEBUG_WAND = new DebugWand();
-    public static final Item IN_WORLD_CRAFTER = new InWorldCrafterItem();
+    public static final Item LINKCARD = new LinkCardItem(LINKCARD_REGISTRY_NAME);
+    public static final Item TOKEN = new Token(TOKEN_REGISTRY_NAME);
+    public static final Item RECIPE_PATTERN = new RecipePattern(RECIPE_PATTERN_REGISTRY_NAME);
+    public static final Item DEBUG_WAND = new DebugWand(DEBUG_WAND_REGISTRY_NAME);
+    public static final Item IN_WORLD_CRAFTER = new InWorldCrafterItem(IN_WORLD_CRAFTER_REGISTRY_NAME);
+    
+    private static final Item[] ITEMS = {//NOSONAR
+            LINKCARD,
+            TOKEN,
+            RECIPE_PATTERN,
+            DEBUG_WAND,
+            IN_WORLD_CRAFTER
+    };
+    
+    private static final ItemBlock[] ITEM_BLOCKS = {
+            STORAGE_INTERFACE_ITEM,
+            STORAGE_INDEXER_ITEM,
+            TOKEN_GENERATOR_ITEM,
+            QUEUE_ITEM,
+            PATTERN_STORAGE_ITEM,
+            CRAFTING_STORAGE_ITEM,
+            CRAFTING_PROCESSOR_ITEM,
+            CRAFTING_CONTROLLER_ITEM
+    };
     
     private Items() {
     }
-
+    
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         CoreLog.info("Registering Items");
-
+        
         IForgeRegistry<Item> registry = event.getRegistry();
-
-        //set Register names
-        setNameAndRegister(LINKCARD,LINKCARD_REGISTRY_NAME,registry);
-        setNameAndRegister(TOKEN,TOKEN_REGISTRY_NAME,registry);
-        setNameAndRegister(RECIPE_PATTERN,RECIPE_PATTERN_REGISTRY_NAME,registry);
-        setNameAndRegister(DEBUG_WAND,DEBUG_WAND_REGISTRY_NAME,registry);
-        setNameAndRegister(IN_WORLD_CRAFTER,IN_WORLD_CRAFTER_REGISTRY_NAME,registry);
-
-        setNameAndRegister(STORAGE_INTERFACE_ITEM,STORAGE_INTERFACE_RL,registry);
-        setNameAndRegister(STORAGE_INDEXER_ITEM,STORAGE_INDEXER_RL,registry);
-
-        setNameAndRegister(TOKEN_GENERATOR_ITEM,TOKEN_GENERATOR_REGISTRY_NAME,registry);
-        setNameAndRegister(QUEUE_ITEM,QUEUE_RL,registry);
-        setNameAndRegister(PATTERN_STORAGE_ITEM,PATTERN_STORAGE_REGISTRY_NAME,registry);
-
-        setNameAndRegister(CRAFTING_CONTROLLER_ITEM,CRAFTING_CONTROLLER_RL,registry);
-        setNameAndRegister(CRAFTING_PROCESSOR_ITEM,CRAFTING_PROCESSOR_RL,registry);
-        setNameAndRegister(CRAFTING_STORAGE_ITEM,CRAFTING_STORAGE_RL,registry);
+        
+        registry.registerAll(ITEMS);
+        registry.registerAll(ITEM_BLOCKS);
     }
-
-    private static void setNameAndRegister(Item item, ResourceLocation resourceLocation, IForgeRegistry<Item> reg) {
-        item.setRegistryName(resourceLocation);
-        item.setUnlocalizedName(resourceLocation.toString());
-        reg.register(item);
-    }
-
+    
     @SubscribeEvent
     public static void attacheCapabilityProvider(AttachCapabilitiesEvent<ItemStack> event) {
         if (event.getObject().getItem() == LINKCARD) {
@@ -98,34 +94,22 @@ public class Items {
             event.addCapability(CAP_CRAFTING_RECIPE, new CraftingRecipeProvider(event.getObject()));
         }
     }
-
+    
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void initModels(ModelRegistryEvent event) {
         CoreLog.info("Registering Models");
-
-        //ItemBlocks
-        registerDefaultModel(STORAGE_INTERFACE_ITEM);
-        registerDefaultModel(STORAGE_INDEXER_ITEM);
-
-        registerDefaultModel(TOKEN_GENERATOR_ITEM);
-        registerDefaultModel(QUEUE_ITEM);
-        registerDefaultModel(PATTERN_STORAGE_ITEM);
-
-        registerDefaultModel(CRAFTING_STORAGE_ITEM);
-        registerDefaultModel(CRAFTING_PROCESSOR_ITEM);
-        registerDefaultModel(CRAFTING_CONTROLLER_ITEM);
-
-        //Items
-        registerDefaultModel(LINKCARD);
-        registerDefaultModel(TOKEN);
-        registerDefaultModel(RECIPE_PATTERN);
-        registerDefaultModel(DEBUG_WAND);
-        registerDefaultModel(IN_WORLD_CRAFTER);
+        
+        for (Item item : ITEMS) {
+            registerDefaultModel(item);
+        }
+        for (ItemBlock itemBlock : ITEM_BLOCKS) {
+            registerDefaultModel(itemBlock);
+        }
     }
-
+    
     @SideOnly(Side.CLIENT)
-    private static void registerDefaultModel(Item item){
-        ModelLoader.setCustomModelResourceLocation(item,0,new ModelResourceLocation(Objects.requireNonNull(item.getRegistryName()),"inventory"));
+    private static void registerDefaultModel(Item item) {
+        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(Objects.requireNonNull(item.getRegistryName()), "inventory"));
     }
 }

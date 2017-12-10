@@ -3,19 +3,14 @@ package de.webtwob.mma.core.common.item;
 import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.core.MMACore;
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,10 +22,10 @@ import java.util.List;
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
-public class Token extends Item {
+public class Token extends MMAItem {
 
-    public Token() {
-        setCreativeTab(MMACreativeTab.MMATab);
+    public Token(ResourceLocation rl) {
+        super(rl);
     }
 
     @Override

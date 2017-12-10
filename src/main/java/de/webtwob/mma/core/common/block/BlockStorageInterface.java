@@ -1,9 +1,7 @@
 package de.webtwob.mma.core.common.block;
 
 import de.webtwob.mma.api.property.MMAProperties;
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -11,6 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
@@ -22,11 +21,10 @@ import javax.annotation.Nonnull;
 /**
  * Created by BB20101997 on 16. Mär. 2017.
  */
-public class BlockStorageInterface extends Block {
+public class BlockStorageInterface extends MMABlock {
 
-    public BlockStorageInterface() {
-        super(Material.IRON);
-        setCreativeTab(MMACreativeTab.MMATab);
+    public BlockStorageInterface(ResourceLocation rl) {
+        super(Material.IRON,rl);
 
         IBlockState state = blockState.getBaseState();
         state = state.withProperty(MMAProperties.FACING, EnumFacing.UP);

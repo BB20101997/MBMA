@@ -1,16 +1,14 @@
 package de.webtwob.mma.core.common.item;
 
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
-
-import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
-public class RecipePattern extends Item {
+public class RecipePattern extends MMAItem {
 
-    public RecipePattern() {
-        setCreativeTab(MMACreativeTab.MMATab);
+    public RecipePattern(ResourceLocation rl) {
+        super(rl);
     }
 
 }

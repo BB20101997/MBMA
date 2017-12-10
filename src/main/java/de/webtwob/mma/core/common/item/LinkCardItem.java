@@ -3,19 +3,15 @@ package de.webtwob.mma.core.common.item;
 import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.property.IsLinkedItemPropertyGetter;
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
+import de.webtwob.mma.core.common.creativetab.CoreCreativeTab;
 import de.webtwob.mma.core.common.references.MMAUnlocalizedNames;
 import de.webtwob.mma.core.common.references.ResourceLocations;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,11 +23,11 @@ import java.util.List;
 /**
  * Created by bennet on 17.03.17.
  */
-public class LinkCardItem extends Item {
+public class LinkCardItem extends MMAItem {
 
-    public LinkCardItem() {
-        super();
-        setCreativeTab(MMACreativeTab.MMATab);
+    public LinkCardItem(ResourceLocation rl) {
+        super(rl);
+        setCreativeTab(CoreCreativeTab.MMATab);
         addPropertyOverride(ResourceLocations.Items.LINKED, IsLinkedItemPropertyGetter.INSTANCE);
     }
 

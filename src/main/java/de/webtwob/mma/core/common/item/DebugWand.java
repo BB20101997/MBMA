@@ -2,17 +2,16 @@ package de.webtwob.mma.core.common.item;
 
 import de.webtwob.mma.api.interfaces.block.IDebuggableBlock;
 import de.webtwob.mma.api.interfaces.tileentity.IDebuggableTile;
-import de.webtwob.mma.core.common.creativetab.MMACreativeTab;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
@@ -23,14 +22,13 @@ import javax.annotation.Nonnull;
 /**
  * Created by BB20101997 on 17. Okt. 2017.
  */
-public class DebugWand extends Item {
+public class DebugWand extends MMAItem {
 
     /**
      * The Constructor to create a new DebugWand Instance
      */
-    public DebugWand() {
-        super();
-        setCreativeTab(MMACreativeTab.MMATab);
+    public DebugWand(ResourceLocation rl) {
+        super(rl);
     }
 
 

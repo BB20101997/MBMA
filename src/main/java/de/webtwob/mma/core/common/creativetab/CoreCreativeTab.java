@@ -12,12 +12,12 @@ import javax.annotation.Nonnull;
 /**
  * Created by bennet on 17.03.17.
  */
-public class MMACreativeTab extends CreativeTabs {
+public class CoreCreativeTab extends CreativeTabs {
 
 
-    public static final CreativeTabs MMATab = new MMACreativeTab();
+    public static final CreativeTabs MMATab = new CoreCreativeTab();
 
-    private MMACreativeTab() {
+    private CoreCreativeTab() {
         super("mma");
     }
 
