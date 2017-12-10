@@ -91,7 +91,13 @@ public class InWorldRecipeLoader {
         
         @Override
         public InWorldRecipe deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if(!json.isJsonObject()){
+                throw new JsonParseException("Root JsonElement is not an JsonObject");
+            }
             JsonObject root = json.getAsJsonObject();
+            if(!root.has("Type")){
+                throw new JsonParseException("Missing Element \"Type\" in Root Object");
+            }
             String type = root.get("Type").getAsString();
             switch (type) {
                 case "BlocksOnly": {

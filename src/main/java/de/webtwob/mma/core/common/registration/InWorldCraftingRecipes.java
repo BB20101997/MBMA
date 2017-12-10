@@ -1,6 +1,7 @@
 package de.webtwob.mma.core.common.registration;
 
 
+import com.google.gson.JsonParseException;
 import de.webtwob.mma.api.APILog;
 import de.webtwob.mma.api.registries.InWorldRecipe;
 import de.webtwob.mma.api.util.InWorldRecipeLoader;
@@ -28,6 +29,7 @@ import java.util.stream.Stream;
 @Mod.EventBusSubscriber(modid = MMACore.MODID)
 public class InWorldCraftingRecipes {
     private static final String RECIPE_DIR = "/assets/mmacore/3d_recipes";
+    
     private InWorldCraftingRecipes() {
     }
     
@@ -43,10 +45,10 @@ public class InWorldCraftingRecipes {
         try {
             URI folderURI = InWorldRecipeLoader.class.getResource(RECIPE_DIR).toURI();
             Path folderPath;
-            if("jar".equals(folderURI.getScheme())){
+            if ("jar".equals(folderURI.getScheme())) {
                 fileSystem = FileSystems.newFileSystem(folderURI, Collections.emptyMap());
                 folderPath = fileSystem.getPath(RECIPE_DIR);
-            }else{
+            } else {
                 folderPath = Paths.get(folderURI);
             }
             pathIterator = Files.walk(folderPath);
@@ -55,15 +57,21 @@ public class InWorldCraftingRecipes {
                 if ("3drecipe".equals(FilenameUtils.getExtension(path.toString()))) {
                     Path relativePath = folderPath.relativize(path);
                     ResourceLocation recipeRL = new ResourceLocation("mmacore", FilenameUtils.removeExtension(relativePath.toString()).replaceAll("\\\\", "/"));
-                    InWorldRecipe recipe = InWorldRecipeLoader.loadRecipeFromReader(Files.newBufferedReader(path));
-                    recipe.setRegistryName(recipeRL);
-                    registry.register(recipe);
+                    try {
+                        InWorldRecipe recipe = InWorldRecipeLoader.loadRecipeFromReader(Files.newBufferedReader(path));
+                        recipe.setRegistryName(recipeRL);
+                        registry.register(recipe);
+                    } catch (NullPointerException | JsonParseException | ClassCastException | IllegalStateException e) {
+                        CoreLog.LOGGER.error("Failed to register build in InWorldRecipe " + recipeRL + " in " + path, e);
+                    } catch (Exception e){
+                        CoreLog.LOGGER.error("Unexpected Exception while loading build in InWorldRecipe "+recipeRL+" in "+path,e);
+                    }
                 }
             }
         } catch (IOException | URISyntaxException e) {
             APILog.LOGGER.error(e);
         } finally {
-            if(fileSystem!=null) {
+            if (fileSystem != null) {
                 try {
                     fileSystem.close();
                 } catch (IOException e) {
