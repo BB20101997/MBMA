@@ -1,5 +1,6 @@
 package de.webtwob.mma.core.common.item;
 
+import de.webtwob.mma.api.util.ResourceLocationUtils;
 import de.webtwob.mma.core.common.creativetab.CoreCreativeTab;
 
 import net.minecraft.item.Item;
@@ -13,7 +14,7 @@ public abstract class MMAItem extends Item{
     public MMAItem(ResourceLocation rl){
         setCreativeTab(CoreCreativeTab.MMATab);
         setRegistryName(rl);
-        setUnlocalizedName(rl.toString());
+        setUnlocalizedName(ResourceLocationUtils.unlocalizedNameForResourceLocation(rl));
     }
     
 }

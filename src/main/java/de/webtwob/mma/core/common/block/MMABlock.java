@@ -1,5 +1,6 @@
 package de.webtwob.mma.core.common.block;
 
+import de.webtwob.mma.api.util.ResourceLocationUtils;
 import de.webtwob.mma.core.common.creativetab.CoreCreativeTab;
 
 import net.minecraft.block.material.MapColor;
@@ -15,7 +16,7 @@ public abstract class MMABlock extends net.minecraft.block.Block{
         super(blockMaterialIn, blockMapColorIn);
         setCreativeTab(CoreCreativeTab.MMATab);
         setRegistryName(rl);
-        setUnlocalizedName(rl.toString());
+        setUnlocalizedName(ResourceLocationUtils.unlocalizedNameForResourceLocation(rl));
     }
     
     public MMABlock(Material materialIn, ResourceLocation rl) {
