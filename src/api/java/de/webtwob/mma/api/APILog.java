@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 @SuppressWarnings("JavaDoc")
 public class APILog {
 
-    private static final Logger LOGGER = LogManager.getLogger(MMAAPI.MODID);
+    public static final Logger LOGGER = LogManager.getLogger(MMAAPI.MODID);
 
     private APILog() {
     }
@@ -25,7 +25,7 @@ public class APILog {
     public static void warn(String message, Object... data) {
         LOGGER.warn(message, data);
     }
-
+    
     public static void error(String message, Object... data) {
         LOGGER.error(message, data);
     }
