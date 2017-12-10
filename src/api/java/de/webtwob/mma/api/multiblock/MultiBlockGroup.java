@@ -25,6 +25,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     private final Set<MultiBlockMember> multiblockMemberSet = new HashSet<>();
     private final MultiBlockGroupManager manager;
     private MultiBlockGroupType type;
+    private MultiBlockGroupTypeInstance typeInstance = null;
     private boolean isValid = true;
 
     /**
@@ -41,6 +42,9 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     public MultiBlockGroup(MultiBlockGroupManager mbgm,MultiBlockGroupType type) {
         this(mbgm);
         this.type = type;
+        if (type instanceof InstantiatableGroupType) {
+            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this,()->{this.markDirty();return null;});
+        }
     }
 
     /**
@@ -83,11 +87,21 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         }
         if (multiblockMemberSet.size() < mbg.multiblockMemberSet.size()) {
             mbg.multiblockMemberSet.addAll(multiblockMemberSet);
+            if (mbg.typeInstance != null) {
+                mbg.typeInstance.joinData(typeInstance);
+            } else if (this.typeInstance != null) {
+                typeInstance.lostOnJoin();
+            }
             voidGroup();
             markDirty();
             return mbg;
         } else {
             multiblockMemberSet.addAll(mbg.multiblockMemberSet);
+            if (typeInstance != null) {
+                typeInstance.joinData(mbg.typeInstance);
+            } else if (mbg.typeInstance != null) {
+                mbg.typeInstance.lostOnJoin();
+            }
             mbg.voidGroup();
             markDirty();
             return this;
@@ -142,7 +156,12 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         if (type != null) {
-            compound.setString(NBTKeys.GROUP_TYPE, type.getRegistryName().toString());
+            ResourceLocation registryName = type.getRegistryName();
+            if (registryName != null)
+                compound.setString(NBTKeys.GROUP_TYPE, registryName.toString());
+        }
+        if (typeInstance instanceof INBTSerializable) {
+            compound.setTag(NBTKeys.GROUP_TYPE_INSTANCE, ((INBTSerializable) typeInstance).serializeNBT());
         }
         NBTTagList memberList = new NBTTagList();
         for(MultiBlockMember member:multiblockMemberSet){
@@ -157,6 +176,13 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     public void deserializeNBT(final NBTTagCompound compound) {
         if (compound.hasKey(NBTKeys.GROUP_TYPE, Constants.NBT.TAG_INT_ARRAY)) {
             type = GameRegistry.findRegistry(MultiBlockGroupType.class).getValue(new ResourceLocation(compound.getString(NBTKeys.GROUP_TYPE)));
+        }
+        
+        if (type instanceof InstantiatableGroupType) {
+            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this,()->{this.markDirty();return null;});
+            if (typeInstance != null && typeInstance instanceof INBTSerializable && compound.hasKey(NBTKeys.GROUP_TYPE_INSTANCE)) {
+                ((INBTSerializable)typeInstance).deserializeNBT(compound.getTag(NBTKeys.GROUP_TYPE_INSTANCE));
+            }
         }
 
         if (compound.hasKey(NBTKeys.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY)) {
@@ -174,5 +200,9 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
 
     private void markDirty(){
         manager.data.markDirty();
+    }
+    
+    MultiBlockGroupTypeInstance getTypeInstance() {
+        return typeInstance;
     }
 }

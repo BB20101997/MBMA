@@ -9,6 +9,7 @@ public class NBTKeys {
 
 
     public static final String GROUP_TYPE = MODID + ":group_type";
+    public static final String GROUP_TYPE_INSTANCE = MODID + ":group_type_instance";
     public static final String MBG_MEMBERS = MODID + ":members";
     public static final String MBG_LIST = MODID + ":mbgmDataMap";
 
