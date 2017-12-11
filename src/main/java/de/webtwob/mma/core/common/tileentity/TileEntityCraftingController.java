@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityCraftingController extends MultiBlockTileEntity {
+public class TileEntityCraftingController extends MultiBlockTileEntity{
     
     @ObjectHolder("mmacore:crafting")
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;

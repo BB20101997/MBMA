@@ -2,7 +2,10 @@ package de.webtwob.mma.core.common.item;
 
 import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
-import de.webtwob.mma.core.MMACore;
+import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
+import de.webtwob.mma.core.client.gui.TokenGui;
+import de.webtwob.mma.core.common.inventory.TokenContainer;
+import de.webtwob.mma.core.common.references.BlockHolder;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -17,12 +20,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
-public class Token extends MMAItem {
+public class Token extends MMAItem implements IGUIHandlerBoth{
 
     public Token(ResourceLocation rl) {
         super(rl);
@@ -51,7 +55,7 @@ public class Token extends MMAItem {
         if (!worldIn.isRemote) {
             BlockPos pos = playerIn.getPosition();
             playerIn.openGui(
-                    MMACore.INSTANCE, handIn.ordinal() + 1, worldIn, pos.getX(), pos.getY(),
+                    BlockHolder.apiInstance, handIn.ordinal(), worldIn, pos.getX(), pos.getY(),
                     pos.getZ()
             );
         }
@@ -80,5 +84,18 @@ public class Token extends MMAItem {
     @Override
     public int getItemStackLimit(ItemStack stack) {
         return 16;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return TokenGui.tryCreateInstance(player,EnumHand.values()[id]);
+    }
+    
+    @Nullable
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return TokenContainer.tryCreateInstance(player, EnumHand.values()[id]);
     }
 }
