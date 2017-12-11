@@ -6,6 +6,7 @@ import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * Created by BB20101997 on 03. Dez. 2017.
@@ -61,5 +62,12 @@ public class CraftingControllerContainer extends Container implements IInventory
             stack = invBasic.removeStackFromSlot(0);
             tileEntityCraftingController.addLinkCard(stack);
         }
+    }
+    
+    public static CraftingControllerContainer tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
+        if(tileEntity instanceof TileEntityCraftingController){
+            return new CraftingControllerContainer(player, (TileEntityCraftingController) tileEntity);
+        }
+        return null;
     }
 }

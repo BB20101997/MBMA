@@ -1,12 +1,14 @@
 package de.webtwob.mma.core.client.gui;
 
+import org.lwjgl.input.Keyboard;
+
+import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.api.inventory.GhostSlot;
 import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.inventory.TokenContainer;
 import de.webtwob.mma.core.common.packet.TokenUpdatePacket;
 import de.webtwob.mma.core.common.references.ResourceLocations;
 import de.webtwob.mma.core.common.registration.PacketHandler;
-import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -17,6 +19,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import java.io.IOException;
 
@@ -26,7 +30,8 @@ import static de.webtwob.mma.api.inventory.GhostSlot.adjustCount;
  * Created by bennet on 21.03.17.
  */
 public class TokenGui extends GuiContainer {
-
+    
+    private static Capability<ICraftingRequest> requestCapability;
     private int amount = 1;
 
     private GuiTextField itemNameTextField;
@@ -176,5 +181,18 @@ public class TokenGui extends GuiContainer {
 
     private void updateToken() {
         PacketHandler.INSTANCE.sendToServer(new TokenUpdatePacket(getItemStackFromTextField(itemNameTextField), amount));
+    }
+    
+     @CapabilityInject(ICraftingRequest.class)
+    private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
+        TokenGui.requestCapability = requestCapability;
+    }
+    
+    public static TokenGui tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
+        ItemStack held = player.getHeldItem(enumHand);
+                if (requestCapability != null && held.hasCapability(requestCapability, null)) {
+                    return new TokenGui(player, enumHand);
+                }
+        return null;
     }
 }

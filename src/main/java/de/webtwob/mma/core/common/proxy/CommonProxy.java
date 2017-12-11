@@ -6,11 +6,8 @@ import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.inventory.CraftingControllerContainer;
 import de.webtwob.mma.core.common.inventory.TokenContainer;
 import de.webtwob.mma.core.common.inventory.TokenGeneratorContainer;
-import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
-import de.webtwob.mma.core.common.tileentity.TileEntityRequestGenerator;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -30,9 +27,9 @@ public class CommonProxy implements IGuiHandler {
     public static final int QS_GUI = 0;
     
     public static final int MAIN_HAND_ITEM_GUI = 1;
-    public static final int OFF_HAND_ITEM_GUI = 2;
+    public static final int OFF_HAND_ITEM_GUI  = 2;
     
-    public static final int TOKEN_GENERATOR_GUI = 3;
+    public static final int TOKEN_GENERATOR_GUI     = 3;
     public static final int CRAFTING_CONTROLLER_GUI = 4;
     
     protected static Capability<ICraftingRequest> requestCapability;
@@ -56,29 +53,16 @@ public class CommonProxy implements IGuiHandler {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
         switch (id) {
             case MAIN_HAND_ITEM_GUI:
-            case OFF_HAND_ITEM_GUI: {
-                ItemStack held = player.getHeldItem(EnumHand.values()[id - 1]);
-                if (requestCapability != null && held.hasCapability(requestCapability, null)) {
-                    return new TokenContainer(player, EnumHand.values()[id - 1]);
-                }
-                break;
-            }
-            case TOKEN_GENERATOR_GUI: {
-                if (tileEntity instanceof TileEntityRequestGenerator) {
-                    return new TokenGeneratorContainer(player, (TileEntityRequestGenerator) tileEntity);
-                }
-                break;
-            }
-            case CRAFTING_CONTROLLER_GUI: {
-                if (tileEntity instanceof TileEntityCraftingController) {
-                    return new CraftingControllerContainer(player, (TileEntityCraftingController) tileEntity);
-                }
-                break;
-            }
+            case OFF_HAND_ITEM_GUI:
+                //TODO maybe instead add an interface for Items with InHandGui with functions to create GUI'S
+                return TokenContainer.tryCreateInstance(player, EnumHand.values()[id - 1]);
+            case TOKEN_GENERATOR_GUI:
+                return TokenGeneratorContainer.tryCreateInstance(player, tileEntity);
+            case CRAFTING_CONTROLLER_GUI:
+                return CraftingControllerContainer.tryCreateInstance(player, tileEntity);
             default:
                 return null;
         }
-        return null;
     }
     
     @Nullable

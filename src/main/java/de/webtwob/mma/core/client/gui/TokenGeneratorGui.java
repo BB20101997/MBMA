@@ -7,6 +7,7 @@ import de.webtwob.mma.core.common.tileentity.TileEntityRequestGenerator;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * Created by bennet on 28.03.17.
@@ -29,5 +30,12 @@ public class TokenGeneratorGui extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.TOKEN_GENERATOR_GUI);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+    }
+    
+    public static TokenGeneratorGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
+        if (tileEntity instanceof TileEntityRequestGenerator) {
+            return new TokenGeneratorGui(player, (TileEntityRequestGenerator) tileEntity);
+        }
+        return null;
     }
 }

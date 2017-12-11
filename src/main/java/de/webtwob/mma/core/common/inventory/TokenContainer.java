@@ -72,4 +72,12 @@ public class TokenContainer extends Container {
             request.setQuantity(amount);
         }
     }
+    
+    public static TokenContainer tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
+        ItemStack held = player.getHeldItem(enumHand);
+        if (requestCapability != null && held.hasCapability(requestCapability, null)) {
+            return new TokenContainer(player, enumHand);
+        }
+        return null;
+    }
 }

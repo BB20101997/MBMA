@@ -4,11 +4,8 @@ import de.webtwob.mma.core.client.gui.CraftingControllerGui;
 import de.webtwob.mma.core.client.gui.TokenGeneratorGui;
 import de.webtwob.mma.core.client.gui.TokenGui;
 import de.webtwob.mma.core.common.proxy.CommonProxy;
-import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
-import de.webtwob.mma.core.common.tileentity.TileEntityRequestGenerator;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -27,30 +24,15 @@ public class ClientProxy extends CommonProxy {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
         switch (id) {
             case MAIN_HAND_ITEM_GUI:
-            case OFF_HAND_ITEM_GUI: {
-                ItemStack held = player.getHeldItem(EnumHand.values()[id - 1]);
-                if (requestCapability != null && held.hasCapability(requestCapability, null)) {
-                    return new TokenGui(player, EnumHand.values()[id - 1]);
-                }
-                //add other Items here possibly
-                break;
-            }
-            case TOKEN_GENERATOR_GUI: {
-                if (tileEntity instanceof TileEntityRequestGenerator) {
-                    return new TokenGeneratorGui(player, (TileEntityRequestGenerator) tileEntity);
-                }
-                break;
-            }
-            case CRAFTING_CONTROLLER_GUI: {
-                if (tileEntity instanceof TileEntityCraftingController) {
-                    return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);
-                }
-                break;
-            }
+            case OFF_HAND_ITEM_GUI:
+                //TODO maybe instead add an interface for Items with InHandGui with functions to create GUI'S
+                return TokenGui.tryCreateInstance(player,EnumHand.values()[id-1]);
+            case TOKEN_GENERATOR_GUI:
+                return TokenGeneratorGui.tryCreateInstance(player,tileEntity);
+            case CRAFTING_CONTROLLER_GUI:
+                return CraftingControllerGui.tryCreateInstance(player,tileEntity);
             default:
-                //no matching gui
                 return null;
         }
-        return null;
     }
 }

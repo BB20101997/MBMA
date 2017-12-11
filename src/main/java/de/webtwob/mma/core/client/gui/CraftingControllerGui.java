@@ -11,6 +11,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
@@ -99,5 +100,12 @@ public class CraftingControllerGui extends GuiContainer {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         slider.mouseDragged(mc,mouseX,mouseY);
         offset = (int) Math.max(Math.min(slider.getSliderPosition() * (12 * (listLength - 8) - 7), (listLength - 8) * 12 - 7),0);
+    }
+    
+    public static CraftingControllerGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
+        if (tileEntity instanceof TileEntityCraftingController) {
+            return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);
+        }
+        return null;
     }
 }
