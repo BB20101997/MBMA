@@ -28,37 +28,39 @@ import javax.annotation.Nullable;
  * Created by bennet on 28.03.17.
  */
 public class TileEntityRequestGenerator extends TileEntity implements ITickable, ISidedInventory {
-
+    
+    private static final String NBT_KEY_CNAME = "CustomName";
+    
     private final NonNullList<ItemStack> musterList = NonNullList.withSize(5, ItemStack.EMPTY);
-
+    
     private final NonNullList<ItemStack> outputList = NonNullList.withSize(5, ItemStack.EMPTY);
-
+    
     //we need different list so we can have different ItemHandlers later for the correct sidedness
-    private final NonNullList<ItemStack> upList = NonNullList.withSize(1, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> upList    = NonNullList.withSize(1, ItemStack.EMPTY);
     private final NonNullList<ItemStack> northList = NonNullList.withSize(1, ItemStack.EMPTY);
-    private final NonNullList<ItemStack> eastList = NonNullList.withSize(1, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> eastList  = NonNullList.withSize(1, ItemStack.EMPTY);
     private final NonNullList<ItemStack> southList = NonNullList.withSize(1, ItemStack.EMPTY);
-    private final NonNullList<ItemStack> westList = NonNullList.withSize(1, ItemStack.EMPTY);
-
+    private final NonNullList<ItemStack> westList  = NonNullList.withSize(1, ItemStack.EMPTY);
+    
     private final ItemStackHandler muster = new FilteredItemHandler(musterList, MMAFilter.MUSTER_FILTER, 1);
-
+    
     private final ItemStackHandler output = new FilteredItemHandler(outputList, o -> false, 64);
-
-    private final ItemStackHandler up = new FilteredItemHandler(upList, MMAFilter.INPUT_FILTER, 64);
+    
+    private final ItemStackHandler up    = new FilteredItemHandler(upList, MMAFilter.INPUT_FILTER, 64);
     private final ItemStackHandler north = new FilteredItemHandler(northList, MMAFilter.INPUT_FILTER, 64);
-    private final ItemStackHandler east = new FilteredItemHandler(eastList, MMAFilter.INPUT_FILTER, 64);
+    private final ItemStackHandler east  = new FilteredItemHandler(eastList, MMAFilter.INPUT_FILTER, 64);
     private final ItemStackHandler south = new FilteredItemHandler(southList, MMAFilter.INPUT_FILTER, 64);
-    private final ItemStackHandler west = new FilteredItemHandler(westList, MMAFilter.INPUT_FILTER, 64);
-
+    private final ItemStackHandler west  = new FilteredItemHandler(westList, MMAFilter.INPUT_FILTER, 64);
+    
     private final ItemStackHandler combined = new CombinedItemHandler(north, east, south, west, up, output);
-
+    
     private String customName;
     private int idleTimer = 0;
-
+    
     public ItemStackHandler getMuster() {
         return muster;
     }
-
+    
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound nbtTagCompound) {
         super.readFromNBT(nbtTagCompound);
@@ -69,34 +71,33 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
         if (compound.hasKey(NBTKeys.TOKEN_GENERATOR_COMBINED)) {
             combined.deserializeNBT((NBTTagCompound) compound.getTag(NBTKeys.TOKEN_GENERATOR_COMBINED));
         }
-        if (nbtTagCompound.hasKey("CustomName", 8)) {
-            this.setCustomName(nbtTagCompound.getString("CustomName"));
+        if (nbtTagCompound.hasKey(NBT_KEY_CNAME, 8)) {
+            this.setCustomName(nbtTagCompound.getString(NBT_KEY_CNAME));
         }
-
-
+        
     }
-
+    
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbtTagCompound) {
         NBTTagCompound compound = getTileData();
         compound.setTag(NBTKeys.TOKEN_GENERATOR_MUSTER, muster.serializeNBT());
         compound.setTag(NBTKeys.TOKEN_GENERATOR_COMBINED, combined.serializeNBT());
-
+        
         nbtTagCompound = super.writeToNBT(nbtTagCompound);
-
+        
         if (this.hasCustomName()) {
-            nbtTagCompound.setString("CustomName", getName());
+            nbtTagCompound.setString(NBT_KEY_CNAME, getName());
         }
-
+        
         return nbtTagCompound;
     }
-
+    
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
     }
-
+    
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
@@ -106,7 +107,7 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
         }
         return super.getCapability(capability, facing);
     }
-
+    
     private IItemHandler getItemHandlerFromFacing(EnumFacing facing) {
         if (facing == null) {
             return combined;
@@ -125,15 +126,15 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
                 case EAST:
                     return east;
                 default: {
-                    throw new IllegalArgumentException(String.format("Parameter of type EnumFacing is neither null nor one "
-                            + "of" + " the six possible values: %s \nWho " +
-                            "added" + " a " + "dimension to the universe " +
-                            "without " + "telling me?", facing.toString()));
+                    throw new IllegalArgumentException(String.format(
+                            "Parameter of type EnumFacing is neither null nor one of the six possible values: %s %nWho added a dimension to the universe without telling me?",
+                            facing.toString()
+                    ));
                 }
             }
         }
     }
-
+    
     @Override
     public void update() {
         if (idleTimer <= 0) {
@@ -145,8 +146,10 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
                         continue;
                     }
                     ICraftingRequest request = extract.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null);
-                    ICraftingRequest musterRequest = muster.getStackInSlot(slot).getCapability(APICapabilities
-                            .CAPABILITY_CRAFTING_REQUEST, null);
+                    ICraftingRequest musterRequest = muster.getStackInSlot(slot)
+                                                           .getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST,
+                                                                          null
+                                                           );
                     copyRequest(musterRequest, request);
                     outputList.set(slot, extract);
                 }
@@ -157,21 +160,20 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
             idleTimer--;
         }
     }
-
+    
     private void copyRequest(ICraftingRequest musterRequest, ICraftingRequest request) {
         if (musterRequest != null && request != null) {
             request.setRequest(musterRequest.getRequest());
             request.setQuantity(musterRequest.getQuantity());
         }
     }
-
-
+    
     private boolean canProccesForSlot(int slot) {
         if (slot < 5 && slot >= 0) {
-            ItemStack extract = combined.extractItem(slot, 1, true);
-            ItemStack out = output.getStackInSlot(slot);
+            ItemStack extract  = combined.extractItem(slot, 1, true);
+            ItemStack out      = output.getStackInSlot(slot);
             ItemStack template = muster.getStackInSlot(slot);
-
+            
             if (template.isEmpty() || extract.isEmpty()) {
                 return false;
             }
@@ -184,14 +186,17 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
             if (out.getCount() >= out.getItem().getItemStackLimit(out)) {
                 return false;
             }
-
-            copyRequest(template.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null), extract.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null));
-
+            
+            copyRequest(
+                    template.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null),
+                    extract.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)
+            );
+            
             return ItemHandlerHelper.canItemStacksStack(out, extract);
         }
         return false;
     }
-
+    
     @Nonnull
     @Override
     public int[] getSlotsForFace(@Nonnull EnumFacing enumFacing) {
@@ -208,26 +213,27 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
                 return new int[]{2};
             case WEST:
                 return new int[]{3};
+            default:
+                return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         }
-        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     }
-
+    
     @Override
     public boolean canInsertItem(int slot, @Nonnull ItemStack itemStack, @Nonnull EnumFacing enumFacing) {
         boolean flag = enumFacing != EnumFacing.DOWN && slot <= 4 && MMAFilter.INPUT_FILTER.test(itemStack);
         return flag && combined.getStackInSlot(slot).isEmpty();
     }
-
+    
     @Override
     public boolean canExtractItem(int i, @Nonnull ItemStack itemStack, @Nonnull EnumFacing enumFacing) {
         return enumFacing == EnumFacing.DOWN && i > 4;
     }
-
+    
     @Override
     public int getSizeInventory() {
         return combined.getSlots();
     }
-
+    
     @Override
     public boolean isEmpty() {
         for (int slot = 0; slot < combined.getSlots(); slot++) {
@@ -237,7 +243,7 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
         }
         return true;
     }
-
+    
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
@@ -265,7 +271,7 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
             }
         }
     }
-
+    
     @Nonnull
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
@@ -275,7 +281,7 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
         }
         return retrieved;
     }
-
+    
     @Nonnull
     @Override
     public ItemStack removeStackFromSlot(int slot) {
@@ -285,77 +291,77 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
         }
         return retrieved;
     }
-
+    
     @Override
     public void setInventorySlotContents(int slot, @Nonnull ItemStack itemStack) {
-            switch (slot) {
-                case 0: {
-                    northList.set(0, itemStack);
-                    break;
-                }
-                case 1: {
-                    eastList.set(0, itemStack);
-                    break;
-                }
-                case 2: {
-                    southList.set(0, itemStack);
-                    break;
-                }
-                case 3: {
-                    westList.set(0, itemStack);
-                    break;
-                }
-                case 4: {
-                    upList.set(0, itemStack);
-                    break;
-                }
-                default:{
-                    outputList.set(slot, itemStack);
-                }
+        switch (slot) {
+            case 0: {
+                northList.set(0, itemStack);
+                break;
             }
+            case 1: {
+                eastList.set(0, itemStack);
+                break;
+            }
+            case 2: {
+                southList.set(0, itemStack);
+                break;
+            }
+            case 3: {
+                westList.set(0, itemStack);
+                break;
+            }
+            case 4: {
+                upList.set(0, itemStack);
+                break;
+            }
+            default: {
+                outputList.set(slot, itemStack);
+            }
+        }
         markDirty();
     }
-
+    
     @Override
     public int getInventoryStackLimit() {
         return 1;
     }
-
+    
     @Override
     public boolean isUsableByPlayer(@Nonnull EntityPlayer entityPlayer) {
         return true;
     }
-
+    
     @Override
     public void openInventory(@Nonnull EntityPlayer entityPlayer) {
         //no action required for InventoryOpen
     }
-
+    
     @Override
     public void closeInventory(@Nonnull EntityPlayer entityPlayer) {
         //no action required for InventoryOpen
     }
-
+    
     @Override
     public boolean isItemValidForSlot(int slot, @Nonnull ItemStack itemStack) {
         return slot <= 4 && MMAFilter.INPUT_FILTER.test(itemStack);
     }
-
+    
     @Override
     public int getField(int i) {
         return 0;
     }
-
+    
     @Override
     public void setField(int i, int i1) {
-
+        //NO-OP
     }
-
+    
     @Override
     public int getFieldCount() {
         return 0;
     }
-
+    
     @Override
     public void clear() {
         for (int slot = 0; slot < combined.getSlots(); slot++) {
@@ -363,18 +369,18 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
         }
         markDirty();
     }
-
+    
     @Nonnull
     @Override
     public String getName() {
         return hasCustomName() ? customName : "mma.inventory.token.generator";
     }
-
+    
     @Override
     public boolean hasCustomName() {
         return customName != null && !customName.isEmpty();
     }
-
+    
     private void setCustomName(String customName) {
         this.customName = customName;
     }
