@@ -21,7 +21,7 @@ public class MMAAPI {
     public static final String COMMON_PROXY = "de.webtwob.mma.api.inventory.ApiCommonProxy";
     
     @Mod.Instance(MODID)
-    public static MMAAPI INSTANCE;
+    public static MMAAPI INSTANCE;//NOSONAR
     
     @SidedProxy(serverSide = COMMON_PROXY,clientSide = CLIENT_PROXY)
     private static ApiCommonProxy proxy = null;

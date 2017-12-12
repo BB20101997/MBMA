@@ -20,10 +20,10 @@ public class MMACore {
     public static final String CLIENT_PROXY = "de.webtwob.mma.core.client.proxy.ClientProxy";
 
     @Mod.Instance(MODID)
-    public static MMACore INSTANCE = null;
+    public static MMACore INSTANCE = null;//NOSONAR
 
     @SidedProxy(clientSide = CLIENT_PROXY, serverSide = COMMON_PROXY)
-    public static CommonProxy PROXY = null;
+    public static CommonProxy PROXY = null;//NOSONAR
 
     public MMACore() {
         CoreLog.info("ModInstance created!");
