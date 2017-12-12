@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by BB20101997 on 04. Dez. 2017.
  */
@@ -24,6 +26,7 @@ public class InWorldCrafterItem extends MMAItem {
     }
     
     @Override
+    @Nonnull
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(worldIn!=null&&pos!=null&&facing!=null){
             if(!worldIn.isRemote){
