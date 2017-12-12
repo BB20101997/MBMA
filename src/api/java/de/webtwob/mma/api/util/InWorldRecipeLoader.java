@@ -96,10 +96,10 @@ public class InWorldRecipeLoader {
         return loadRecipeFromReader(newReader(recipeFile, StandardCharsets.UTF_8));
     }
     
+    @Nonnull
     public static InWorldRecipe loadRecipeFromReader(Reader recipeReader) {
         Gson gson = new GsonBuilder().registerTypeAdapter(InWorldRecipe.class, new InWordRecipeDeserializer()).create();
         return gson.fromJson(recipeReader, InWorldRecipe.class);
-        
     }
     
     private static class InWordRecipeDeserializer implements JsonDeserializer<InWorldRecipe> {
