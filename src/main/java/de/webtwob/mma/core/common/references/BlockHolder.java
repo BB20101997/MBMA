@@ -22,7 +22,7 @@ public class BlockHolder {
     public static final Block CRAFTING_TABLE = null;
    
     @Mod.Instance(value = "mmaapi",owner = "mmacore")
-    public static MMAAPI apiInstance = null;
+    public static MMAAPI apiInstance = null;//NOSONAR
     
     private BlockHolder() {
     
