@@ -1,13 +1,12 @@
 package de.webtwob.mma.core.common.multiblockgroups;
 
+import de.webtwob.mma.api.crafting.ItemStackContainer;
 import de.webtwob.mma.api.multiblock.InstantiatableGroupType;
 import de.webtwob.mma.api.multiblock.MultiBlockGroup;
 import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 
-import net.minecraft.item.ItemStack;
-
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Supplier;
 
@@ -18,20 +17,18 @@ public class QueueGroupType extends InstantiatableGroupType {
     
     @Override
     public MultiBlockGroupTypeInstance createGroupTypeInstance(MultiBlockGroup group, Supplier markDirtyCallback) {
-        return new QueueGroupType.Instance(group);
+        return new QueueGroupType.Instance();
     }
     
     public class Instance implements MultiBlockGroupTypeInstance {
         
-        private MultiBlockGroup group;
-        
-        public Instance(MultiBlockGroup group){
-            this.group = group;
-        }
+        private final Queue<ItemStackContainer> containers = new LinkedList<>();
         
         @Override
         public void joinData(@Nullable MultiBlockGroupTypeInstance oldInstance) {
-        
+            if(oldInstance instanceof QueueGroupType.Instance){
+                containers.addAll(((Instance) oldInstance).getQueue());
+            }
         }
     
         @Override
@@ -39,9 +36,8 @@ public class QueueGroupType extends InstantiatableGroupType {
             //NO-OP
         }
         
-        public List<Queue<ItemStack>> getQueues(){
-            //TODO
-            return null;
+        public Queue<ItemStackContainer> getQueue(){
+            return containers;
         }
         
     }

@@ -202,7 +202,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         manager.data.markDirty();
     }
     
-    MultiBlockGroupTypeInstance getTypeInstance() {
+   public MultiBlockGroupTypeInstance getTypeInstance() {
         return typeInstance;
     }
 }
