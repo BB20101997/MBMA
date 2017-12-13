@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -38,7 +39,7 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandlerBoth{
+public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandlerBoth {
     
     @ObjectHolder("mmacore:queue")
     private static final MultiBlockGroupType MANAGER_QUEUE = null;
@@ -51,6 +52,7 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
     private final LinkedList<ItemStackContainer> inUseRequestContainer = new LinkedList<>();
     
     private IItemHandler handler = new EnqueueingItemHandler();
+    private boolean resync = false;
     
     public TileEntityQueue() {
         //init freeItemStackContainers
@@ -136,11 +138,13 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
      * @return an Array containing the currently enqueued Requests
      */
     @Nonnull
-    public Queue<ItemStackContainer> getCurrentRequests() {
-        MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-        if (instance instanceof QueueGroupType.Instance) {
-            QueueGroupType.Instance queueInstance = (QueueGroupType.Instance) instance;
-            return queueInstance.getQueue();
+    public LinkedList<ItemStackContainer> getCurrentRequests() {
+        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
+        if (group != null) {
+            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
+            if (instance instanceof QueueGroupType.Instance) {
+                return ((QueueGroupType.Instance) instance).getQueue();
+            }
         }
         return new LinkedList<>();
     }
@@ -163,6 +167,17 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
                     return request;
                 })
                 .orElse(ItemStack.EMPTY);
+    }
+    
+    @Override
+    public void update() {
+        super.update();
+        if(resync){
+            resync = false;
+            removeAllFromQueue(inUseRequestContainer);
+            removeAllFromQueue(freeRequestContainer);
+            addAllToQueue(inUseRequestContainer);
+        }
     }
     
     @Override
@@ -210,8 +225,10 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
             if (instance instanceof QueueGroupType.Instance) {
                 Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
                 queue.removeAll(itemStackContainer);
+                return;
             }
         }
+        resync = true;
     }
     
     private void addToQueue(ItemStackContainer itemStackContainer) {
@@ -221,8 +238,10 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
             if (instance instanceof QueueGroupType.Instance) {
                 Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
                 queue.add(itemStackContainer);
+                return;
             }
         }
+        resync = true;
     }
     
     private void addAllToQueue(Collection<ItemStackContainer> itemStackContainerCollection) {
@@ -234,31 +253,39 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
                 queue.addAll(itemStackContainerCollection);
             }
         }
+        
+        resync = true;
     }
     
     private boolean canStackBeAddedToQueue(ItemStack stack) {
         //do we have room, is there even some thing to insert and does crafting exists
-        if (freeRequestContainer.isEmpty() || stack.isEmpty() || capabilityCraftingRequest == null){
+        if (freeRequestContainer.isEmpty() || stack.isEmpty() || capabilityCraftingRequest == null) {
             return false;
         }
         
         //is the ItemStack a Request and is it uncompleted
-        ICraftingRequest request = stack.getCapability(capabilityCraftingRequest,null);
+        ICraftingRequest request = stack.getCapability(capabilityCraftingRequest, null);
         
         return null != request && !request.isCompleted();
-    
+        
     }
     
     @Nullable
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return QueueGui.tryCreateInstance(id,player,world,x,y,z);
+        return QueueGui.tryCreateInstance(id, player, world, x, y, z);
     }
     
     @Nullable
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return QueueContainer.tryCreateInstance(id,player,world,x,y,z);
+        return QueueContainer.tryCreateInstance(id, player, world, x, y, z);
+    }
+    
+    @Override
+    public void performDebugOnTile(EntityPlayer player) {
+        super.performDebugOnTile(player);
+        player.sendStatusMessage(new TextComponentString(String.format("%d out of %d Queue length in use!\n", inUseRequestContainer.size(), MMAConfiguration.queueLength)), false);
     }
     
     private class EnqueueingItemHandler implements IItemHandler {
@@ -290,20 +317,20 @@ public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandle
             }
             
             //TODO check if other queues in the MultiBlock have ISC's left and use those if we are out
-            if(!canStackBeAddedToQueue(stack)){
+            if (!canStackBeAddedToQueue(stack)) {
                 return stack;
             }
             
             //create two copies one to return and one to enqueue
             ItemStack enqueue = stack.copy();
             ItemStack result;
-    
+            
             //set the stack we want to enqueue to size 1 while decreasing the returned stack, we don't want to dupe requests
-            if(stack.getCount()!=1) {
+            if (stack.getCount() != 1) {
                 result = stack.copy();
                 result.shrink(1);
                 enqueue.setCount(1);
-            }else{
+            } else {
                 result = ItemStack.EMPTY;
             }
             

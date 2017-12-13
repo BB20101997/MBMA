@@ -7,7 +7,6 @@ import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.function.Supplier;
 
 /**
@@ -22,7 +21,7 @@ public class QueueGroupType extends InstantiatableGroupType {
     
     public class Instance implements MultiBlockGroupTypeInstance {
         
-        private final Queue<ItemStackContainer> containers = new LinkedList<>();
+        private final LinkedList<ItemStackContainer> containers = new LinkedList<>();
         
         @Override
         public void joinData(@Nullable MultiBlockGroupTypeInstance oldInstance) {
@@ -36,9 +35,13 @@ public class QueueGroupType extends InstantiatableGroupType {
             //NO-OP
         }
         
-        public Queue<ItemStackContainer> getQueue(){
+        public LinkedList<ItemStackContainer> getQueue(){
             return containers;
         }
-        
+    
+        @Override
+        public String toString() {
+            return String.format("QueueGroupType: List size: %d",containers.size());
+        }
     }
 }

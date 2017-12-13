@@ -1,6 +1,7 @@
 package de.webtwob.mma.api.inventory;
 
 import de.webtwob.mma.api.APILog;
+import de.webtwob.mma.api.references.ResourceLocations;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
@@ -15,28 +16,46 @@ import java.awt.*;
  */
 public class GuiSlider extends GuiButton {
     
-    private final int sliderLength;
-    private final ResourceLocation texture;
-    private final int enabledTextureX;
-    private final int disabledTextureX;
-    private final int enabledTextureY;
-    private final int disabledTextureY;
+    private int sliderLength = 15;
+    private ResourceLocation textureEnabled = ResourceLocations.GUI_COMPONENTS;
+    private ResourceLocation textureDisabled = ResourceLocations.GUI_COMPONENTS;
+    private int enabledTextureX;
+    private int disabledTextureX;
+    private int enabledTextureY;
+    private int disabledTextureY;
     private boolean holding;
     private int startPos = 0;
-    private Orientation orientation;
+    private Orientation orientation = Orientation.VERTICAL;
     private int sliderPosition = 0;
     private boolean isOver;
     
-    public GuiSlider(int id, Orientation orientation, int xPos, int yPos, int width, int height, int sliderLength, ResourceLocation texture, int enabledTextureX, int enabledTextureY, int disabledTextureX, int disabledTextureY) {
-        super(id, xPos, yPos, width, height, "");
-        enabled = false;
-        this.enabledTextureX = enabledTextureX;
-        this.disabledTextureX = disabledTextureX;
-        this.enabledTextureY = enabledTextureY;
-        this.disabledTextureY = disabledTextureY;
-        this.texture = texture;
+    public GuiSlider(int id, Orientation orientation, int x, int y, int length) {
+        super(id, x, y, "");
+        if (orientation.horizontal) {
+            enabledTextureX = 116;
+            enabledTextureY = 0;
+            disabledTextureX = 116;
+            disabledTextureY = 8;
+            width = length;
+            this.height = 8;
+        } else {
+            enabledTextureX = 100;
+            enabledTextureY = 0;
+            disabledTextureX = 108;
+            disabledTextureY = 0;
+            width = 8;
+            this.height = length;
+        }
+    }
+    
+    public void changeDiplaySettings(Orientation orientation, ResourceLocation textureEnabled, ResourceLocation textureDisabled, int enabledX, int enabledY, int disabledX, int disabledY) {
         this.orientation = orientation;
-        this.sliderLength = sliderLength;
+        this.textureEnabled = textureEnabled;
+        this.textureDisabled = textureDisabled;
+        enabledTextureX = enabledX;
+        enabledTextureY = enabledY;
+        disabledTextureX = disabledX;
+        disabledTextureY = disabledY;
     }
     
     @Override
@@ -59,9 +78,9 @@ public class GuiSlider extends GuiButton {
                 yFrom = y + sliderPosition;
                 yTo = yFrom + sliderLength;
             }
-            APILog.debug(String.format("Bounds x:%d-%d y:%d-%d Actual: x: %d y: %d",xFrom,xTo,yFrom,yTo,mouseX,mouseY));
+            APILog.debug(String.format("Bounds x:%d-%d y:%d-%d Actual: x: %d y: %d", xFrom, xTo, yFrom, yTo, mouseX, mouseY));
             if (xFrom <= mouseX && xTo >= mouseX && yFrom <= mouseY && yTo >= mouseY) {
-                startPos = sliderPosition - (orientation.horizontal?mouseX:mouseY);
+                startPos = sliderPosition - (orientation.horizontal ? mouseX : mouseY);
                 holding = true;
                 return true;
             }
@@ -84,9 +103,9 @@ public class GuiSlider extends GuiButton {
     @Override
     public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTick) {
         if (!visible) return;
-        mc.getTextureManager().bindTexture(texture);
         hovered = new Rectangle(x, y, orientation.horizontal ? sliderLength : width, orientation.horizontal ? height : sliderLength).contains(mouseX, mouseY);
-        isOver = new Rectangle(x,y,width,height).contains(mouseX,mouseY);
+        isOver = new Rectangle(x, y, width, height).contains(mouseX, mouseY);
+        mc.getTextureManager().bindTexture(enabled ? textureEnabled : textureDisabled);
         int textureX = enabled ? enabledTextureX : disabledTextureX;
         int textureY = enabled ? enabledTextureY : disabledTextureY;
         if (orientation.horizontal) {
@@ -96,6 +115,13 @@ public class GuiSlider extends GuiButton {
         }
     }
     
+    /**
+     * @param from the ranges start
+     * @param to   the ranges end
+     */
+    public int sliderPositionToRange(int from, int to) {
+        return (int) ((to - from) * getSliderPosition() + from);
+    }
     
     public double getSliderPosition() {
         if (orientation.horizontal) {
@@ -106,17 +132,16 @@ public class GuiSlider extends GuiButton {
     }
     
     public void setSliderPosition(double sliderPosition) {
-        int max = height-sliderLength;
-        if(orientation.horizontal){
-            max = width-sliderLength;
+        int max = height - sliderLength;
+        if (orientation.horizontal) {
+            max = width - sliderLength;
         }
-        if(sliderPosition>=0&&sliderPosition<=1){
-            this.sliderPosition = (int) (max*sliderPosition);
-        }
-        else{
-            if(sliderPosition<0){
+        if (sliderPosition >= 0 && sliderPosition <= 1) {
+            this.sliderPosition = (int) (max * sliderPosition);
+        } else {
+            if (sliderPosition < 0) {
                 this.sliderPosition = 0;
-            }else{
+            } else {
                 this.sliderPosition = max;
             }
         }
@@ -124,8 +149,8 @@ public class GuiSlider extends GuiButton {
     
     //call this in handleMouseInput in your GuiContainer or what ever
     public void handleMouseInput(boolean slowScroll) {
-        if(isOver) {
-            int i = Integer.signum(Mouse.getEventDWheel());
+        if (isOver) {
+            int i = Integer.signum(-Mouse.getEventDWheel());
             int max = height - sliderLength;
             if (orientation.horizontal) {
                 max = width - sliderLength;

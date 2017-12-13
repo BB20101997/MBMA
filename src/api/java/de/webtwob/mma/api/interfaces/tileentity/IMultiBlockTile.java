@@ -24,7 +24,10 @@ public interface IMultiBlockTile {
      */
     @Nullable
     static MultiBlockGroup getGroup(World world, BlockPos pos, MultiBlockGroupType type) {
-        MBGMWorldSaveData data = MBGMWorldSaveData.get(world);
+        MBGMWorldSaveData data = null;
+        if(world!=null) {
+            data= MBGMWorldSaveData.get(world);
+        }
         if (data != null) {
             return data.multiBlockGroupManager.getGroupForMember(new MultiBlockMember(world, pos), type);
         }

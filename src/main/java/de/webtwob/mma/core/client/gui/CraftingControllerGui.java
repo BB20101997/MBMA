@@ -25,17 +25,24 @@ public class CraftingControllerGui extends GuiContainer {
     
     private TileEntityCraftingController tileEntityCraftingController;
     
-    private GuiSlider slider = new GuiSlider(0, GuiSlider.Orientation.VERTICAL, 0, 0, 8, 103, 15, ResourceLocations.Textures.GUI_COMPONENTS, 100, 0, 108, 0);
+    private GuiSlider slider = new GuiSlider(0, GuiSlider.Orientation.VERTICAL, 0, 0, 103);
     
     private int selected = -1;
-    private int offset = 0;
     private int listLength = 0;
+    private static final int ELEMENT_HEIGHT = 12;
     
     public CraftingControllerGui(EntityPlayer player, TileEntityCraftingController tecc) {
         super(new CraftingControllerContainer(player, tecc));
         tileEntityCraftingController = tecc;
         xSize = 176;
         ySize = 220;
+    }
+    
+    public static CraftingControllerGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
+        if (tileEntity instanceof TileEntityCraftingController) {
+            return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);
+        }
+        return null;
     }
     
     @Override
@@ -56,15 +63,16 @@ public class CraftingControllerGui extends GuiContainer {
             selected = -1;
         }
         listLength = linkList.size();
-        for (int i = offset / 12; i < listLength; i++) {
-            if (i * 12 - offset < 104) {
-                mc.getTextureManager().bindTexture(ResourceLocations.Textures.GUI_COMPONENTS);
+        int offset = slider.sliderPositionToRange(0,getMaxOffset());
+        for (int i = offset/ ELEMENT_HEIGHT; i < listLength; i++) {
+            if (i * ELEMENT_HEIGHT - offset < 104) {
+                mc.getTextureManager().bindTexture(de.webtwob.mma.api.references.ResourceLocations.GUI_COMPONENTS);
                 if (selected != i) {
                     //not selected
-                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * 12 - offset, 0, 18, 147, 12);
+                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 18, 147,ELEMENT_HEIGHT);
                 } else {
                     //selected
-                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * 12 - offset, 0, 30, 147, 12);
+                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 30, 147, ELEMENT_HEIGHT);
                 }
                 ItemStack stack = linkList.get(i);
                 BlockPos pos = IBlockPosProvider.getBlockPos(stack);
@@ -74,15 +82,15 @@ public class CraftingControllerGui extends GuiContainer {
                 } else {
                     text = i + ": " + stack.getDisplayName();
                 }
-                GuiLabel label = new GuiLabel(fontRenderer, i, guiLeft + 10, guiTop + 31 + i * 12 - offset, 144, 10, Color.WHITE.getRGB());
+                GuiLabel label = new GuiLabel(fontRenderer, i, guiLeft + 10, guiTop + 31 + i * ELEMENT_HEIGHT - offset, 144, 10, Color.WHITE.getRGB());
                 label.addLine(text);
                 label.drawLabel(mc, mouseX, mouseY);
             }
         }
         //we may have drawn over some parts of the gui so we redraw those
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.LINKING_INTERFACE);
-        drawTexturedModalRect(guiLeft, guiTop + 132, 0, 132, xSize, 12);
-        drawTexturedModalRect(guiLeft, guiTop + 17, 0, 17, xSize, 12);
+        drawTexturedModalRect(guiLeft, guiTop + 132, 0, 132, xSize, ELEMENT_HEIGHT);
+        drawTexturedModalRect(guiLeft, guiTop + 17, 0, 17, xSize, ELEMENT_HEIGHT);
         slider.setEnabled(linkList.size() >= 9);
     }
     
@@ -90,29 +98,24 @@ public class CraftingControllerGui extends GuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (isPointInRegion(9, 30, 145, 102, mouseX, mouseY)) {
-            selected = (mouseY + offset - guiTop - 29) / 12;
+            selected = (mouseY + slider.sliderPositionToRange(0,getMaxOffset()) - guiTop - 29) / ELEMENT_HEIGHT;
         }
     }
-    
     
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        slider.mouseDragged(mc,mouseX,mouseY);
-        offset = Math.max(Math.min((int) (slider.getSliderPosition() * (12 * (listLength - 8) - 7)), (listLength - 8) * 12 - 7),0);
+        slider.mouseDragged(mc, mouseX, mouseY);
     }
     
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         slider.handleMouseInput(isShiftKeyDown());
-       
+    }
+   
+    private int getMaxOffset(){
+        return Math.max(0,(listLength - 8) * ELEMENT_HEIGHT - 7);
     }
     
-    public static CraftingControllerGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
-        if (tileEntity instanceof TileEntityCraftingController) {
-            return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);
-        }
-        return null;
-    }
 }

@@ -4,6 +4,7 @@ import de.webtwob.mma.api.interfaces.tileentity.IDebuggableTile;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.multiblock.MultiBlockGroup;
 import de.webtwob.mma.api.multiblock.MultiBlockGroupManager;
+import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 import de.webtwob.mma.api.multiblock.MultiBlockMember;
 import de.webtwob.mma.core.common.CoreLog;
 
@@ -47,6 +48,12 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
     public void performDebugOnTile(EntityPlayer player) {
         StringBuilder sb = new StringBuilder();
         sb.append("GroupType: ").append(group.getType().getRegistryName()).append('\n');
+        MultiBlockGroupTypeInstance instance = group.getTypeInstance();
+        if(instance!=null) {
+            sb.append("GroupInstance: ").append(instance).append('\n');
+        }else {
+            sb.append("GroupInstance: null \n");
+        }
         sb.append("GroupHash: ").append(group.hashCode()).append('\n');
         sb.append("GroupSize: ").append(group.getMembers().size()).append('\n');
         player.sendStatusMessage(new TextComponentString(sb.toString()), false);

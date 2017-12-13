@@ -72,7 +72,7 @@ public class DebugWand extends MMAItem {
         if (block.hasTileEntity(state)) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof IDebuggableTile) {
-                player.sendStatusMessage(new TextComponentString("Debug Information for TileEntity of Block " + block.getLocalizedName()), false);
+                player.sendStatusMessage(new TextComponentString("Debug Information for TileEntity of " + block.getLocalizedName()), false);
                 ((IDebuggableTile) tileEntity).performDebugOnTile(player);
                 return true;
             }
