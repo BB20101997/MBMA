@@ -21,30 +21,36 @@ import javax.annotation.Nonnull;
  */
 public class InWorldCrafterItem extends MMAItem {
     
-    public InWorldCrafterItem(ResourceLocation rl){
+    public InWorldCrafterItem(ResourceLocation rl) {
         super(rl);
     }
     
     @Override
     @Nonnull
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(worldIn!=null&&pos!=null&&facing!=null){
-            if(!worldIn.isRemote){
+        if (worldIn != null && pos != null && facing != null) {
+            if (!worldIn.isRemote) {
                 IForgeRegistry<InWorldRecipe> registry = GameRegistry.findRegistry(InWorldRecipe.class);
-                if(registry!=null)
-                    for (InWorldRecipe recipe:registry.getValues()){
-                        BlockPattern pattern = recipe.getBlockPattern();
-                        BlockPattern.PatternHelper helper = pattern.match(worldIn,pos.offset(facing.getOpposite()));
-                        if(helper!=null){
-                            recipe.executeRecipe(worldIn, helper);
-                            return EnumActionResult.SUCCESS;
-                        }
-                    }
-                    return EnumActionResult.PASS;
+                if (registry != null)
+                    return tryFindRecipe(registry, worldIn, pos, facing);
+                return EnumActionResult.PASS;
             }
             return EnumActionResult.SUCCESS;
         }
         return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    }
+    
+    @Nonnull
+    private EnumActionResult tryFindRecipe(@Nonnull IForgeRegistry<InWorldRecipe> registry, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EnumFacing facing) {
+        for (InWorldRecipe recipe : registry.getValues()) {
+            BlockPattern pattern = recipe.getBlockPattern();
+            BlockPattern.PatternHelper helper = pattern.match(worldIn, pos.offset(facing.getOpposite()));
+            if (helper != null) {
+                recipe.executeRecipe(worldIn, helper);
+                return EnumActionResult.SUCCESS;
+            }
+        }
+        return EnumActionResult.PASS;
     }
     
     @Override
