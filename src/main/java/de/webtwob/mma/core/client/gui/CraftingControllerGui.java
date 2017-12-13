@@ -99,7 +99,7 @@ public class CraftingControllerGui extends GuiContainer {
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         slider.mouseDragged(mc,mouseX,mouseY);
-        offset = (int) Math.max(Math.min(slider.getSliderPosition() * (12 * (listLength - 8) - 7), (listLength - 8) * 12 - 7),0);
+        offset = Math.max(Math.min((int) (slider.getSliderPosition() * (12 * (listLength - 8) - 7)), (listLength - 8) * 12 - 7),0);
     }
     
     public static CraftingControllerGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
