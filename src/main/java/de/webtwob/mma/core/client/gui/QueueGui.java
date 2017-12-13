@@ -1,10 +1,11 @@
 package de.webtwob.mma.core.client.gui;
 
+import de.webtwob.mma.api.crafting.ItemStackContainer;
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.inventory.GuiSlider;
-import de.webtwob.mma.core.common.inventory.CraftingControllerContainer;
+import de.webtwob.mma.core.common.inventory.QueueContainer;
 import de.webtwob.mma.core.common.references.ResourceLocations;
-import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
+import de.webtwob.mma.core.common.tileentity.TileEntityQueue;
 
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -12,35 +13,35 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
- * Created by BB20101997 on 03. Dez. 2017.
+ * Created by BB20101997 on 13. Dez. 2017.
  */
-public class CraftingControllerGui extends GuiContainer {
+public class QueueGui extends GuiContainer {
     
-    private TileEntityCraftingController tileEntityCraftingController;
-    
+    public static final int ELEMENT_HEIGHT = 16;//TODO
+    private TileEntityQueue entityQueue;
     private GuiSlider slider = new GuiSlider(0, GuiSlider.Orientation.VERTICAL, 0, 0, 103);
+    int selected = -1;
+    int listLength = 0;
     
-    private int selected = -1;
-    private int listLength = 0;
-    private static final int ELEMENT_HEIGHT = 12;
-    
-    public CraftingControllerGui(EntityPlayer player, TileEntityCraftingController tecc) {
-        super(new CraftingControllerContainer(player, tecc));
-        tileEntityCraftingController = tecc;
+    public QueueGui(TileEntityQueue te) {
+        super(new QueueContainer());
+        entityQueue = te;
         xSize = 176;
         ySize = 220;
     }
     
-    public static CraftingControllerGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
-        if (tileEntity instanceof TileEntityCraftingController) {
-            return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);
+    public static QueueGui tryCreateInstance(int id, EntityPlayer player, World world, int x, int y, int z) {
+        TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+        if (te instanceof TileEntityQueue) {
+            return new QueueGui((TileEntityQueue) te);
         }
         return null;
     }
@@ -56,25 +57,25 @@ public class CraftingControllerGui extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(ResourceLocations.Textures.LINKING_INTERFACE);
+        mc.getTextureManager().bindTexture(ResourceLocations.Textures.QUEUES_GUI);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        NonNullList<ItemStack> linkList = tileEntityCraftingController.getQueueLinkCards();
-        if (selected >= linkList.size()) {
+        LinkedList<ItemStackContainer> queue = entityQueue.getCurrentRequests();
+        listLength = queue.size();
+        if (selected >= queue.size()) {
             selected = -1;
         }
-        listLength = linkList.size();
         int offset = slider.sliderPositionToRange(0,getMaxOffset());
         for (int i = offset/ ELEMENT_HEIGHT; i < listLength; i++) {
             if (i * ELEMENT_HEIGHT - offset < 104) {
                 mc.getTextureManager().bindTexture(de.webtwob.mma.api.references.ResourceLocations.GUI_COMPONENTS);
                 if (selected != i) {
                     //not selected
-                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 18, 147,ELEMENT_HEIGHT);
+                    drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 18, 147, ELEMENT_HEIGHT);
                 } else {
                     //selected
                     drawTexturedModalRect(guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 30, 147, ELEMENT_HEIGHT);
                 }
-                ItemStack stack = linkList.get(i);
+                ItemStack stack = queue.get(i).getItemStack();
                 BlockPos pos = IBlockPosProvider.getBlockPos(stack);
                 String text;
                 if (pos != null) {
@@ -91,7 +92,7 @@ public class CraftingControllerGui extends GuiContainer {
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.LINKING_INTERFACE);
         drawTexturedModalRect(guiLeft, guiTop + 132, 0, 132, xSize, ELEMENT_HEIGHT);
         drawTexturedModalRect(guiLeft, guiTop + 17, 0, 17, xSize, ELEMENT_HEIGHT);
-        slider.setEnabled(linkList.size() >= 9);
+        slider.setEnabled(queue.size() >= 9);
     }
     
     @Override
@@ -117,5 +118,4 @@ public class CraftingControllerGui extends GuiContainer {
     private int getMaxOffset(){
         return Math.max(0,(listLength - 8) * ELEMENT_HEIGHT - 7);
     }
-    
 }

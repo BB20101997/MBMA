@@ -2,6 +2,7 @@ package de.webtwob.mma.core.common.registration;
 
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
 import de.webtwob.mma.core.common.CoreLog;
+import de.webtwob.mma.core.common.multiblockgroups.QueueGroupType;
 
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,7 +19,7 @@ public class MultiBlockGroupTypes {
     public static final MultiBlockGroupType  STORAGE = new MultiBlockGroupType();
     public static final MultiBlockGroupType  CRAFTING = new MultiBlockGroupType();
     public static final MultiBlockGroupType  RECIPES = new MultiBlockGroupType();
-    public static final MultiBlockGroupType  QUEUE = new MultiBlockGroupType();
+    public static final MultiBlockGroupType  QUEUE = new QueueGroupType();
 
     private MultiBlockGroupTypes() {
     }

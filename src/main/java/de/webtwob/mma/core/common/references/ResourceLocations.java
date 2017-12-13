@@ -20,12 +20,11 @@ public class ResourceLocations {
     }
 
     public static class Textures{
-        public static final ResourceLocation QUEUESTACK_GUI = new ResourceLocation(MODID, "textures/gui/linking_interface.png");
+        public static final ResourceLocation QUEUES_GUI = new ResourceLocation(MODID, "textures/gui/queue_interface.png");
         public static final ResourceLocation TOKEN_GUI = new ResourceLocation(MODID, "textures/gui/token.png");
         public static final ResourceLocation RECIPE_BANK_GUI = new ResourceLocation(MODID, "textures/gui/recipe_bank.png");
         public static final ResourceLocation TOKEN_GENERATOR_GUI = new ResourceLocation(MODID, "textures/gui/token_generator.png");
         public static final ResourceLocation LINKING_INTERFACE = new ResourceLocation(MODID,"textures/gui/linking_interface.png");
-        public static final ResourceLocation GUI_COMPONENTS = new ResourceLocation(MODID,"textures/gui/gui_components.png");
     
         private Textures() {
         }

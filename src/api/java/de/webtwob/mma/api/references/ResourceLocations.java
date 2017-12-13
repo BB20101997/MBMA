@@ -16,6 +16,9 @@ public class ResourceLocations {
     public static final ResourceLocation REG_RECIPE_VANILLA = new ResourceLocation(MODID,"vanillaRecipe");
     public static final ResourceLocation REG_RECIPE_CUSTOM = new ResourceLocation(MODID,"customRecipe");
     public static final ResourceLocation REG_IN_WORLD_RECIPE = new ResourceLocation(MODID,"inWorldRecipe");
+   
+    //Textures
+    public static final ResourceLocation GUI_COMPONENTS = new ResourceLocation(MODID,"textures/gui/gui_components.png");
     
     private ResourceLocations() {
     }
