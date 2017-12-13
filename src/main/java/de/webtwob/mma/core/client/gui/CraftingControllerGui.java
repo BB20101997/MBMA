@@ -102,6 +102,13 @@ public class CraftingControllerGui extends GuiContainer {
         offset = Math.max(Math.min((int) (slider.getSliderPosition() * (12 * (listLength - 8) - 7)), (listLength - 8) * 12 - 7),0);
     }
     
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        slider.handleMouseInput(isShiftKeyDown());
+       
+    }
+    
     public static CraftingControllerGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
         if (tileEntity instanceof TileEntityCraftingController) {
             return new CraftingControllerGui(player, (TileEntityCraftingController) tileEntity);

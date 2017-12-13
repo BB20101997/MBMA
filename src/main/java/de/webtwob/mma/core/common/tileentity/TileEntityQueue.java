@@ -3,19 +3,24 @@ package de.webtwob.mma.core.common.tileentity;
 import de.webtwob.mma.api.crafting.ItemStackContainer;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequestProvider;
+import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.multiblock.MultiBlockGroup;
 import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
+import de.webtwob.mma.core.client.gui.QueueGui;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
+import de.webtwob.mma.core.common.inventory.QueueContainer;
 import de.webtwob.mma.core.common.multiblockgroups.QueueGroupType;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.Constants;
@@ -33,7 +38,7 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityQueue extends MultiBlockTileEntity {
+public class TileEntityQueue extends MultiBlockTileEntity  implements IGUIHandlerBoth{
     
     @ObjectHolder("mmacore:queue")
     private static final MultiBlockGroupType MANAGER_QUEUE = null;
@@ -242,6 +247,18 @@ public class TileEntityQueue extends MultiBlockTileEntity {
         
         return null != request && !request.isCompleted();
     
+    }
+    
+    @Nullable
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return QueueGui.tryCreateInstance(id,player,world,x,y,z);
+    }
+    
+    @Nullable
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return QueueContainer.tryCreateInstance(id,player,world,x,y,z);
     }
     
     private class EnqueueingItemHandler implements IItemHandler {

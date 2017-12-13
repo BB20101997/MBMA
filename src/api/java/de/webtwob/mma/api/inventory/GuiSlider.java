@@ -1,6 +1,7 @@
 package de.webtwob.mma.api.inventory;
 
 import de.webtwob.mma.api.APILog;
+import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -24,6 +25,7 @@ public class GuiSlider extends GuiButton {
     private int startPos = 0;
     private Orientation orientation;
     private int sliderPosition = 0;
+    private boolean isOver;
     
     public GuiSlider(int id, Orientation orientation, int xPos, int yPos, int width, int height, int sliderLength, ResourceLocation texture, int enabledTextureX, int enabledTextureY, int disabledTextureX, int disabledTextureY) {
         super(id, xPos, yPos, width, height, "");
@@ -84,6 +86,7 @@ public class GuiSlider extends GuiButton {
         if (!visible) return;
         mc.getTextureManager().bindTexture(texture);
         hovered = new Rectangle(x, y, orientation.horizontal ? sliderLength : width, orientation.horizontal ? height : sliderLength).contains(mouseX, mouseY);
+        isOver = new Rectangle(x,y,width,height).contains(mouseX,mouseY);
         int textureX = enabled ? enabledTextureX : disabledTextureX;
         int textureY = enabled ? enabledTextureY : disabledTextureY;
         if (orientation.horizontal) {
@@ -102,6 +105,37 @@ public class GuiSlider extends GuiButton {
         }
     }
     
+    public void setSliderPosition(double sliderPosition) {
+        int max = height-sliderLength;
+        if(orientation.horizontal){
+            max = width-sliderLength;
+        }
+        if(sliderPosition>=0&&sliderPosition<=1){
+            this.sliderPosition = (int) (max*sliderPosition);
+        }
+        else{
+            if(sliderPosition<0){
+                this.sliderPosition = 0;
+            }else{
+                this.sliderPosition = max;
+            }
+        }
+    }
+    
+    //call this in handleMouseInput in your GuiContainer or what ever
+    public void handleMouseInput(boolean slowScroll) {
+        if(isOver) {
+            int i = Integer.signum(Mouse.getEventDWheel());
+            int max = height - sliderLength;
+            if (orientation.horizontal) {
+                max = width - sliderLength;
+            }
+            if (!slowScroll) {
+                i *= 10;
+            }
+            sliderPosition = Math.max(0, Math.min(sliderPosition + i, max));
+        }
+    }
     
     public enum Orientation {
         HORIZONTAL(true),
