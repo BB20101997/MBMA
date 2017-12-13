@@ -4,7 +4,6 @@ import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.registration.PacketHandler;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 
 /**
@@ -38,7 +37,6 @@ public class MMACore {
     public void inti(FMLInitializationEvent event) {
         CoreLog.info("Starting Init!");
         PacketHandler.init();
-        PROXY.register();
         /*
          * other stuff that would go here:
          * Register WorldGenerators
