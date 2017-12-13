@@ -8,6 +8,7 @@ import static de.webtwob.mma.core.MMACore.MODID;
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public class NBTKeys {
 
+    //TODO remove unused NBTKeys
     public static final String QS_ITEM_HANDLER = MODID + ":QSITEMS";
     public static final String QS_TOKEN = MODID + ":QSToken";
     public static final String QS_STATE = MODID + ":QSState";
