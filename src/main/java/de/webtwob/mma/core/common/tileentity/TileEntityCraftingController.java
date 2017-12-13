@@ -2,22 +2,34 @@ package de.webtwob.mma.core.common.tileentity;
 
 import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.capability.*;
+import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
+import de.webtwob.mma.core.client.gui.CraftingControllerGui;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
+import de.webtwob.mma.core.common.inventory.CraftingControllerContainer;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,7 +37,7 @@ import java.util.stream.Stream;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityCraftingController extends MultiBlockTileEntity{
+public class TileEntityCraftingController extends MultiBlockTileEntity implements IGUIHandlerBoth{
     
     @ObjectHolder("mmacore:crafting")
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
@@ -226,5 +238,18 @@ public class TileEntityCraftingController extends MultiBlockTileEntity{
             }
             
         }
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return CraftingControllerGui.tryCreateInstance(player,world.getTileEntity(new BlockPos(x,y,z)));
+    }
+    
+    @Nullable
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return CraftingControllerContainer.tryCreateInstance(player, world.getTileEntity(new BlockPos(x,y,z)));
     }
 }

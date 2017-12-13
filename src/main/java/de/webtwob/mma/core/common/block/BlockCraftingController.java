@@ -2,9 +2,9 @@ package de.webtwob.mma.core.common.block;
 
 import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
+import de.webtwob.mma.api.inventory.ApiCommonProxy;
 import de.webtwob.mma.api.property.MMAProperties;
-import de.webtwob.mma.core.MMACore;
-import de.webtwob.mma.core.common.proxy.CommonProxy;
+import de.webtwob.mma.core.common.references.BlockHolder;
 import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
 
 import net.minecraft.block.material.Material;
@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 /**
  * Created by BB20101997 on 28. Okt. 2017.
  */
-public class BlockCraftingController extends MMABlock {
+public class BlockCraftingController extends MMABlock{
     
     public BlockCraftingController(ResourceLocation rl) {
         super(Material.IRON,rl);
@@ -49,7 +49,7 @@ public class BlockCraftingController extends MMABlock {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            player.openGui(MMACore.INSTANCE, CommonProxy.CRAFTING_CONTROLLER_GUI, world, pos.getX(), pos.getY(), pos.getZ());
+            player.openGui(BlockHolder.apiInstance, ApiCommonProxy.TILE_ENTITY_GUI,world,pos.getX(),pos.getY(),pos.getZ());
         }
         return true;
     }
