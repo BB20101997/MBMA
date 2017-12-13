@@ -279,11 +279,16 @@ public class TileEntityQueue extends MultiBlockTileEntity {
             
             //create two copies one to return and one to enqueue
             ItemStack enqueue = stack.copy();
-            ItemStack result = stack.copy();
-            
+            ItemStack result;
+    
             //set the stack we want to enqueue to size 1 while decreasing the returned stack, we don't want to dupe requests
-            enqueue.setCount(1);
-            result.shrink(1);
+            if(stack.getCount()!=1) {
+                result = stack.copy();
+                result.shrink(1);
+                enqueue.setCount(1);
+            }else{
+                result = ItemStack.EMPTY;
+            }
             
             if (simulate)
                 return result;
