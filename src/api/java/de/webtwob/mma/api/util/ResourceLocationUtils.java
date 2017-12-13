@@ -7,8 +7,11 @@ import net.minecraft.util.ResourceLocation;
  */
 public class ResourceLocationUtils {
     
-    public static String unlocalizedNameForResourceLocation(ResourceLocation rl){
-        return rl.toString().replace(":",".");
+    private ResourceLocationUtils() {
+    }
+    
+    public static String unlocalizedNameForResourceLocation(ResourceLocation rl) {
+        return rl.toString().replace(":", ".");
     }
     
 }
