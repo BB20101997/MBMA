@@ -7,12 +7,12 @@ import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.multiblock.MultiBlockGroup;
 import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
-import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
 import de.webtwob.mma.core.common.multiblockgroups.QueueGroupType;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -23,6 +23,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Predicate;
@@ -34,23 +35,22 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  */
 public class TileEntityQueue extends MultiBlockTileEntity {
     
-    //TODO ItemStackContainer return to pool;
-    
     @ObjectHolder("mmacore:queue")
     private static final MultiBlockGroupType MANAGER_QUEUE = null;
     
-    private static Capability<IItemHandler>             capabilityItemHandler;
-    private static Capability<ICraftingRequest>         capabilityCraftingRequest;
+    private static Capability<IItemHandler> capabilityItemHandler;
+    private static Capability<ICraftingRequest> capabilityCraftingRequest;
     private static Capability<ICraftingRequestProvider> capabilityCraftingRequestProvider;
     
-    private final LinkedList<ItemStackContainer> freeRequestContainer  = new LinkedList<>();
+    private final LinkedList<ItemStackContainer> freeRequestContainer = new LinkedList<>();
     private final LinkedList<ItemStackContainer> inUseRequestContainer = new LinkedList<>();
     
     private IItemHandler handler = new EnqueueingItemHandler();
     
     public TileEntityQueue() {
+        //init freeItemStackContainers
         for (int i = 0; i < MMAConfiguration.queueLength; i++) {
-            freeRequestContainer.add(new ItemStackContainer());
+            freeRequestContainer.add(createItemStackContainer());
         }
     }
     
@@ -94,7 +94,7 @@ public class TileEntityQueue extends MultiBlockTileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound supComp = super.writeToNBT(compound);
-        NBTTagList     items   = new NBTTagList();
+        NBTTagList items = new NBTTagList();
         inUseRequestContainer.forEach(stack -> items.appendTag(stack.getItemStack().serializeNBT()));
         supComp.setTag(NBTKeys.QUEUE_STACKS, items);
         return supComp;
@@ -103,19 +103,27 @@ public class TileEntityQueue extends MultiBlockTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-        if (instance instanceof QueueGroupType.Instance) {
-            ((QueueGroupType.Instance) instance).getQueue().removeAll(inUseRequestContainer);
-        }
+        removeAllFromQueue(inUseRequestContainer);
+        
         inUseRequestContainer.clear();
-        freeRequestContainer.clear();
-        compound.getTagList(NBTKeys.QUEUE_STACKS, Constants.NBT.TAG_COMPOUND)
-                .forEach(comp -> inUseRequestContainer.add(
-                        new ItemStackContainer(new ItemStack((NBTTagCompound) comp))));
-        int remainingContainer = MMAConfiguration.queueLength - inUseRequestContainer.size();
-        while(remainingContainer > 0){
-            freeRequestContainer.add(new ItemStackContainer());
-            remainingContainer--;
+        int free = MMAConfiguration.queueLength;
+        ItemStackContainer container;
+        for (NBTBase comp : compound.getTagList(NBTKeys.QUEUE_STACKS, Constants.NBT.TAG_COMPOUND)) {
+            container = createItemStackContainer(new ItemStack((NBTTagCompound) comp));
+            inUseRequestContainer.add(container);
+            free--;
+            if (free <= 0) {
+                //we are over our limit we keep the request but will not allow to reuse the container
+                container.setPoolReturn(this::disposeItemStackContainer);
+            }
+        }
+        addAllToQueue(inUseRequestContainer);
+        //adjust freeContainer amount
+        while (free > freeRequestContainer.size()) {
+            freeRequestContainer.add(createItemStackContainer());
+        }
+        while (free < freeRequestContainer.size() && !freeRequestContainer.isEmpty()) {
+            freeRequestContainer.remove(0);
         }
     }
     
@@ -141,39 +149,99 @@ public class TileEntityQueue extends MultiBlockTileEntity {
             return ItemStack.EMPTY;
         }
         return getCurrentRequests().stream()
-                                   .filter(isc -> requirement.test(isc.getItemStack()))
-                                   .findFirst()
-                                   .map(isc -> {
-                                       ItemStack request = isc.getItemStack();
-                                       isc.setItemStack(ItemStack.EMPTY);
-                                       isc.returnToPool();
-                                       return request;
-                                   })
-                                   .orElse(ItemStack.EMPTY);
+                .filter(isc -> requirement.test(isc.getItemStack()))
+                .findFirst()
+                .map(isc -> {
+                    ItemStack request = isc.getItemStack();
+                    isc.setItemStack(ItemStack.EMPTY);
+                    isc.returnToPool();
+                    return request;
+                })
+                .orElse(ItemStack.EMPTY);
     }
     
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-        if (instance instanceof QueueGroupType.Instance) {
-            ((QueueGroupType.Instance) instance).getQueue().removeAll(inUseRequestContainer);
+        removeAllFromQueue(inUseRequestContainer);
+    }
+    
+    private ItemStackContainer createItemStackContainer() {
+        return createItemStackContainer(ItemStack.EMPTY);
+    }
+    
+    private ItemStackContainer createItemStackContainer(ItemStack stack) {
+        ItemStackContainer container = new ItemStackContainer(stack);
+        container.setDirtyCallback(this::markDirty);
+        container.setPoolReturn(this::freeItemStackContainer);
+        return container;
+    }
+    
+    private void freeItemStackContainer(ItemStackContainer container) {
+        if (inUseRequestContainer.contains(container)) {
+            //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
+            inUseRequestContainer.remove(container);
+            freeRequestContainer.add(container);
+        }
+    }
+    
+    private void disposeItemStackContainer(ItemStackContainer container) {
+        if (inUseRequestContainer.contains(container)) {
+            //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
+            inUseRequestContainer.remove(container);
         }
     }
     
     @Override
     public void onLoad() {
         super.onLoad();
+        addAllToQueue(inUseRequestContainer);
+    }
+    
+    private void removeAllFromQueue(Collection<ItemStackContainer> itemStackContainer) {
         MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
         if (group != null) {
             MultiBlockGroupTypeInstance instance = group.getTypeInstance();
             if (instance instanceof QueueGroupType.Instance) {
                 Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
-                queue.addAll(inUseRequestContainer);
-                
+                queue.removeAll(itemStackContainer);
             }
         }
+    }
+    
+    private void addToQueue(ItemStackContainer itemStackContainer) {
+        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
+        if (group != null) {
+            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
+            if (instance instanceof QueueGroupType.Instance) {
+                Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
+                queue.add(itemStackContainer);
+            }
+        }
+    }
+    
+    private void addAllToQueue(Collection<ItemStackContainer> itemStackContainerCollection) {
+        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
+        if (group != null) {
+            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
+            if (instance instanceof QueueGroupType.Instance) {
+                Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
+                queue.addAll(itemStackContainerCollection);
+            }
+        }
+    }
+    
+    private boolean canStackBeAddedToQueue(ItemStack stack) {
+        //do we have room, is there even some thing to insert and does crafting exists
+        if (freeRequestContainer.isEmpty() || stack.isEmpty() || capabilityCraftingRequest == null){
+            return false;
+        }
         
+        //is the ItemStack a Request and is it uncompleted
+        ICraftingRequest request = stack.getCapability(capabilityCraftingRequest,null);
+        
+        return null != request && !request.isCompleted();
+    
     }
     
     private class EnqueueingItemHandler implements IItemHandler {
@@ -192,6 +260,7 @@ public class TileEntityQueue extends MultiBlockTileEntity {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            //slot in range
             if (slot >= getSlots() || slot < 0) {
                 if (!simulate) {
                     //Are you a QA tester?
@@ -203,42 +272,28 @@ public class TileEntityQueue extends MultiBlockTileEntity {
                 }
             }
             
-            //do we have room and is there even some thing to insert
-            if (freeRequestContainer.isEmpty() || stack.getCount() <= 0) {
-                return stack;
-            }
-            
-            ICraftingRequest request;
-            
-            //is the ItemStack a Request and is it uncompleted
-            if (capabilityCraftingRequest != null && ((request = stack.getCapability(
-                    capabilityCraftingRequest, null)) == null || request.isCompleted())) {
-                return stack;
-            }
-            
-            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-            if (!(instance instanceof QueueGroupType.Instance)) {
-                CoreLog.LOGGER.warn("TileEntityQueue's GroupTypeInstance is not of Type QueueGroupType.Instance!");
+            //TODO check if other queues in the MultiBlock have ISC's left and use those if we are out
+            if(!canStackBeAddedToQueue(stack)){
                 return stack;
             }
             
             //create two copies one to return and one to enqueue
             ItemStack enqueue = stack.copy();
-            ItemStack result  = stack.copy();
+            ItemStack result = stack.copy();
             
             //set the stack we want to enqueue to size 1 while decreasing the returned stack, we don't want to dupe requests
             enqueue.setCount(1);
             result.shrink(1);
             
+            if (simulate)
+                return result;
+            
             ItemStackContainer container = freeRequestContainer.poll();
             container.setItemStack(enqueue);
+            inUseRequestContainer.add(container);
+            addToQueue(container);
             
-            if (simulate || ((QueueGroupType.Instance) instance).getQueue().add(container)) {
-                //either this is simulated or we succeed with adding the request to the queue therefore we return the decremented result stack
-                return result;
-            }
-            //we are neither a simulation nor did we succeeded in adding to the queue therefore we return the original stack
-            return stack;
+            return result;
         }
         
         @Nonnull
