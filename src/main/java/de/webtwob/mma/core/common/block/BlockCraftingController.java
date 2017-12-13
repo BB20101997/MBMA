@@ -4,7 +4,7 @@ import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.inventory.ApiCommonProxy;
 import de.webtwob.mma.api.property.MMAProperties;
-import de.webtwob.mma.core.common.references.BlockHolder;
+import de.webtwob.mma.core.common.references.ObjectHolders;
 import de.webtwob.mma.core.common.tileentity.TileEntityCraftingController;
 
 import net.minecraft.block.material.Material;
@@ -49,7 +49,7 @@ public class BlockCraftingController extends MMABlock{
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            player.openGui(BlockHolder.apiInstance, ApiCommonProxy.TILE_ENTITY_GUI,world,pos.getX(),pos.getY(),pos.getZ());
+            player.openGui(ObjectHolders.apiInstance, ApiCommonProxy.TILE_ENTITY_GUI,world,pos.getX(),pos.getY(),pos.getZ());
         }
         return true;
     }

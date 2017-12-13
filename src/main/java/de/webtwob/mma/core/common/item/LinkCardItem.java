@@ -82,9 +82,9 @@ public class LinkCardItem extends MMAItem {
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         if (getLinked(stack) != null) {
-            return getUnlocalizedName() + MMAUnlocalizedNames.LINKED_SUFIX;
+            return getUnlocalizedName() + MMAUnlocalizedNames.LINKED_SUFFIX;
         } else {
-            return getUnlocalizedName() + MMAUnlocalizedNames.UNLINKED_SUFIX;
+            return getUnlocalizedName() + MMAUnlocalizedNames.UNLINKED_SUFFIX;
         }
     }
 

@@ -1,7 +1,6 @@
 package de.webtwob.mma.core;
 
 import de.webtwob.mma.core.common.CoreLog;
-import de.webtwob.mma.core.common.proxy.CommonProxy;
 import de.webtwob.mma.core.common.registration.PacketHandler;
 
 import net.minecraftforge.fml.common.Mod;
@@ -16,14 +15,9 @@ import net.minecraftforge.fml.common.event.*;
 public class MMACore {
 
     public static final String MODID = "mmacore";
-    public static final String COMMON_PROXY = "de.webtwob.mma.core.common.proxy.CommonProxy";
-    public static final String CLIENT_PROXY = "de.webtwob.mma.core.client.proxy.ClientProxy";
 
     @Mod.Instance(MODID)
     public static MMACore INSTANCE = null;//NOSONAR
-
-    @SidedProxy(clientSide = CLIENT_PROXY, serverSide = COMMON_PROXY)
-    public static CommonProxy PROXY = null;//NOSONAR
 
     public MMACore() {
         CoreLog.info("ModInstance created!");

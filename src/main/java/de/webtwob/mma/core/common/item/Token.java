@@ -5,7 +5,7 @@ import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.core.client.gui.TokenGui;
 import de.webtwob.mma.core.common.inventory.TokenContainer;
-import de.webtwob.mma.core.common.references.BlockHolder;
+import de.webtwob.mma.core.common.references.ObjectHolders;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -55,7 +55,7 @@ public class Token extends MMAItem implements IGUIHandlerBoth{
         if (!worldIn.isRemote) {
             BlockPos pos = playerIn.getPosition();
             playerIn.openGui(
-                    BlockHolder.apiInstance, handIn.ordinal(), worldIn, pos.getX(), pos.getY(),
+                    ObjectHolders.apiInstance, handIn.ordinal(), worldIn, pos.getX(), pos.getY(),
                     pos.getZ()
             );
         }

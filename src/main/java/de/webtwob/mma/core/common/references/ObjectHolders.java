@@ -3,12 +3,11 @@ package de.webtwob.mma.core.common.references;
 import de.webtwob.mma.api.MMAAPI;
 
 import net.minecraft.block.Block;
-
 import net.minecraftforge.fml.common.Mod;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-public class BlockHolder {
+public class ObjectHolders {
     
     @ObjectHolder("minecraft:furnace")
     public static final Block FURNACE        = null;
@@ -24,7 +23,7 @@ public class BlockHolder {
     @Mod.Instance(value = "mmaapi",owner = "mmacore")
     public static MMAAPI apiInstance = null;//NOSONAR
     
-    private BlockHolder() {
+    private ObjectHolders() {
     
     }
     

@@ -4,7 +4,10 @@ import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.capability.implementations.CombinedItemHandler;
 import de.webtwob.mma.api.capability.implementations.FilteredItemHandler;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
+import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.api.util.MMAFilter;
+import de.webtwob.mma.core.client.gui.TokenGeneratorGui;
+import de.webtwob.mma.core.common.inventory.TokenGeneratorContainer;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +18,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -27,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * Created by bennet on 28.03.17.
  */
-public class TileEntityRequestGenerator extends TileEntity implements ITickable, ISidedInventory {
+public class TileEntityRequestGenerator extends TileEntity implements ITickable, ISidedInventory ,IGUIHandlerBoth{
     
     private static final String NBT_KEY_CNAME = "CustomName";
     
@@ -383,5 +390,18 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     
     private void setCustomName(String customName) {
         this.customName = customName;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return TokenGeneratorGui.tryCreateInstance(player,world.getTileEntity(new BlockPos(x,y,z)));
+    }
+    
+    @Nullable
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        return TokenGeneratorContainer.tryCreateInstance(player, world.getTileEntity(new BlockPos(x,y,z)));
     }
 }

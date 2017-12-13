@@ -1,7 +1,7 @@
 package de.webtwob.mma.core.common.block;
 
-import de.webtwob.mma.core.MMACore;
-import de.webtwob.mma.core.common.proxy.CommonProxy;
+import de.webtwob.mma.api.inventory.ApiCommonProxy;
+import de.webtwob.mma.core.common.references.ObjectHolders;
 import de.webtwob.mma.core.common.tileentity.TileEntityRequestGenerator;
 
 import net.minecraft.block.material.Material;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * Created by bennet on 23.03.17.
  */
-public class BlockRequestGenerator extends MMABlock {
+public class BlockRequestGenerator extends MMABlock{
 
     public BlockRequestGenerator(ResourceLocation rl) {
         super(Material.IRON,rl);
@@ -30,7 +30,7 @@ public class BlockRequestGenerator extends MMABlock {
     public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing dir, float x, float y, float z) {
         //open gui
         if (!world.isRemote) {
-            player.openGui(MMACore.INSTANCE, CommonProxy.TOKEN_GENERATOR_GUI, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            player.openGui(ObjectHolders.apiInstance, ApiCommonProxy.TILE_ENTITY_GUI,world,blockPos.getX(),blockPos.getY(),blockPos.getZ());
         }
         return true;
     }
