@@ -9,6 +9,7 @@ import de.webtwob.mma.core.common.config.MMAConfiguration;
 import de.webtwob.mma.core.common.inventory.CraftingControllerContainer;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -37,21 +38,24 @@ import java.util.stream.Stream;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityCraftingController extends MultiBlockTileEntity implements IGUIHandlerBoth{
+public class TileEntityCraftingController extends MultiBlockTileEntity implements IGUIHandlerBoth {
     
     @ObjectHolder("mmacore:crafting")
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
-    private static final int WAIT_TIME = 20;
-    private static Capability<ICraftingRequestProvider> capabilityRequestProvider = null;
-    private final List<Function<TileEntityCraftingController, String>> ERROR_SOLVED = new LinkedList<>();
-    private final List<Function<TileEntityCraftingController, String>> WAIT_CONDITION = new LinkedList<>();
-    private final List<String> errors = new LinkedList<>();
-    private final List<String> waiting = new LinkedList<>();
+    
+    private static final int                                                  WAIT_TIME                 = 20;
+    private static       Capability<ICraftingRequestProvider>                 capabilityRequestProvider = null;
+    private final        List<Function<TileEntityCraftingController, String>> ERROR_SOLVED              = new LinkedList<>();
+    private final        List<Function<TileEntityCraftingController, String>> WAIT_CONDITION            = new LinkedList<>();
+    private final        List<String>                                         errors                    = new LinkedList<>();
+    private final        List<String>                                         waiting                   = new LinkedList<>();
+    
     @Nonnull
-    private MachineState state = MachineState.IDLE;
-    private int pause = WAIT_TIME;
-    private NonNullList<ItemStack> queueLinkCards = NonNullList.create();
+    private MachineState           state            = MachineState.IDLE;
+    private int                    pause            = WAIT_TIME;
+    private NonNullList<ItemStack> queueLinkCards   = NonNullList.create();
     private NonNullList<ItemStack> patternLinkCards = NonNullList.create();
+    
     @Nonnull
     private ItemStack currentRequest = ItemStack.EMPTY;
     
@@ -78,7 +82,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
     @Override
     public void update() {
         super.update();
-        if (pause <= 0) {
+        if (0 >= pause) {
             switch (state) {
                 case IDLE:
                     idle();
@@ -111,9 +115,9 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
         descriptions.clear();
         //noinspection ResultOfMethodCallIgnored
         functions.stream()
-                .map(e -> e.apply(this))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(() -> descriptions));
+                 .map(e -> e.apply(this))
+                 .filter(Objects::nonNull)
+                 .collect(Collectors.toCollection(() -> descriptions));
         if (descriptions.isEmpty()) {
             functions.clear();
             setState(MachineState.IDLE);
@@ -154,15 +158,15 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
             return false;
         }
         return (patternLinkCards.stream()
-                .map(IBlockPosProvider::getBlockPos)
-                .filter(Objects::nonNull)
-                .map(world::getTileEntity)
-                .map(IPatternProvider::getIPatternProviderForTileEntity)
-                .filter(Objects::nonNull)
-                .map(IPatternProvider::getPatternList)
-                .flatMap(List::stream)
-                .filter(Objects::nonNull)
-                .anyMatch(recipe -> doesRecipeProduceProduct(recipe, stack)));
+                                .map(IBlockPosProvider::getBlockPos)
+                                .filter(Objects::nonNull)
+                                .map(world::getTileEntity)
+                                .map(IPatternProvider::getIPatternProviderForTileEntity)
+                                .filter(Objects::nonNull)
+                                .map(IPatternProvider::getPatternList)
+                                .flatMap(List::stream)
+                                .filter(Objects::nonNull)
+                                .anyMatch(recipe -> doesRecipeProduceProduct(recipe, stack)));
     }
     
     private boolean doesRecipeProduceProduct(ICraftingRecipe recipe, ItemStack stack) {
@@ -170,27 +174,26 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
     }
     
     private Stream<ICraftingRequestProvider> getRequestProviders() {
-        if (capabilityRequestProvider == null) {
+        if (null == capabilityRequestProvider) {
             return Stream.empty();
         }
         return queueLinkCards.stream()
-                .map(IBlockPosProvider::getBlockPos)
-                .filter(Objects::nonNull)
-                .map(world::getTileEntity)
-                .filter(Objects::nonNull)
-                .map(te -> te.getCapability(capabilityRequestProvider, null))
-                .filter(Objects::nonNull);
+                             .map(IBlockPosProvider::getBlockPos)
+                             .filter(Objects::nonNull)
+                             .map(world::getTileEntity)
+                             .filter(Objects::nonNull)
+                             .map(te -> te.getCapability(capabilityRequestProvider, null))
+                             .filter(Objects::nonNull);
     }
     
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean getNewRequest() {
         currentRequest = getRequestProviders().map(cap -> cap.getRequestIfRequirementHolds(this::canHandleRequest))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(ItemStack.EMPTY);
+                                              .filter(Objects::nonNull)
+                                              .findFirst()
+                                              .orElse(ItemStack.EMPTY);
         return !currentRequest.isEmpty();
     }
-    
     
     public boolean canAddLinkCard() {
         return MMAConfiguration.controllerQueueCount > queueLinkCards.size();
@@ -205,6 +208,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
         return queueLinkCards;
     }
     
+    @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound tileData = getTileData();
@@ -214,8 +218,9 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
         NBTTagList itemList = new NBTTagList();
         
         for (ItemStack stack : queueLinkCards) {
-            if(!stack.isEmpty())
-            itemList.appendTag(stack.serializeNBT());
+            if (!stack.isEmpty()) {
+                itemList.appendTag(stack.serializeNBT());
+            }
         }
         
         tileData.setTag(NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, itemList);
@@ -230,9 +235,10 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
         
         //read linkCards from tileData
         if (tileData.hasKey(NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, Constants.NBT.TAG_LIST)) {
-            NBTTagList itemList = tileData.getTagList(NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, Constants.NBT.TAG_COMPOUND);
-            for (NBTBase  itemNBT :itemList) {
-                if(itemNBT instanceof NBTTagCompound){
+            NBTTagList itemList = tileData.getTagList(
+                    NBTKeys.CRAFTING_CONTROLLER_QUEUE_LINKS, Constants.NBT.TAG_COMPOUND);
+            for (NBTBase itemNBT : itemList) {
+                if (itemNBT instanceof NBTTagCompound) {
                     queueLinkCards.add(new ItemStack((NBTTagCompound) itemNBT));
                 }
             }
@@ -244,12 +250,23 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
     @Nullable
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return CraftingControllerGui.tryCreateInstance(player,world.getTileEntity(new BlockPos(x,y,z)));
+        return CraftingControllerGui.tryCreateInstance(player, world.getTileEntity(new BlockPos(x, y, z)));
     }
     
     @Nullable
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return CraftingControllerContainer.tryCreateInstance(player, world.getTileEntity(new BlockPos(x,y,z)));
+        return CraftingControllerContainer.tryCreateInstance(player, world.getTileEntity(new BlockPos(x, y, z)));
+    }
+    
+    @Override
+    public void onBlockBreak(final World world, final BlockPos pos) {
+        super.onBlockBreak(world, pos);
+        for (ItemStack stack : queueLinkCards) {
+            if (!stack.isEmpty()) {
+                world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
+            }
+        }
+        queueLinkCards.clear();
     }
 }

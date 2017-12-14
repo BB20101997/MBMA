@@ -24,12 +24,12 @@ public interface IMultiBlockTile {
      */
     @Nullable
     static MultiBlockGroup getGroup(World world, BlockPos pos, MultiBlockGroupType type) {
-        MBGMWorldSaveData data = null;
+        MBGMWorldSaveData data;
         if(world!=null) {
-            data= MBGMWorldSaveData.get(world);
-        }
-        if (data != null) {
-            return data.multiBlockGroupManager.getGroupForMember(new MultiBlockMember(world, pos), type);
+            data = MBGMWorldSaveData.get(world);
+            if (data != null) {
+                return data.multiBlockGroupManager.getGroupForMember(new MultiBlockMember(world, pos), type);
+            }
         }
         return null;
     }
@@ -45,9 +45,14 @@ public interface IMultiBlockTile {
      */
     default void setGroup(MultiBlockGroup mbg, World world, BlockPos pos) {
         MultiBlockGroup group = getGroup(world, pos, getGroupType());
-        if (group != null && group != mbg) {
-            group.removeMember(new MultiBlockMember(world, pos));
-
+        if (group != mbg) {
+            MultiBlockMember mbm = new MultiBlockMember(world,pos);
+            if(group!=null) {
+                group.removeMember(mbm);
+            }
+            if(mbg!=null){
+                mbg.addMember(mbm);
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package de.webtwob.mma.core.client.gui;
 import de.webtwob.mma.api.crafting.ItemStackContainer;
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.inventory.GuiSlider;
+import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.inventory.QueueContainer;
 import de.webtwob.mma.core.common.references.ResourceLocations;
 import de.webtwob.mma.core.common.tileentity.TileEntityQueue;
@@ -18,21 +19,21 @@ import net.minecraft.world.World;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by BB20101997 on 13. Dez. 2017.
  */
 public class QueueGui extends GuiContainer {
     
-    public static final int ELEMENT_HEIGHT = 16;//TODO
+    private static final int ELEMENT_HEIGHT = 16;//TODO
     private TileEntityQueue entityQueue;
-    private GuiSlider slider = new GuiSlider(0, GuiSlider.Orientation.VERTICAL, 0, 0, 103);
-    int selected = -1;
-    int listLength = 0;
+    private GuiSlider slider     = new GuiSlider(0, GuiSlider.Orientation.VERTICAL, 0, 0, 103);
+    private int       selected   = -1;
+    private int       listLength = 0;
     
-    public QueueGui(TileEntityQueue te) {
-        super(new QueueContainer());
+    private QueueGui(TileEntityQueue te,EntityPlayer player) {
+        super(new QueueContainer(te,player));
         entityQueue = te;
         xSize = 176;
         ySize = 220;
@@ -41,7 +42,7 @@ public class QueueGui extends GuiContainer {
     public static QueueGui tryCreateInstance(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
         if (te instanceof TileEntityQueue) {
-            return new QueueGui((TileEntityQueue) te);
+            return new QueueGui((TileEntityQueue) te,player);
         }
         return null;
     }
@@ -59,14 +60,14 @@ public class QueueGui extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.QUEUES_GUI);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        LinkedList<ItemStackContainer> queue = entityQueue.getCurrentRequests();
+        List<ItemStackContainer> queue = entityQueue.getCurrentRequests();
         listLength = queue.size();
         if (selected >= queue.size()) {
             selected = -1;
         }
         int offset = slider.sliderPositionToRange(0,getMaxOffset());
         for (int i = offset/ ELEMENT_HEIGHT; i < listLength; i++) {
-            if (i * ELEMENT_HEIGHT - offset < 104) {
+            if (104 > i * ELEMENT_HEIGHT - offset) {
                 mc.getTextureManager().bindTexture(de.webtwob.mma.api.references.ResourceLocations.GUI_COMPONENTS);
                 if (selected != i) {
                     //not selected
@@ -78,7 +79,7 @@ public class QueueGui extends GuiContainer {
                 ItemStack stack = queue.get(i).getItemStack();
                 BlockPos pos = IBlockPosProvider.getBlockPos(stack);
                 String text;
-                if (pos != null) {
+                if (null != pos) {
                     text = String.format("%2d: X: %d Y: %d Z: %d", i, pos.getX(), pos.getY(), pos.getZ());
                 } else {
                     text = i + ": " + stack.getDisplayName();
@@ -92,7 +93,7 @@ public class QueueGui extends GuiContainer {
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.LINKING_INTERFACE);
         drawTexturedModalRect(guiLeft, guiTop + 132, 0, 132, xSize, ELEMENT_HEIGHT);
         drawTexturedModalRect(guiLeft, guiTop + 17, 0, 17, xSize, ELEMENT_HEIGHT);
-        slider.setEnabled(queue.size() >= 9);
+        slider.setEnabled(9 <= queue.size());
     }
     
     @Override

@@ -8,6 +8,8 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by BB20101997 on 03. Dez. 2017.
  */
@@ -44,24 +46,25 @@ public class CraftingControllerContainer extends Container implements IInventory
     }
     
       private void positionPlayerSlots() {
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
+        for (int row = 0; 3 > row; row++) {
+            for (int col = 0; 9 > col; col++) {
                 addSlotToContainer(new Slot(player.inventory, col + row * 9 + 9, 8 + col * 18, ySize - 10 - (4 - row) * 18));
             }
         }
 
-        for (int hotbar = 0; hotbar < 9; hotbar++) {
+        for (int hotbar = 0; 9 > hotbar; hotbar++) {
             addSlotToContainer(new Slot(player.inventory, hotbar, 8 + hotbar * 18, ySize - 24));
         }
     }
     
     @Override
-    public void onInventoryChanged(IInventory invBasic) {
+    public void onInventoryChanged(@Nonnull IInventory invBasic) {
         ItemStack stack = invBasic.getStackInSlot(0);
         if(!stack.isEmpty()&&tileEntityCraftingController.canAddLinkCard()){
             stack = invBasic.removeStackFromSlot(0);
             tileEntityCraftingController.addLinkCard(stack);
         }
+        //TODO Drop link on inventory closed
     }
     
     public static CraftingControllerContainer tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
@@ -69,5 +72,11 @@ public class CraftingControllerContainer extends Container implements IInventory
             return new CraftingControllerContainer(player, (TileEntityCraftingController) tileEntity);
         }
         return null;
+    }
+    
+    @Override
+    public void onContainerClosed(final EntityPlayer playerIn) {
+        super.onContainerClosed(playerIn);
+        clearContainer(playerIn,playerIn.world,linkcard);
     }
 }

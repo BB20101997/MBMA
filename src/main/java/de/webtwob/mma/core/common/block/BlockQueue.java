@@ -1,5 +1,6 @@
 package de.webtwob.mma.core.common.block;
 
+import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.inventory.ApiCommonProxy;
 import de.webtwob.mma.core.common.references.ObjectHolders;
 import de.webtwob.mma.core.common.tileentity.TileEntityQueue;
@@ -45,5 +46,16 @@ public class BlockQueue extends MMABlock {
             @Nonnull final World world, @Nonnull final IBlockState state
     ) {
         return new TileEntityQueue();
+    }
+    
+    @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        
+        if (tileEntity instanceof IMultiBlockTile) {
+            ((IMultiBlockTile) tileEntity).onBlockBreak(worldIn, pos);
+        }
+        
+        super.breakBlock(worldIn, pos, state);
     }
 }

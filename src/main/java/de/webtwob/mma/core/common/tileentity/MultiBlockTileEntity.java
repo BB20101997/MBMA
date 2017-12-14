@@ -31,14 +31,14 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
                     .map(pos -> IMultiBlockTile.getGroup(world, pos, getGroupType()))
                     .filter(Objects::nonNull)
                     .reduce(MultiBlockGroup::joinGroups).orElse(null);
-            if (group == null) {
+            if (null == group) {
                 CoreLog.debug("Reduction concluded in null creating new Group!");
                 MultiBlockGroupManager manager = MultiBlockGroupManager.getInstance(world);
-                if (manager != null) {
+                if (null != manager) {
                     group = manager.createNewGroup(getGroupType());
                 }
             }
-            if (group!=null&&oldGroup != group) {
+            if (null != group && oldGroup != group) {
                 group.addMember(new MultiBlockMember(world, pos));
             }
         }
@@ -47,15 +47,19 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
     @Override
     public void performDebugOnTile(EntityPlayer player) {
         StringBuilder sb = new StringBuilder();
-        sb.append("GroupType: ").append(group.getType().getRegistryName()).append('\n');
-        MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-        if(instance!=null) {
-            sb.append("GroupInstance: ").append(instance).append('\n');
-        }else {
-            sb.append("GroupInstance: null \n");
+        if(null != group) {
+            sb.append("GroupType: ").append(group.getType().getRegistryName()).append('\n');
+            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
+            if (null != instance) {
+                sb.append("GroupInstance: ").append(instance).append('\n');
+            } else {
+                sb.append("GroupInstance: null \n");
+            }
+            sb.append("GroupHash: ").append(group.hashCode()).append('\n');
+            sb.append("GroupSize: ").append(group.getMembers().size()).append('\n');
+        }else{
+            sb.append("Group is null;\n");
         }
-        sb.append("GroupHash: ").append(group.hashCode()).append('\n');
-        sb.append("GroupSize: ").append(group.getMembers().size()).append('\n');
         player.sendStatusMessage(new TextComponentString(sb.toString()), false);
     }
 }
