@@ -49,6 +49,9 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     private final NonNullList<ItemStack> southList = NonNullList.withSize(1, ItemStack.EMPTY);
     private final NonNullList<ItemStack> westList  = NonNullList.withSize(1, ItemStack.EMPTY);
     
+    @SuppressWarnings("unchecked")
+    private final NonNullList<ItemStack>[] dirLists = (NonNullList<ItemStack>[]) (new NonNullList[]{northList, eastList, southList, westList, upList});
+    
     private final ItemStackHandler muster = new FilteredItemHandler(musterList, MMAFilter.MUSTER_FILTER, 1);
     
     private final ItemStackHandler output = new FilteredItemHandler(outputList, o -> false, 64);
@@ -132,12 +135,11 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
                     return west;
                 case EAST:
                     return east;
-                default: {
+                default:
                     throw new IllegalArgumentException(String.format(
                             "Parameter of type EnumFacing is neither null nor one of the six possible values: %s %nWho added a dimension to the universe without telling me?",
                             facing.toString()
                     ));
-                }
             }
         }
     }
@@ -254,28 +256,12 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
-        if (slot > 4) {
+        if (slot < 0) {
+            throw new IllegalArgumentException("Slot Index may not be Negative!");
+        } else if (slot > 4) {
             return outputList.get(slot - 5);
-        }
-        switch (slot) {
-            case 0: {
-                return northList.get(0);
-            }
-            case 1: {
-                return eastList.get(0);
-            }
-            case 2: {
-                return southList.get(0);
-            }
-            case 3: {
-                return westList.get(0);
-            }
-            case 4: {
-                return upList.get(0);
-            }
-            default: {
-                return ItemStack.EMPTY;
-            }
+        } else {
+            return dirLists[slot].get(0);
         }
     }
     
@@ -301,30 +287,12 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     
     @Override
     public void setInventorySlotContents(int slot, @Nonnull ItemStack itemStack) {
-        switch (slot) {
-            case 0: {
-                northList.set(0, itemStack);
-                break;
-            }
-            case 1: {
-                eastList.set(0, itemStack);
-                break;
-            }
-            case 2: {
-                southList.set(0, itemStack);
-                break;
-            }
-            case 3: {
-                westList.set(0, itemStack);
-                break;
-            }
-            case 4: {
-                upList.set(0, itemStack);
-                break;
-            }
-            default: {
-                outputList.set(slot, itemStack);
-            }
+        if (slot < 0) {
+            throw new IllegalArgumentException("Slot Index may not be Negative!");
+        } else if (slot > 4) {
+            outputList.set(slot - 5, itemStack);
+        } else {
+            dirLists[slot].set(0, itemStack);
         }
         markDirty();
     }
