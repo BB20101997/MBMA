@@ -4,3 +4,8 @@
 /classes/
 /run/
 *.iml
+/bin/
+/.settings/
+*.launch
+/.classpath
+/.project
