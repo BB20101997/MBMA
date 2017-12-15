@@ -89,9 +89,10 @@ public class BlockStorageInterface extends MMABlock {
     private boolean isConnected(IBlockAccess world, BlockPos pos, EnumFacing orientation) {
         BlockPos dest = pos.offset(orientation);
         TileEntity te;
+        
         if (world instanceof ChunkCache) {
             ChunkCache chunk = (ChunkCache) world;
-            te = chunk.getTileEntity(pos);
+            te = chunk.getTileEntity(dest);
         } else {
             te = world.getTileEntity(dest);
         }
