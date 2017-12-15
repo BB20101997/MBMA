@@ -31,14 +31,20 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class TileEntityStorageIndexer extends MultiBlockTileEntity {
     
     @ObjectHolder("mmacore:storage")
-    private static final MultiBlockGroupType          MANAGER_STORAGE       = null;
-    private static       Capability<IItemHandler>     capabilityItemHandler = null;
-    private              LinkedList<IItemMoveRequest> requests              = new LinkedList<>();
-    private              NonNullList<ItemStack>       storageLinks          = NonNullList.create();
+    private static final MultiBlockGroupType MANAGER_STORAGE = null;
+    private static Capability<IItemHandler> capabilityItemHandler = null;
+    private LinkedList<IItemMoveRequest> requests = new LinkedList<>();
+    private NonNullList<ItemStack> storageLinks = NonNullList.create();
     
     @CapabilityInject(IItemHandler.class)
     private static void setCapabilityItemHandler(Capability<IItemHandler> itemHandlerCapability) {
         capabilityItemHandler = itemHandlerCapability;
+    }
+    
+    private static IItemHandler getItemHandlerForTileEntity(TileEntity tileEntity, EnumFacing facing) {
+        if (tileEntity == null)
+            return null;
+        return tileEntity.getCapability(capabilityItemHandler, facing);
     }
     
     @Override
@@ -122,28 +128,28 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
             return handlerList;
         }
         return storageLinks.stream()
-                           .map(IBlockPosProvider::getBlockPos)
-                           .filter(Objects::nonNull)
-                           .map(p -> new Object() {
-                               final BlockPos pos = p;
-                               final IBlockState state = world.getBlockState(pos);
-                           })
-                           .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.CONNECTED))
-                           .filter(o -> o.state.getValue(MMAProperties.CONNECTED))
-                           .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.FACING))
-                           .map(o -> new Object() {
-                               final EnumFacing facing = o.state.getValue(MMAProperties.FACING);
-                               final TileEntity tileEntity = world.getTileEntity(o.pos.offset(facing));
-                           })
-                           .map(o->getItemHandlerForTileEntity(o.tileEntity,o.facing.getOpposite()))
-                           .filter(Objects::nonNull)
-                           .collect(Collectors.toList());
-    }
-    
-    private static IItemHandler getItemHandlerForTileEntity(TileEntity tileEntity,EnumFacing facing){
-        if(tileEntity==null)
-            return null;
-        return tileEntity.getCapability(capabilityItemHandler,facing);
+                .map(IBlockPosProvider::getBlockPos)
+                .filter(Objects::nonNull)
+                .filter(world::isBlockLoaded)//only use loaded Interfaces
+                .map(p -> new Object() {
+                    final BlockPos pos = p;
+                    final IBlockState state = world.getBlockState(pos);
+                })
+                .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.CONNECTED))
+                .filter(o -> o.state.getValue(MMAProperties.CONNECTED))
+                .filter(o -> o.state.getPropertyKeys().contains(MMAProperties.FACING))
+                .map(o -> new Object() {
+                    final EnumFacing facing = o.state.getValue(MMAProperties.FACING);
+                    final BlockPos dest = o.pos.offset(facing);
+                })
+                .filter(o -> world.isBlockLoaded(o.dest)) //only use loaded TileEntities
+                .map(o -> new Object() {
+                    final TileEntity tileEntity = world.getTileEntity(o.dest);
+                    final EnumFacing facing = o.facing;
+                })
+                .map(o -> getItemHandlerForTileEntity(o.tileEntity, o.facing.getOpposite()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
     
     /**
