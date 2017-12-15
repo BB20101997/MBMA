@@ -6,6 +6,7 @@ import de.webtwob.mma.api.interfaces.gui.IGUIHandlerServer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -25,7 +26,7 @@ public class ApiCommonProxy implements IGuiHandler {
     @Nullable
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        Object guiProvider = getCorrespondingObject(id,player,world,x,y,z);
+        Object guiProvider = getCorrespondingObject(id, player, world, x, y, z);
         if (guiProvider instanceof IGUIHandlerServer) {
             return ((IGUIHandlerServer) guiProvider).getServerGuiElement(id, player, world, x, y, z);
         }
@@ -45,9 +46,21 @@ public class ApiCommonProxy implements IGuiHandler {
             case OFF_HAND_ITEM_GUI:
                 return player.getHeldItem(EnumHand.OFF_HAND).getItem();
             case TILE_ENTITY_GUI:
-                return world.getTileEntity(new BlockPos(x, y, z));
+                //only open a GUI for loaded TileEntities
+                if (world.isBlockLoaded(new BlockPos(x, y, z))) {
+                    return world.getTileEntity(new BlockPos(x, y, z));
+                } else {
+                    player.sendStatusMessage(new TextComponentString("Block not loaded!"), false);
+                    return null;
+                }
             case BLOCK_GUI:
-                return world.getBlockState(new BlockPos(x, y, z)).getBlock();
+                //only open a GUI for loaded Blocks
+                if (world.isBlockLoaded(new BlockPos(x, y, z))) {
+                    return world.getBlockState(new BlockPos(x, y, z)).getBlock();
+                } else {
+                    player.sendStatusMessage(new TextComponentString("Block not loaded!"), false);
+                    return null;
+                }
             default:
                 APILog.LOGGER.error("Unsupported id {} in ApiCommonProxy!", id);
                 return null;
