@@ -33,8 +33,8 @@ public class QSContainer extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
 
-        ItemStack ret = ItemStack.EMPTY;
-        Slot slot = inventorySlots.get(index);
+        ItemStack ret  = ItemStack.EMPTY;
+        Slot      slot = inventorySlots.get(index);
         if (slot != null && slot.getHasStack()) {
 
             ItemStack inSlot = slot.getStack();

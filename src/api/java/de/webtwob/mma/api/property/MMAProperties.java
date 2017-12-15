@@ -14,9 +14,9 @@ public class MMAProperties {
     /*
      * Note: Names have to be lower-case
      * */
-    public static final PropertyDirection FACING = PropertyDirection.create("facing");
-    public static final PropertyBool CONNECTED = PropertyBool.create("connected");
-    public static final PropertyEnum<MachineState> STATE = PropertyEnum.create("state", MachineState.class);
+    public static final PropertyDirection          FACING    = PropertyDirection.create("facing");
+    public static final PropertyBool               CONNECTED = PropertyBool.create("connected");
+    public static final PropertyEnum<MachineState> STATE     = PropertyEnum.create("state", MachineState.class);
 
     private MMAProperties() {
     }

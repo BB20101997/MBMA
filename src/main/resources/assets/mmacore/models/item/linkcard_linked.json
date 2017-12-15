@@ -1,6 +1,6 @@
 {
-  "parent":"mmacore:item/linkcard",
-  "textures":{
-    "layer0":"mmacore:items/linkcard_linked"
+  "parent":   "mmacore:item/linkcard",
+  "textures": {
+    "layer0": "mmacore:items/linkcard_linked"
   }
 }

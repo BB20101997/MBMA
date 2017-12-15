@@ -11,9 +11,9 @@ import javax.annotation.Nullable;
  * Created by BB20101997 on 11. Dez. 2017.
  */
 public interface IGUIHandlerClient {
-   
+
     @SideOnly(Side.CLIENT)
     @Nullable
-    Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) ;
-    
+    Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z);
+
 }

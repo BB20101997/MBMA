@@ -37,7 +37,8 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
                 compound = new NBTTagCompound();
             }
             compound.setInteger(NBTKeys.TOKEN_SHARE_QUANTITY,
-                    Math.max(0, compound.getInteger(NBTKeys.TOKEN_SHARE_QUANTITY) - i));
+                                Math.max(0, compound.getInteger(NBTKeys.TOKEN_SHARE_QUANTITY) - i)
+            );
             item.setTagCompound(compound);
         }
 
@@ -83,7 +84,7 @@ public class CraftingRequestProvider implements ICapabilitySerializable {
 
     /**
      * @param stack the ItemStack for which to provide an instance of ICraftingRequest
-     * */
+     */
     public CraftingRequestProvider(ItemStack stack) {
         item = stack;
     }

@@ -21,8 +21,9 @@ import javax.annotation.Nullable;
  * Created by BB20101997 on 28. Okt. 2017.
  */
 public class BlockCraftingStorage extends MMABlock {
+
     public BlockCraftingStorage(ResourceLocation rl) {
-        super(Material.IRON,rl);
+        super(Material.IRON, rl);
 
         IBlockState state = blockState.getBaseState();
         state = state.withProperty(MMAProperties.STATE, MachineState.IDLE);
@@ -31,7 +32,7 @@ public class BlockCraftingStorage extends MMABlock {
 
     /**
      * @deprecated
-     * */
+     */
     @SuppressWarnings("deprecation")
     @Nonnull
     @Deprecated
@@ -66,12 +67,14 @@ public class BlockCraftingStorage extends MMABlock {
     @Override
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityCraftingStorage();
-    }@Override
+    }
+
+    @Override
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity instanceof IMultiBlockTile) {
-            ((IMultiBlockTile) tileEntity).onBlockBreak(worldIn,pos);
+            ((IMultiBlockTile) tileEntity).onBlockBreak(worldIn, pos);
         }
 
         super.breakBlock(worldIn, pos, state);

@@ -11,8 +11,8 @@ import javax.annotation.Nonnull;
  */
 public class DefaultCraftingRequest implements ICraftingRequest {
 
-    private ItemStack stack = ItemStack.EMPTY;
-    private int quantity = -1;
+    private ItemStack stack    = ItemStack.EMPTY;
+    private int       quantity = -1;
 
     @Nonnull
     @Override

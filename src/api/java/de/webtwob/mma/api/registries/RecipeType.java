@@ -44,12 +44,12 @@ public abstract class RecipeType extends IForgeRegistryEntry.Impl<RecipeType> {
 
     /**
      * @param request the recipe for which to determine the output
-     * @param world the world the player is in
+     * @param world   the world the player is in
      */
     public void autoFill(ICraftingRecipe request, World world) {
         if (!canAutoFillOutput()) {
             throw new UnsupportedOperationException("autoFill was called on a RecipeType that was not autofillable");
-        }else{
+        } else {
             APILog.error("Autofillable RecipeType did not override autoFill or did call super!");
         }
     }
@@ -63,22 +63,24 @@ public abstract class RecipeType extends IForgeRegistryEntry.Impl<RecipeType> {
         @Override
         public void autoFill(ICraftingRecipe request, World world) {
             if (canAutoFillOutput()) {
-                request.setOutput(0, CraftingManager.findMatchingResult(getVanillaMatrixForRequest(request), world), 1, NBTMatchType.FULL);
+                request.setOutput(0, CraftingManager.findMatchingResult(getVanillaMatrixForRequest(request), world), 1,
+                                  NBTMatchType.FULL
+                );
             }
         }
 
         @Nonnull
-        private InventoryCrafting getVanillaMatrixForRequest(@Nonnull ICraftingRecipe request){
-            InventoryCrafting matrix =  new InventoryCrafting(new Container() {
+        private InventoryCrafting getVanillaMatrixForRequest(@Nonnull ICraftingRecipe request) {
+            InventoryCrafting matrix = new InventoryCrafting(new Container() {
                 @Override
                 public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
                     return true;
                 }
-            },3,3);
+            }, 3, 3);
 
             ItemStack[] ins = request.getInputs();
-            for(int i = 0 ;i<9&&i<ins.length;i++) {
-                matrix.setInventorySlotContents(i,ins[i]);
+            for (int i = 0; i < 9 && i < ins.length; i++) {
+                matrix.setInventorySlotContents(i, ins[i]);
             }
             return matrix;
         }

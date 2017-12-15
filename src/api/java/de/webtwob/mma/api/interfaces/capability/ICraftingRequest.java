@@ -11,13 +11,14 @@ import javax.annotation.Nonnull;
  */
 public interface ICraftingRequest {
 
-     /**
+    /**
      * @param stack the ItemStack this will perform on
+     *
      * @return the items ICraftingRequest Instance if it has that Capability else null
-     * */
+     */
     static ICraftingRequest getCraftingRequest(ItemStack stack) {
-        return !(stack == null || stack.isEmpty()) ?
-                stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null) : null;
+        return !(stack == null || stack.isEmpty()) ? stack.getCapability(
+                APICapabilities.CAPABILITY_CRAFTING_REQUEST, null) : null;
     }
 
     @Nonnull

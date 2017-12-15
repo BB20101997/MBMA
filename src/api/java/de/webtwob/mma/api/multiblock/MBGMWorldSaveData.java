@@ -14,26 +14,25 @@ import javax.annotation.Nullable;
 
 import static de.webtwob.mma.api.MMAAPI.MODID;
 
-
 /**
  * Created by BB20101997 on 31. Okt. 2017.
  */
 @Mod.EventBusSubscriber(modid = MODID)
 public class MBGMWorldSaveData extends WorldSavedData {
 
-    private static final String DATA_NAME = MODID + "_MBGMData";
-    public final MultiBlockGroupManager multiBlockGroupManager = new MultiBlockGroupManager(this);
+    private static final String                 DATA_NAME              = MODID + "_MBGMData";
+    public final         MultiBlockGroupManager multiBlockGroupManager = new MultiBlockGroupManager(this);
 
     public MBGMWorldSaveData() {
         this(DATA_NAME);
     }
 
-    public MBGMWorldSaveData(String name){
+    public MBGMWorldSaveData(String name) {
         super(name);
     }
 
     @Nullable
-    public static MBGMWorldSaveData get(World world){
+    public static MBGMWorldSaveData get(World world) {
         MapStorage storage = world.getMapStorage();
         if (storage == null) {
             return null;

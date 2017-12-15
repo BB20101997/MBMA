@@ -21,8 +21,8 @@ public class TokenContainer extends Container {
 
     private static Capability<ICraftingRequest> requestCapability;
     @Nonnull
-    public final ItemStack stack;
-    private final EnumHand hand;
+    public final   ItemStack                    stack;
+    private final  EnumHand                     hand;
     private ItemStackContainer container = new ItemStackContainer();
 
     public TokenContainer(@Nonnull EntityPlayer player, EnumHand enumHand) {
@@ -36,24 +36,32 @@ public class TokenContainer extends Container {
         }
     }
 
-    public ResourceLocation getRequestRegistryName(){
-        return container.getItemStack().getItem().getRegistryName();
-    }
-
     @CapabilityInject(ICraftingRequest.class)
     private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
         TokenContainer.requestCapability = requestCapability;
     }
 
-    @Override
-    public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
-        return stack.equals(playerIn.getHeldItem(hand)) && requestCapability != null && stack.getCapability(requestCapability, null) != null;
+    public static TokenContainer tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
+        ItemStack held = player.getHeldItem(enumHand);
+        if (requestCapability != null && held.hasCapability(requestCapability, null)) {
+            return new TokenContainer(player, enumHand);
+        }
+        return null;
     }
 
+    public ResourceLocation getRequestRegistryName() {
+        return container.getItemStack().getItem().getRegistryName();
+    }
+
+    @Override
+    public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
+        return stack.equals(playerIn.getHeldItem(hand)) && requestCapability != null && stack.getCapability(
+                requestCapability, null) != null;
+    }
 
     public int getRequestAmount() {
         ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
-        if(request!=null){
+        if (request != null) {
             return request.getQuantity();
         }
         return 0;
@@ -61,23 +69,15 @@ public class TokenContainer extends Container {
 
     public void setItem(Item item) {
         ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
-        if(request!=null){
-            request.setRequest(new ItemStack(item,request.getQuantity()));
+        if (request != null) {
+            request.setRequest(new ItemStack(item, request.getQuantity()));
         }
     }
 
     public void setAmount(int amount) {
         ICraftingRequest request = ICraftingRequest.getCraftingRequest(stack);
-        if(request!=null){
+        if (request != null) {
             request.setQuantity(amount);
         }
-    }
-    
-    public static TokenContainer tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
-        ItemStack held = player.getHeldItem(enumHand);
-        if (requestCapability != null && held.hasCapability(requestCapability, null)) {
-            return new TokenContainer(player, enumHand);
-        }
-        return null;
     }
 }

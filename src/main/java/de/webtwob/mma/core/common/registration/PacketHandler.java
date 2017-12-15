@@ -14,8 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class PacketHandler {
 
-    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel
-            (MMACore.MODID);
+    public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(MMACore.MODID);
 
     private static int id = 0;
     private static boolean registered;
@@ -34,8 +33,12 @@ public class PacketHandler {
         if (!registered) {
             registered = true;
             CoreLog.debug("Registering PacketHandler");
-            INSTANCE.registerMessage(MachineStateUpdatePacket.MachineStateUpdatePacketHandler.class, MachineStateUpdatePacket.class, getNextID(), Side.CLIENT);
-            INSTANCE.registerMessage(TokenUpdatePacket.TokenUpdatePacketHandler.class, TokenUpdatePacket.class, getNextID(), Side.SERVER);
+            INSTANCE.registerMessage(MachineStateUpdatePacket.MachineStateUpdatePacketHandler.class,
+                                     MachineStateUpdatePacket.class, getNextID(), Side.CLIENT
+            );
+            INSTANCE.registerMessage(TokenUpdatePacket.TokenUpdatePacketHandler.class, TokenUpdatePacket.class,
+                                     getNextID(), Side.SERVER
+            );
         }
     }
 }

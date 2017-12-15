@@ -28,9 +28,9 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
 
     /**
      * Creates a new TileEntityCraftingStorage with a fixed Size unmodifiable {@literal List<ItemStackContainer>}
-     *     with size based on the value found in the configuration file
+     * with size based on the value found in the configuration file
      */
-    public TileEntityCraftingStorage(){
+    public TileEntityCraftingStorage() {
         ItemStackContainer[] container = new ItemStackContainer[MMAConfiguration.storageStackLimit];
         Arrays.setAll(container, i -> new ItemStackContainer());
         containerList = Collections.unmodifiableList(Arrays.asList(container));
@@ -45,7 +45,7 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound nbtc) {
         NBTTagCompound compound = super.writeToNBT(nbtc);
-        NBTTagList itemList = new NBTTagList();
+        NBTTagList     itemList = new NBTTagList();
         for (ItemStackContainer isc : containerList) {
             ItemStack stack = isc.getItemStack();
             if (!stack.isEmpty()) {
@@ -60,14 +60,16 @@ public class TileEntityCraftingStorage extends MultiBlockTileEntity {
     public void readFromNBT(final NBTTagCompound compound) {
         super.readFromNBT(compound);
         NBTTagList itemList = compound.getTagList(NBTKeys.CRAFTING_STORAGE_LIST, Constants.NBT.TAG_COMPOUND);
-        int sizeNBT = itemList.tagCount();
-        int sizeList = containerList.size();
+        int        sizeNBT  = itemList.tagCount();
+        int        sizeList = containerList.size();
         for (int i = 0; i < sizeList && i < sizeNBT; i++) {
             containerList.get(i).setItemStack(new ItemStack(itemList.getCompoundTagAt(i)));
         }
         if (sizeNBT > sizeList) {
             for (int i = sizeNBT; i < sizeList; i++) {
-                world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(itemList.getCompoundTagAt(i))));
+                world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(),
+                                                 new ItemStack(itemList.getCompoundTagAt(i))
+                ));
             }
         }
     }

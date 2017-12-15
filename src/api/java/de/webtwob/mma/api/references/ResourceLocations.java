@@ -10,16 +10,18 @@ import static de.webtwob.mma.api.MMAAPI.MODID;
 public class ResourceLocations {
 
     //Registrie ResourceLocations
-    public static final ResourceLocation REG_MULTIBLOCK = new ResourceLocation(MODID, "multiblock");
+    public static final ResourceLocation REG_MULTIBLOCK  = new ResourceLocation(MODID, "multiblock");
     public static final ResourceLocation REG_RECIPE_TYPE = new ResourceLocation(MODID, "recipeType");
 
-    public static final ResourceLocation REG_RECIPE_VANILLA = new ResourceLocation(MODID,"vanillaRecipe");
-    public static final ResourceLocation REG_RECIPE_CUSTOM = new ResourceLocation(MODID,"customRecipe");
-    public static final ResourceLocation REG_IN_WORLD_RECIPE = new ResourceLocation(MODID,"inWorldRecipe");
-   
+    public static final ResourceLocation REG_RECIPE_VANILLA  = new ResourceLocation(MODID, "vanillaRecipe");
+    public static final ResourceLocation REG_RECIPE_CUSTOM   = new ResourceLocation(MODID, "customRecipe");
+    public static final ResourceLocation REG_IN_WORLD_RECIPE = new ResourceLocation(MODID, "inWorldRecipe");
+
     //Textures
-    public static final ResourceLocation GUI_COMPONENTS = new ResourceLocation(MODID,"textures/gui/gui_components.png");
-    
+    public static final ResourceLocation GUI_COMPONENTS = new ResourceLocation(MODID,
+                                                                               "textures/gui/gui_components.png"
+    );
+
     private ResourceLocations() {
     }
 }

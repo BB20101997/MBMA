@@ -21,12 +21,12 @@ public class APICapabilities {
     @CapabilityInject(IBlockPosProvider.class)
     public static final Capability<IBlockPosProvider> CAPABILITY_BLOCK_POS = null;
     @CapabilityInject(ICraftingRequest.class)
-    public static final Capability<ICraftingRequest> CAPABILITY_CRAFTING_REQUEST = null;
+    public static final Capability<ICraftingRequest>  CAPABILITY_CRAFTING_REQUEST = null;
     @CapabilityInject(ICraftingRecipe.class)
-    public static final Capability<ICraftingRecipe> CAPABILITY_CRAFTING_RECIPE = null;
+    public static final Capability<ICraftingRecipe>   CAPABILITY_CRAFTING_RECIPE = null;
     @CapabilityInject(IPatternProvider.class)
-    public static final  Capability<IPatternProvider> CAPABILITY_PATTERN_PROVIDER = null;
-    
+    public static final Capability<IPatternProvider>  CAPABILITY_PATTERN_PROVIDER = null;
+
     private static boolean registered = false;
 
     private APICapabilities() {
@@ -39,14 +39,18 @@ public class APICapabilities {
         if (!registered) {
             registered = true;
             APILog.debug("Registering Capabilities");
-            CapabilityManager.INSTANCE.register(IBlockPosProvider.class, new BlockPosStorage(), DefaultBlockPosProvider::new);
+            CapabilityManager.INSTANCE.register(
+                    IBlockPosProvider.class, new BlockPosStorage(), DefaultBlockPosProvider::new);
             CapabilityManager.INSTANCE.register(
                     ICraftingRequest.class, new CraftingRequestStorage(), DefaultCraftingRequest::new);
             CapabilityManager.INSTANCE.register(
                     ICraftingRecipe.class, new CraftingRecipeStorage(), DefaultCraftingRecipe::new);
-            CapabilityManager.INSTANCE.register(ICraftingRequestProvider.class, new ICraftingRequestProviderIStorage(), () -> require -> null);
-            CapabilityManager.INSTANCE.register(IPatternProvider.class,new IPatternProviderStorage(),()-> ArrayList::new);
+            CapabilityManager.INSTANCE.register(
+                    ICraftingRequestProvider.class, new ICraftingRequestProviderIStorage(), () -> require -> null);
+            CapabilityManager.INSTANCE.register(IPatternProvider.class, new IPatternProviderStorage(),
+                                                () -> ArrayList::new
+            );
         }
     }
-    
+
 }

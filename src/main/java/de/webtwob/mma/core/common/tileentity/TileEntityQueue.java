@@ -43,51 +43,51 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * Created by BB20101997 on 25. Okt. 2017.
  */
 public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandlerBoth {
-    
+
     @ObjectHolder("mmacore:queue")
     private static final MultiBlockGroupType MANAGER_QUEUE = null;
-    
-    private static Capability<IItemHandler> capabilityItemHandler;
-    private static Capability<ICraftingRequest> capabilityCraftingRequest;
+
+    private static Capability<IItemHandler>             capabilityItemHandler;
+    private static Capability<ICraftingRequest>         capabilityCraftingRequest;
     private static Capability<ICraftingRequestProvider> capabilityCraftingRequestProvider;
-    
-    private final LinkedList<ItemStackContainer> freeRequestContainer = new LinkedList<>();
+
+    private final LinkedList<ItemStackContainer> freeRequestContainer  = new LinkedList<>();
     private final LinkedList<ItemStackContainer> inUseRequestContainer = new LinkedList<>();
-    
+
     private IItemHandler handler = new EnqueueingItemHandler();
-    private boolean resync = false;
-    
+    private boolean      resync  = false;
+
     public TileEntityQueue() {
         //init freeItemStackContainers
         for (int i = 0; i < MMAConfiguration.queueLength; i++) {
             freeRequestContainer.add(createItemStackContainer());
         }
     }
-    
+
     @CapabilityInject(IItemHandler.class)
     private static void injectItemHandler(Capability<IItemHandler> handler) {
         capabilityItemHandler = handler;
     }
-    
+
     @CapabilityInject(ICraftingRequest.class)
     private static void injectCraftingRequest(Capability<ICraftingRequest> handler) {
         capabilityCraftingRequest = handler;
     }
-    
+
     @CapabilityInject(ICraftingRequestProvider.class)
     private static void injectCraftingRequestProvider(Capability<ICraftingRequestProvider> handler) {
         capabilityCraftingRequestProvider = handler;
     }
-    
+
     public MultiBlockGroupType getGroupType() {
         return MANAGER_QUEUE;
     }
-    
+
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return super.hasCapability(capability, facing) || null != getCapability(capability, facing);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
@@ -99,24 +99,24 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
         }
         return super.getCapability(capability, facing);
     }
-    
+
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound supComp = super.writeToNBT(compound);
-        NBTTagList items = new NBTTagList();
+        NBTTagList     items   = new NBTTagList();
         inUseRequestContainer.forEach(stack -> items.appendTag(stack.getItemStack().serializeNBT()));
         supComp.setTag(NBTKeys.QUEUE_STACKS, items);
         return supComp;
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         removeAllFromQueue(inUseRequestContainer);
-        
+
         inUseRequestContainer.clear();
-        int free = MMAConfiguration.queueLength;
+        int                free = MMAConfiguration.queueLength;
         ItemStackContainer container;
         for (NBTBase comp : compound.getTagList(NBTKeys.QUEUE_STACKS, Constants.NBT.TAG_COMPOUND)) {
             container = createItemStackContainer(new ItemStack((NBTTagCompound) comp));
@@ -136,7 +136,7 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
             freeRequestContainer.remove(0);
         }
     }
-    
+
     /**
      * @return an Array containing the currently enqueued Requests
      */
@@ -148,12 +148,12 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
             if (instance instanceof QueueGroupType.Instance) {
                 return ((QueueGroupType.Instance) instance).getQueue();
             }
-        }else{
+        } else {
             System.out.println("Goup was null!");
         }
         return new LinkedList<>();
     }
-    
+
     /**
      * find the first Group Member that returns a non empty ItemStack and return said ItemStack
      */
@@ -163,47 +163,43 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
             return ItemStack.EMPTY;
         }
         List<ItemStackContainer> queue = getCurrentRequests();
-        return queue.stream()
-                .filter(isc -> requirement.test(isc.getItemStack()))
-                .findFirst()
-                .map(isc -> {
-                    ItemStack request = isc.getItemStack();
-                    queue.remove(isc);
-                    isc.setItemStack(ItemStack.EMPTY);
-                    isc.returnToPool();
-                    return request;
-                })
-                .orElse(ItemStack.EMPTY);
+        return queue.stream().filter(isc -> requirement.test(isc.getItemStack())).findFirst().map(isc -> {
+            ItemStack request = isc.getItemStack();
+            queue.remove(isc);
+            isc.setItemStack(ItemStack.EMPTY);
+            isc.returnToPool();
+            return request;
+        }).orElse(ItemStack.EMPTY);
     }
-    
+
     @Override
     public void update() {
         super.update();
-        if(resync){
+        if (resync) {
             resync = false;
             removeAllFromQueue(inUseRequestContainer);
             removeAllFromQueue(freeRequestContainer);
             addAllToQueue(inUseRequestContainer);
         }
     }
-    
+
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
         removeAllFromQueue(inUseRequestContainer);
     }
-    
+
     private ItemStackContainer createItemStackContainer() {
         return createItemStackContainer(ItemStack.EMPTY);
     }
-    
+
     private ItemStackContainer createItemStackContainer(ItemStack stack) {
         ItemStackContainer container = new ItemStackContainer(stack);
         container.setDirtyCallback(this::markDirty);
         container.setPoolReturn(this::freeItemStackContainer);
         return container;
     }
-    
+
     private void freeItemStackContainer(ItemStackContainer container) {
         if (inUseRequestContainer.contains(container)) {
             //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
@@ -211,20 +207,20 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
             freeRequestContainer.add(container);
         }
     }
-    
+
     private void disposeItemStackContainer(ItemStackContainer container) {
         if (inUseRequestContainer.contains(container)) {
             //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
             inUseRequestContainer.remove(container);
         }
     }
-    
+
     @Override
     public void onLoad() {
         super.onLoad();
         addAllToQueue(inUseRequestContainer);
     }
-    
+
     private void removeAllFromQueue(Collection<ItemStackContainer> itemStackContainer) {
         MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
         if (null != group) {
@@ -237,7 +233,7 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
         }
         resync = true;
     }
-    
+
     private void addToQueue(ItemStackContainer itemStackContainer) {
         MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
         if (null != group) {
@@ -250,7 +246,7 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
         }
         resync = true;
     }
-    
+
     private void addAllToQueue(Collection<ItemStackContainer> itemStackContainerCollection) {
         MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
         if (null != group) {
@@ -260,63 +256,81 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
                 queue.addAll(itemStackContainerCollection);
             }
         }
-        
+
         resync = true;
     }
-    
+
     public boolean canStackBeAddedToQueue(ItemStack stack) {
         //do we have room, is there even some thing to insert and does crafting exists
         if (freeRequestContainer.isEmpty() || stack.isEmpty() || null == capabilityCraftingRequest) {
             return false;
         }
-        
+
         //is the ItemStack a Request and is it uncompleted
         ICraftingRequest request = stack.getCapability(capabilityCraftingRequest, null);
-        
+
         return null != request && !request.isCompleted();
-        
+
     }
-    
+
     @Nullable
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return QueueGui.tryCreateInstance(id, player, world, x, y, z);
     }
-    
+
     @Nullable
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return QueueContainer.tryCreateInstance(id, player, world, x, y, z);
     }
-    
+
     @Override
     public void performDebugOnTile(EntityPlayer player) {
         super.performDebugOnTile(player);
-        player.sendStatusMessage(new TextComponentString(String.format("%d out of %d Queue length in use!\n", inUseRequestContainer.size(), MMAConfiguration.queueLength)), false);
+        player.sendStatusMessage(
+                new TextComponentString(
+                        String.format("%d out of %d Queue length in use!\n", inUseRequestContainer.size(),
+                                      MMAConfiguration.queueLength
+                        )), false);
     }
-    
+
     public void addStackToQueue(final ItemStack stack) {
         ItemStackContainer isc = freeRequestContainer.poll();
-        if(null == isc)
-            throw new IllegalStateException("No free ISC! You need to make sure to test if an ItemStack can be added first befor adding it!");
+        if (null == isc) {
+            throw new IllegalStateException(
+                    "No free ISC! You need to make sure to test if an ItemStack can be added first befor adding it!");
+        }
         isc.setItemStack(stack);
         inUseRequestContainer.add(isc);
         addToQueue(isc);
     }
-    
+
+    @Override
+    public void onBlockBreak(final World world, final BlockPos pos) {
+        super.onBlockBreak(world, pos);
+        removeAllFromQueue(inUseRequestContainer);
+        for (ItemStackContainer isc : inUseRequestContainer) {
+            ItemStack stack = isc.getItemStack();
+            if (!stack.isEmpty()) {
+                world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack));
+            }
+        }
+    }
+
     private class EnqueueingItemHandler implements IItemHandler {
-        
+
         @Override
         public int getSlots() {
             return 1;
         }
-        
+
         @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
             return ItemStack.EMPTY;
         }
-        
+
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -331,16 +345,16 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
                     return stack;
                 }
             }
-            
+
             //TODO check if other queues in the MultiBlock have ISC's left and use those if we are out
             if (!canStackBeAddedToQueue(stack)) {
                 return stack;
             }
-            
+
             //create two copies one to return and one to enqueue
             ItemStack enqueue = stack.copy();
             ItemStack result;
-            
+
             //set the stack we want to enqueue to size 1 while decreasing the returned stack, we don't want to dupe requests
             if (1 != stack.getCount()) {
                 result = stack.copy();
@@ -349,37 +363,26 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
             } else {
                 result = ItemStack.EMPTY;
             }
-            
-            if (simulate)
+
+            if (simulate) {
                 return result;
-            
+            }
+
             addStackToQueue(stack);
-            
+
             return result;
         }
-        
+
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             //we don't allow extraction
             return ItemStack.EMPTY;
         }
-        
+
         @Override
         public int getSlotLimit(int slot) {
             return 1;
-        }
-    }
-    
-    @Override
-    public void onBlockBreak(final World world, final BlockPos pos) {
-        super.onBlockBreak(world,pos);
-        removeAllFromQueue(inUseRequestContainer);
-        for(ItemStackContainer isc:inUseRequestContainer){
-            ItemStack stack = isc.getItemStack();
-            if(!stack.isEmpty()){
-                world.spawnEntity(new EntityItem(world,pos.getX(),pos.getY(),pos.getZ(),stack));
-            }
         }
     }
 }

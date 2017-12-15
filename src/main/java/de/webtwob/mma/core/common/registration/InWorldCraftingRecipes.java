@@ -28,22 +28,22 @@ import java.util.stream.Stream;
  */
 @Mod.EventBusSubscriber(modid = MMACore.MODID)
 public class InWorldCraftingRecipes {
-    
+
     private static final String RECIPE_DIR = "/assets/mmacore/3d_recipes";
-    
+
     private InWorldCraftingRecipes() {
     }
-    
+
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<InWorldRecipe> event) {
         CoreLog.info("Registering InWorldRecipes");
         loadBuildInRecipes(event.getRegistry());
     }
-    
+
     private static void loadBuildInRecipes(IForgeRegistry<InWorldRecipe> registry) {
         Stream<Path> pathIterator = null;
         FileSystem   fileSystem   = null;
-        try{
+        try {
             URI folderURI = InWorldRecipeLoader.class.getResource(RECIPE_DIR).toURI();
             Path folderPath;
             if ("jar".equals(folderURI.getScheme())) {
@@ -59,13 +59,13 @@ public class InWorldCraftingRecipes {
                     tryLoadingRecipe(registry, folderPath, path);
                 }
             }
-        } catch(IOException | URISyntaxException e){
+        } catch (IOException | URISyntaxException e) {
             APILog.LOGGER.error(e);
         } finally {
             if (fileSystem != null) {
-                try{
+                try {
                     fileSystem.close();
-                } catch(IOException e){
+                } catch (IOException e) {
                     CoreLog.LOGGER.error(e);
                 }
             }
@@ -73,9 +73,9 @@ public class InWorldCraftingRecipes {
                 pathIterator.close();
             }
         }
-        
+
     }
-    
+
     private static void tryLoadingRecipe(
             final IForgeRegistry<InWorldRecipe> registry, final Path folderPath, final Path path
     ) {
@@ -84,13 +84,13 @@ public class InWorldCraftingRecipes {
                                                          FilenameUtils.removeExtension(relativePath.toString())
                                                                       .replaceAll("\\\\", "/")
         );
-        try{
+        try {
             InWorldRecipe recipe = InWorldRecipeLoader.loadRecipeFromReader(Files.newBufferedReader(path));
             recipe.setRegistryName(recipeRL);
             registry.register(recipe);
-        } catch(NullPointerException | JsonParseException | ClassCastException | IllegalStateException e){
+        } catch (NullPointerException | JsonParseException | ClassCastException | IllegalStateException e) {
             CoreLog.LOGGER.error("Failed to register build in InWorldRecipe " + recipeRL + " in " + path, e);
-        } catch(Exception e){
+        } catch (Exception e) {
             CoreLog.LOGGER.error(
                     "Unexpected Exception while loading build in InWorldRecipe " + recipeRL + " in " + path, e);
         }

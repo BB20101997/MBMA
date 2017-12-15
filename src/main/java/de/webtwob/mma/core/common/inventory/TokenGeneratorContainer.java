@@ -18,14 +18,14 @@ import javax.annotation.Nonnull;
  */
 public class TokenGeneratorContainer extends Container {
 
-    int xSize = 230;
-    int ySize = 168;
-    int inputY = 7;
-    int outputY = 68;
-    int dif = 54;
-    int inputOffset = 17;
+    int xSize        = 230;
+    int ySize        = 168;
+    int inputY       = 7;
+    int outputY      = 68;
+    int dif          = 54;
+    int inputOffset  = 17;
     int outputOffset = 26;
-    int lastDif = 81;
+    int lastDif      = 81;
     private EntityPlayer player;
     private IItemHandler muster;
     private IItemHandler combined;
@@ -36,6 +36,13 @@ public class TokenGeneratorContainer extends Container {
         combined = tgte.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         positionPlayerSlots();
         positionTokenGeneratorSlots();
+    }
+
+    public static TokenGeneratorContainer tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
+        if (tileEntity instanceof TileEntityRequestGenerator) {
+            return new TokenGeneratorContainer(player, (TileEntityRequestGenerator) tileEntity);
+        }
+        return null;
     }
 
     private void positionTokenGeneratorSlots() {
@@ -55,8 +62,8 @@ public class TokenGeneratorContainer extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
 
-        ItemStack ret = ItemStack.EMPTY;
-        Slot slot = inventorySlots.get(index);
+        ItemStack ret  = ItemStack.EMPTY;
+        Slot      slot = inventorySlots.get(index);
         if (slot != null && slot.getHasStack()) {
 
             ItemStack inSlot = slot.getStack();
@@ -83,7 +90,8 @@ public class TokenGeneratorContainer extends Container {
     private void positionPlayerSlots() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlotToContainer(new Slot(player.inventory, col + row * 9 + 9, 8 + col * 18, ySize - 7 - (4 - row) * 18));
+                addSlotToContainer(
+                        new Slot(player.inventory, col + row * 9 + 9, 8 + col * 18, ySize - 7 - (4 - row) * 18));
             }
         }
 
@@ -95,12 +103,5 @@ public class TokenGeneratorContainer extends Container {
     @Override
     public boolean canInteractWith(@Nonnull EntityPlayer entityPlayer) {
         return true;
-    }
-    
-    public static TokenGeneratorContainer tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
-        if(tileEntity instanceof TileEntityRequestGenerator){
-            return new TokenGeneratorContainer(player, (TileEntityRequestGenerator) tileEntity);
-        }
-        return null;
     }
 }

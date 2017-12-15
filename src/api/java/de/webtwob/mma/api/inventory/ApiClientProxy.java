@@ -16,7 +16,7 @@ public class ApiClientProxy extends ApiCommonProxy {
     @Nullable
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-         Object guiProvider = getCorrespondingObject(id,player,world,x,y,z);
+        Object guiProvider = getCorrespondingObject(id, player, world, x, y, z);
         if (guiProvider instanceof IGUIHandlerClient) {
             return ((IGUIHandlerClient) guiProvider).getClientGuiElement(id, player, world, x, y, z);
         }

@@ -1,12 +1,12 @@
 {
-  "Type":"BlocksOnly",
-  "Aisles":[["BBB","BBB","BBB"],["BCB","BWB","BCB"],["BBB","BBB","BBB"]],
-  "resultMap":[
-    {"pos":[1,1,1],"blockName":"mmacore:crafting_storage"}
+  "Type":      "BlocksOnly",
+  "Aisles":    [["BBB", "BBB", "BBB"], ["BCB", "BWB", "BCB"], ["BBB", "BBB", "BBB"]],
+  "resultMap": [
+    {"pos": [1, 1, 1], "blockName": "mmacore:crafting_storage"}
   ],
-  "blockMap":[
-    {"key":"B","value":"minecraft:iron_bars"},
-    {"key":"C","value":"minecraft:chest"},
-    {"key":"W","value":"minecraft:crafting_table"}
+  "blockMap":  [
+    {"key": "B", "value": "minecraft:iron_bars"},
+    {"key": "C", "value": "minecraft:chest"},
+    {"key": "W", "value": "minecraft:crafting_table"}
   ]
 }

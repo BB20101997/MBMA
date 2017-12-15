@@ -8,14 +8,15 @@ import net.minecraftforge.common.util.INBTSerializable;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class MultiBlockMember implements INBTSerializable<NBTTagIntArray>{
+public class MultiBlockMember implements INBTSerializable<NBTTagIntArray> {
+
     private BlockPos pos;
-    private int worldId;
+    private int      worldId;
 
     /**
      * @param dimensionID the world id of the world the member is in
-     * @param pos the position this member is at in worldId
-     * */
+     * @param pos         the position this member is at in worldId
+     */
     public MultiBlockMember(int dimensionID, BlockPos pos) {
         this.pos = pos.toImmutable();
         this.worldId = dimensionID;
@@ -23,15 +24,15 @@ public class MultiBlockMember implements INBTSerializable<NBTTagIntArray>{
 
     /**
      * @param world the world the member is in, used to get the dimensionId
-     * @param pos the position this member is at in worldId
-     * */
-    public MultiBlockMember(World world, BlockPos pos){
+     * @param pos   the position this member is at in worldId
+     */
+    public MultiBlockMember(World world, BlockPos pos) {
         this(world.provider.getDimension(), pos);
     }
 
     /**
      * used to create Members for deserializing NBT
-     * */
+     */
     public MultiBlockMember() {
 
     }
@@ -61,8 +62,8 @@ public class MultiBlockMember implements INBTSerializable<NBTTagIntArray>{
 
     @Override
     public NBTTagIntArray serializeNBT() {
-        if(pos!=null){
-            return new NBTTagIntArray(new int[]{pos.getX(),pos.getY(),pos.getZ(),worldId});
+        if (pos != null) {
+            return new NBTTagIntArray(new int[]{pos.getX(), pos.getY(), pos.getZ(), worldId});
         }
         return new NBTTagIntArray(new int[]{worldId});
     }
@@ -70,10 +71,10 @@ public class MultiBlockMember implements INBTSerializable<NBTTagIntArray>{
     @Override
     public void deserializeNBT(NBTTagIntArray nbt) {
         int[] coords = nbt.getIntArray();
-        if(coords.length>3){
-            pos = new BlockPos(coords[0],coords[1],coords[2]);
+        if (coords.length > 3) {
+            pos = new BlockPos(coords[0], coords[1], coords[2]);
             worldId = coords[3];
-        }else if(coords.length>0){
+        } else if (coords.length > 0) {
             worldId = coords[0];
         }
     }

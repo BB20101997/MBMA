@@ -8,7 +8,8 @@ import java.util.Objects;
 /**
  * Created by BB20101997 on 10. Dez. 2017.
  */
-public  class MMAItemBlock extends ItemBlock {
+public class MMAItemBlock extends ItemBlock {
+
     public MMAItemBlock(Block block) {
         super(block);
         setRegistryName(Objects.requireNonNull(block.getRegistryName()));

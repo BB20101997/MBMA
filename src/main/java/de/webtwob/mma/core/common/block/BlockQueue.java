@@ -22,24 +22,26 @@ import javax.annotation.Nullable;
  * Created by BB20101997 on 06. Nov. 2017.
  */
 public class BlockQueue extends MMABlock {
-    
+
     public BlockQueue(ResourceLocation rl) {
-        super(Material.IRON,rl);
+        super(Material.IRON, rl);
     }
-   
+
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            player.openGui(ObjectHolders.apiInstance, ApiCommonProxy.TILE_ENTITY_GUI,world,pos.getX(),pos.getY(),pos.getZ());
+            player.openGui(ObjectHolders.apiInstance, ApiCommonProxy.TILE_ENTITY_GUI, world, pos.getX(), pos.getY(),
+                           pos.getZ()
+            );
         }
         return true;
     }
-    
+
     @Override
     public boolean hasTileEntity(final IBlockState state) {
         return true;
     }
-    
+
     @Nullable
     @Override
     public TileEntity createTileEntity(
@@ -47,15 +49,15 @@ public class BlockQueue extends MMABlock {
     ) {
         return new TileEntityQueue();
     }
-    
+
     @Override
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
-        
+
         if (tileEntity instanceof IMultiBlockTile) {
             ((IMultiBlockTile) tileEntity).onBlockBreak(worldIn, pos);
         }
-        
+
         super.breakBlock(worldIn, pos, state);
     }
 }

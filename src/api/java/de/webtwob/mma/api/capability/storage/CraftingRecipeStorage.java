@@ -17,16 +17,14 @@ public class CraftingRecipeStorage implements Capability.IStorage<ICraftingRecip
     @Nullable
     @Override
     public NBTBase writeNBT(
-            final Capability<ICraftingRecipe> capability, final ICraftingRecipe iCraftingRecipe,
-            final EnumFacing enumFacing
+            final Capability<ICraftingRecipe> capability, final ICraftingRecipe iCraftingRecipe, final EnumFacing enumFacing
     ) {
         return iCraftingRecipe.serializeNBT();
     }
 
     @Override
     public void readNBT(
-            final Capability<ICraftingRecipe> capability, final ICraftingRecipe iCraftingRecipe,
-            final EnumFacing enumFacing, final NBTBase nbtBase
+            final Capability<ICraftingRecipe> capability, final ICraftingRecipe iCraftingRecipe, final EnumFacing enumFacing, final NBTBase nbtBase
     ) {
         if (nbtBase instanceof NBTTagCompound) {
             iCraftingRecipe.deserializeNBT((NBTTagCompound) nbtBase);

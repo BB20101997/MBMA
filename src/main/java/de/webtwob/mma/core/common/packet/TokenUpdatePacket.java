@@ -1,10 +1,11 @@
 package de.webtwob.mma.core.common.packet;
 
+import io.netty.buffer.ByteBuf;
+
 import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.inventory.TokenContainer;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,19 +22,20 @@ import java.io.IOException;
 public class TokenUpdatePacket implements IMessage {
 
     private ItemStack request;
-    private int quantity;
+    private int       quantity;
 
     /**
      * Used to generate TokenUpdatePackets from an incoming ByteStream
-     * */
+     */
     public TokenUpdatePacket() {
     }
 
     /**
      * Creates a TokenUpdatePacket
-     * @param request the ItemStack to request
+     *
+     * @param request  the ItemStack to request
      * @param quantity the quantity to request
-     * */
+     */
     public TokenUpdatePacket(ItemStack request, int quantity) {
         this.request = request;
         this.quantity = quantity;
@@ -60,11 +62,12 @@ public class TokenUpdatePacket implements IMessage {
     }
 
     public static class TokenUpdatePacketHandler implements IMessageHandler<TokenUpdatePacket, IMessage> {
+
         @Override
         public IMessage onMessage(TokenUpdatePacket message, MessageContext ctx) {
             EntityPlayer playerEntity = ctx.getServerHandler().player;
             if (playerEntity.openContainer instanceof TokenContainer) {
-                ItemStack held = ((TokenContainer) playerEntity.openContainer).stack;
+                ItemStack        held = ((TokenContainer) playerEntity.openContainer).stack;
                 ICraftingRequest icr;
                 if ((icr = held.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null) {
                     if (message.request != null) {

@@ -16,10 +16,10 @@ import static de.webtwob.mma.core.common.references.ResourceLocations.MultiBlock
 @Mod.EventBusSubscriber(modid = "mmacore")
 public class MultiBlockGroupTypes {
 
-    public static final MultiBlockGroupType  STORAGE = new MultiBlockGroupType();
-    public static final MultiBlockGroupType  CRAFTING = new MultiBlockGroupType();
-    public static final MultiBlockGroupType  RECIPES = new MultiBlockGroupType();
-    public static final MultiBlockGroupType  QUEUE = new QueueGroupType();
+    public static final MultiBlockGroupType STORAGE  = new MultiBlockGroupType();
+    public static final MultiBlockGroupType CRAFTING = new MultiBlockGroupType();
+    public static final MultiBlockGroupType RECIPES  = new MultiBlockGroupType();
+    public static final MultiBlockGroupType QUEUE    = new QueueGroupType();
 
     private MultiBlockGroupTypes() {
     }
@@ -33,7 +33,7 @@ public class MultiBlockGroupTypes {
         RECIPES.setRegistryName(MBGM_RECIPE);
         QUEUE.setRegistryName(MBGM_QUEUE);
 
-        event.getRegistry().registerAll(STORAGE,CRAFTING,RECIPES,QUEUE);
+        event.getRegistry().registerAll(STORAGE, CRAFTING, RECIPES, QUEUE);
     }
 
 }

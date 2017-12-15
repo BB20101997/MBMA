@@ -1,7 +1,7 @@
 {
-    "parent": "minecraft:block/cube_top",
-    "textures":{
-        "top":"mmacore:blocks/crafting/storage/problem_top",
-        "side":"mmacore:blocks/crafting/problem"
-    }
+  "parent":   "minecraft:block/cube_top",
+  "textures": {
+    "top":  "mmacore:blocks/crafting/storage/problem_top",
+    "side": "mmacore:blocks/crafting/problem"
+  }
 }

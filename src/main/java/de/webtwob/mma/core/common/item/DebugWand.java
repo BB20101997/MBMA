@@ -31,7 +31,6 @@ public class DebugWand extends MMAItem {
         super(rl);
     }
 
-
     @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
@@ -45,13 +44,16 @@ public class DebugWand extends MMAItem {
             if (!worldIn.isRemote) {
                 boolean debuggable;
                 IBlockState blockState = worldIn.getBlockState(result.getBlockPos());
-                Block block = blockState.getBlock();
+                Block block            = blockState.getBlock();
 
                 debuggable = debugBlock(block, worldIn, result.getBlockPos(), playerIn);
                 debuggable |= debugTile(block, blockState, worldIn, result.getBlockPos(), playerIn);
 
                 if (!debuggable) {
-                    playerIn.sendStatusMessage(new TextComponentString("No Debug Action available for " + block.getLocalizedName()), false);
+                    playerIn.sendStatusMessage(
+                            new TextComponentString("No Debug Action available for " + block.getLocalizedName()),
+                            false
+                    );
                 }
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
@@ -61,7 +63,8 @@ public class DebugWand extends MMAItem {
 
     private boolean debugBlock(Block block, World world, BlockPos pos, EntityPlayer player) {
         if (block instanceof IDebuggableBlock) {
-            player.sendStatusMessage(new TextComponentString("Debug Information for Block " + block.getLocalizedName()), false);
+            player.sendStatusMessage(
+                    new TextComponentString("Debug Information for Block " + block.getLocalizedName()), false);
             ((IDebuggableBlock) block).performDebugOnBlock(world, pos, player, 0);
             return true;
         }
@@ -72,7 +75,10 @@ public class DebugWand extends MMAItem {
         if (block.hasTileEntity(state)) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof IDebuggableTile) {
-                player.sendStatusMessage(new TextComponentString("Debug Information for TileEntity of " + block.getLocalizedName()), false);
+                player.sendStatusMessage(
+                        new TextComponentString("Debug Information for TileEntity of " + block.getLocalizedName()),
+                        false
+                );
                 ((IDebuggableTile) tileEntity).performDebugOnTile(player);
                 return true;
             }

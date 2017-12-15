@@ -1,9 +1,10 @@
 package de.webtwob.mma.core.common.packet;
 
+import io.netty.buffer.ByteBuf;
+
 import de.webtwob.mma.api.enums.MachineState;
 import de.webtwob.mma.api.interfaces.block.IMachineState;
 import de.webtwob.mma.core.common.CoreLog;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -21,16 +22,16 @@ import net.minecraftforge.fml.relauncher.Side;
 public class MachineStateUpdatePacket implements IMessage {
 
     private MachineState machineState = MachineState.IDLE;
-    private BlockPos blockPos = new BlockPos(0, 0, 0);
+    private BlockPos     blockPos     = new BlockPos(0, 0, 0);
 
     /**
      * Used when generating Packets from the ByteStream from the Network
-     * */
+     */
     public MachineStateUpdatePacket() {
     }
 
     /**
-     * @param pos the position of the Machine to update
+     * @param pos   the position of the Machine to update
      * @param state thet state to set the Machine to
      */
     public MachineStateUpdatePacket(BlockPos pos, MachineState state) {
@@ -58,8 +59,7 @@ public class MachineStateUpdatePacket implements IMessage {
         }
     }
 
-    public static class MachineStateUpdatePacketHandler implements IMessageHandler<MachineStateUpdatePacket,
-            IMessage> {
+    public static class MachineStateUpdatePacketHandler implements IMessageHandler<MachineStateUpdatePacket, IMessage> {
 
         @Override
         public IMessage onMessage(MachineStateUpdatePacket message, MessageContext ctx) {
@@ -74,8 +74,10 @@ public class MachineStateUpdatePacket implements IMessage {
                         ((IMachineState) tileEntity).setMachineState(message.machineState);
                         tileEntity.markDirty();
                     } else {
-                        CoreLog.warn("Received MachineStateUpdatePacket for Block at {} {} {}, but TileEntity " +
-                                "didn't support it!", message.blockPos.getX(), message.blockPos.getY(), message.blockPos.getZ());
+                        CoreLog.warn(
+                                "Received MachineStateUpdatePacket for Block at {} {} {}, but TileEntity " + "didn't support it!",
+                                message.blockPos.getX(), message.blockPos.getY(), message.blockPos.getZ()
+                        );
                     }
                 });
             }

@@ -10,16 +10,16 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Created by BB20101997 on 10. Dez. 2017.
  */
-public abstract class MMABlock extends net.minecraft.block.Block{
-    
-    public MMABlock(Material blockMaterialIn, MapColor blockMapColorIn,ResourceLocation rl) {
+public abstract class MMABlock extends net.minecraft.block.Block {
+
+    public MMABlock(Material blockMaterialIn, MapColor blockMapColorIn, ResourceLocation rl) {
         super(blockMaterialIn, blockMapColorIn);
         setCreativeTab(CoreCreativeTab.MMATab);
         setRegistryName(rl);
         setUnlocalizedName(ResourceLocationUtils.unlocalizedNameForResourceLocation(rl));
     }
-    
+
     public MMABlock(Material materialIn, ResourceLocation rl) {
-        this(materialIn,materialIn.getMaterialMapColor(),rl);
+        this(materialIn, materialIn.getMaterialMapColor(), rl);
     }
 }

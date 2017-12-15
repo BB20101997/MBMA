@@ -17,24 +17,25 @@ import net.minecraftforge.items.ItemStackHandler;
 public abstract class ItemHandlerWrapper extends ItemStackHandler {
 
     /**
-     *  An ItemHandler that doesn't rely on the {@literal NonNullList<ItemStack>} directly for saving to/loading from NBT
-     * */
+     * An ItemHandler that doesn't rely on the {@literal NonNullList<ItemStack>} directly for saving to/loading from NBT
+     */
     public ItemHandlerWrapper() {
         super();
     }
-    
+
     /**
-     *  An ItemHandler that doesn't rely on the {@literal NonNullList<ItemStack>} directly for saving to/loading from NBT
-     *  @param stacks a {@literal NonNullList<ItemStacks>} to store the ItemStacks for this ItemStackHandler in
-     * */
+     * An ItemHandler that doesn't rely on the {@literal NonNullList<ItemStack>} directly for saving to/loading from NBT
+     *
+     * @param stacks a {@literal NonNullList<ItemStacks>} to store the ItemStacks for this ItemStackHandler in
+     */
     public ItemHandlerWrapper(NonNullList<ItemStack> stacks) {
         super(stacks);
     }
-    
+
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagList nbtTagList = new NBTTagList();
-        ItemStack stack;
+        ItemStack  stack;
         for (int i = 0; i < getSlots(); i++) {
             stack = getStackInSlot(i);
             if (!stack.isEmpty()) {
@@ -49,19 +50,19 @@ public abstract class ItemHandlerWrapper extends ItemStackHandler {
         nbt.setInteger("Size", getSlots());
         return nbt;
     }
-    
+
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
-            int slot = itemTags.getInteger("Slot");
-            
+            int            slot     = itemTags.getInteger("Slot");
+
             if (slot >= 0 && slot < getSlots()) {
                 setStackInSlot(slot, new ItemStack(itemTags));
             }
         }
         onLoad();
     }
-    
+
 }

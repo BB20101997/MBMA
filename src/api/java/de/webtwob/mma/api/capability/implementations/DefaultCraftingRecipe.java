@@ -17,14 +17,13 @@ import java.util.Arrays;
  */
 public class DefaultCraftingRecipe implements ICraftingRecipe {
 
-    ItemStack[] inputs = new ItemStack[0];
-    ItemStack[] outputs = new ItemStack[0];
-    NBTMatchType[] inputMatch = new NBTMatchType[0];
+    ItemStack[]    inputs      = new ItemStack[0];
+    ItemStack[]    outputs     = new ItemStack[0];
+    NBTMatchType[] inputMatch  = new NBTMatchType[0];
     NBTMatchType[] outputMatch = new NBTMatchType[0];
-    boolean[] oreDict = new boolean[0];
-    double[] chances = new double[0];
+    boolean[]      oreDict     = new boolean[0];
+    double[]       chances     = new double[0];
     RecipeType type;
-
 
     @Override
     public void resizeInputCount(int i) {
@@ -98,7 +97,8 @@ public class DefaultCraftingRecipe implements ICraftingRecipe {
     @Nullable
     @Override
     public RecipeType getRecipeType() {
-        return type != null ? type : GameRegistry.findRegistry(RecipeType.class).getValue(ResourceLocations.REG_RECIPE_CUSTOM);
+        return type != null ? type : GameRegistry.findRegistry(RecipeType.class)
+                                                 .getValue(ResourceLocations.REG_RECIPE_CUSTOM);
     }
 
     @Override

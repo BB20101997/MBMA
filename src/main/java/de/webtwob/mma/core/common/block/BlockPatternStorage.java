@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class BlockPatternStorage extends MMABlock {
 
-    public BlockPatternStorage(ResourceLocation rl){
-        super(Material.IRON,rl);
+    public BlockPatternStorage(ResourceLocation rl) {
+        super(Material.IRON, rl);
     }
 }

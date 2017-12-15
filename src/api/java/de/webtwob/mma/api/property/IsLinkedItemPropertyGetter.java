@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
  * Created by bennet on 26.03.17.
  */
 public class IsLinkedItemPropertyGetter implements IItemPropertyGetter {
+
     public static final IsLinkedItemPropertyGetter INSTANCE = new IsLinkedItemPropertyGetter();
 
     @Override

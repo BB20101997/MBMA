@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 public class ObjectHolders {
-    
+
     @ObjectHolder("minecraft:furnace")
     public static final Block FURNACE        = null;
     @ObjectHolder("minecraft:anvil")
@@ -19,12 +19,12 @@ public class ObjectHolders {
     public static final Block CHEST          = null;
     @ObjectHolder("minecraft:crafting_table")
     public static final Block CRAFTING_TABLE = null;
-   
-    @Mod.Instance(value = "mmaapi",owner = "mmacore")
+
+    @Mod.Instance(value = "mmaapi", owner = "mmacore")
     public static MMAAPI apiInstance = null;//NOSONAR
-    
+
     private ObjectHolders() {
-    
+
     }
-    
+
 }

@@ -22,14 +22,16 @@ public class StructureUtil {
      * @param world    the world to place the structure in
      * @param loc      the ResourceLocation for the structure file
      * @param settings the PlacementSettings to use when placing this structure
+     *
      * @return true if we succeeded in placing the structure
      */
-    public static boolean placeStructureInWorld(BlockPos pos, World world, ResourceLocation loc, PlacementSettings
-            settings) {
+    public static boolean placeStructureInWorld(
+            BlockPos pos, World world, ResourceLocation loc, PlacementSettings settings
+    ) {
         if (!world.isRemote && world instanceof WorldServer) {
             WorldServer worldServer = (WorldServer) world;
-            Template tmp = worldServer.getStructureTemplateManager().get(worldServer.getMinecraftServer(),
-                    loc);
+            Template    tmp         = worldServer.getStructureTemplateManager()
+                                                 .get(worldServer.getMinecraftServer(), loc);
             if (tmp == null) {
                 return false;
             }

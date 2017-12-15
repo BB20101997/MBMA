@@ -1,19 +1,19 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "model": "mmacore:crafting/processor/idle",
+  "defaults":     {
+    "model":  "mmacore:crafting/processor/idle",
     "uvlock": true
   },
-  "variants": {
+  "variants":     {
     "inventory": [
       {}
     ],
-    "normal": [
+    "normal":    [
       {
       }
     ],
-    "state": {
-      "idle": {
+    "state":     {
+      "idle":    {
       },
       "running": {
         "model": "mmacore:crafting/processor/running"

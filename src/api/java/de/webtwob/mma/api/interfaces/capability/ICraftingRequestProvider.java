@@ -12,6 +12,7 @@ public interface ICraftingRequestProvider {
 
     /**
      * @param require the condition a request must satisfy
+     *
      * @return the first element of the queue satisfying the requirement or else null
      */
     ItemStack getRequestIfRequirementHolds(Predicate<ItemStack> require);

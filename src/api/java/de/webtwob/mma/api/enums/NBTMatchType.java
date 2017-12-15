@@ -17,34 +17,31 @@ public enum NBTMatchType {
     FULL {
         @Override
         boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch) {
-          return template.equals(toMatch);
+            return template.equals(toMatch);
         }
-    },
-    /**
+    }, /**
      * The Set of NBTTags of the Template must be a Sub-Set of the Set of NBTTags of the ItemStack to be used
      * and all NBTTag values of the Template must match the NBTTag values of the NBTTagSet of the ItemStack to be used
      */
     PARTIALL {
-        @Override
-        boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch) {
-            return NBTUtil.areNBTEquals(template, toMatch, true);
-        }
-    },
-    PARTIALL_NO_LIST {
+                @Override
+                boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch) {
+                    return NBTUtil.areNBTEquals(template, toMatch, true);
+                }
+            }, PARTIALL_NO_LIST {
         @Override
         boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch) {
             return NBTUtil.areNBTEquals(template, toMatch, false);
         }
-    },
-    /**
+    }, /**
      * The NBTTag-Set of the template and the NBTTag-Set of the ItemStack to be used will not be compared
      */
     IGNORE {
-        @Override
-        boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch) {
-            return true;
-        }
-    };
+                @Override
+                boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch) {
+                    return true;
+                }
+            };
 
     abstract boolean compareNBT(@Nonnull NBTBase template, @Nonnull NBTBase toMatch);
 }

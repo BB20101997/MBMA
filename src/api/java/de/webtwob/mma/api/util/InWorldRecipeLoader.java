@@ -38,40 +38,40 @@ import static com.google.common.io.Files.newReader;
  */
 @Mod.EventBusSubscriber
 public class InWorldRecipeLoader {
-    
+
     private static File location;
-    
-    private InWorldRecipeLoader(){}
-    
+
+    private InWorldRecipeLoader() {}
+
     private static void loadCustomRecipes(IForgeRegistry<InWorldRecipe> registry) {
         if (location != null && (location.mkdirs() || location.exists())) {
             //noinspection ResultOfMethodCallIgnored
             for (File file : FileUtils.listFiles(location, new String[]{"3drecipe"}, true)) {
-                
+
                 String   s           = FilenameUtils.removeExtension(
                         location.toURI().relativize(file.toURI()).toString());
                 String[] domainSplit = s.split("/", 2);
-                
+
                 if (domainSplit.length == 2) {
                     ResourceLocation recipeRL = new ResourceLocation(domainSplit[0], domainSplit[1]);
-                    try{
+                    try {
                         InWorldRecipe recipe = loadRecipeFromFile(file);
                         recipe.setRegistryName(recipeRL);
                         registry.register(recipe);
-                    } catch(IOException exception){
+                    } catch (IOException exception) {
                         APILog.LOGGER.error(
                                 "Couldn't read custom InWorldRecipe " + recipeRL + " from " + file, exception);
                     }
                 }
-                
+
             }
         }
     }
-    
+
     public static void setLocation(File location) {
         InWorldRecipeLoader.location = location;
     }
-    
+
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load loadEvent) {
         InWorldRecipeLoader.setLocation(
@@ -79,31 +79,31 @@ public class InWorldRecipeLoader {
         IForgeRegistry<InWorldRecipe> registry = GameRegistry.findRegistry(InWorldRecipe.class);
         if (registry != null) {
             boolean relock = false;
-            if(registry instanceof ForgeRegistry){
+            if (registry instanceof ForgeRegistry) {
                 //TODO find a way that doesn't require unfreezing the registry
                 relock = ((ForgeRegistry) registry).isLocked();
                 ((ForgeRegistry) registry).unfreeze();
             }
             loadCustomRecipes(registry);
-            if(relock){
-                ((ForgeRegistry)registry).freeze();
+            if (relock) {
+                ((ForgeRegistry) registry).freeze();
             }
         }
     }
-    
+
     @Nonnull
     public static InWorldRecipe loadRecipeFromFile(File recipeFile) throws FileNotFoundException {
         return loadRecipeFromReader(newReader(recipeFile, StandardCharsets.UTF_8));
     }
-    
+
     @Nonnull
     public static InWorldRecipe loadRecipeFromReader(Reader recipeReader) {
         Gson gson = new GsonBuilder().registerTypeAdapter(InWorldRecipe.class, new InWordRecipeDeserializer()).create();
         return gson.fromJson(recipeReader, InWorldRecipe.class);
     }
-    
+
     private static class InWordRecipeDeserializer implements JsonDeserializer<InWorldRecipe> {
-        
+
         @Override
         public InWorldRecipe deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
@@ -117,9 +117,9 @@ public class InWorldRecipeLoader {
             String type = root.get("Type").getAsString();
             switch (type) {
                 case "BlocksOnly": {
-                    try{
+                    try {
                         return deserializeBlocksOnly(root);
-                    } catch(IllegalStateException se){
+                    } catch (IllegalStateException se) {
                         throw new JsonParseException(se);
                     }
                 }
@@ -127,17 +127,15 @@ public class InWorldRecipeLoader {
                     throw new JsonParseException("Unsupported Type:" + type);
             }
         }
-        
+
         private BasicInWorldRecipe deserializeBlocksOnly(JsonObject root) {
-            String[][]                                 aisles            = deserializeAisles(
-                    root.getAsJsonArray("Aisles"));
-            Map<BlockPos, Object>                      resultMap         = deserializeResultMap(
-                    root.getAsJsonArray("resultMap"));
+            String[][]            aisles    = deserializeAisles(root.getAsJsonArray("Aisles"));
+            Map<BlockPos, Object> resultMap = deserializeResultMap(root.getAsJsonArray("resultMap"));
             Map<Character, Predicate<BlockWorldState>> patternPredicates = deserializeBlockPredicates(
                     root.getAsJsonArray("blockMap"));
             return new BasicInWorldRecipe(aisles, patternPredicates, resultMap);
         }
-        
+
         private Map<Character, Predicate<BlockWorldState>> deserializeBlockPredicates(JsonArray blockMap) {
             Map<Character, Predicate<BlockWorldState>> result = new HashMap<>();
             for (JsonElement element : blockMap) {
@@ -148,7 +146,7 @@ public class InWorldRecipeLoader {
             }
             return result;
         }
-        
+
         private Map<BlockPos, Object> deserializeResultMap(JsonArray resultMap) {
             Map<BlockPos, Object> result = new HashMap<>();
             for (JsonElement mapElement : resultMap) {
@@ -159,11 +157,11 @@ public class InWorldRecipeLoader {
             }
             return result;
         }
-        
+
         private BlockPos deserializeBlockPos(JsonArray pos) {
             return new BlockPos(pos.get(0).getAsInt(), pos.get(1).getAsInt(), pos.get(2).getAsInt());
         }
-        
+
         private String[][] deserializeAisles(JsonArray jsonAisles) {
             String[][] aisles = new String[jsonAisles.size()][];
             for (int i = 0; i < jsonAisles.size(); i++) {

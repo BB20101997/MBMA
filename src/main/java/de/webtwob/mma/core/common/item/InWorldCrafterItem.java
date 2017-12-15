@@ -20,31 +20,32 @@ import javax.annotation.Nonnull;
  * Created by BB20101997 on 04. Dez. 2017.
  */
 public class InWorldCrafterItem extends MMAItem {
-    
+
     public InWorldCrafterItem(ResourceLocation rl) {
         super(rl);
     }
-    
+
     @Override
     @Nonnull
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (worldIn != null && pos != null && facing != null) {
             if (!worldIn.isRemote) {
                 IForgeRegistry<InWorldRecipe> registry = GameRegistry.findRegistry(InWorldRecipe.class);
-                if (registry != null)
+                if (registry != null) {
                     return tryFindRecipe(registry, worldIn, pos, facing);
+                }
                 return EnumActionResult.PASS;
             }
             return EnumActionResult.SUCCESS;
         }
         return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
-    
+
     @Nonnull
     private EnumActionResult tryFindRecipe(@Nonnull IForgeRegistry<InWorldRecipe> registry, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EnumFacing facing) {
         for (InWorldRecipe recipe : registry.getValues()) {
-            BlockPattern pattern = recipe.getBlockPattern();
-            BlockPattern.PatternHelper helper = pattern.match(worldIn, pos.offset(facing.getOpposite()));
+            BlockPattern               pattern = recipe.getBlockPattern();
+            BlockPattern.PatternHelper helper  = pattern.match(worldIn, pos.offset(facing.getOpposite()));
             if (helper != null) {
                 recipe.executeRecipe(worldIn, helper);
                 return EnumActionResult.SUCCESS;
@@ -52,12 +53,12 @@ public class InWorldCrafterItem extends MMAItem {
         }
         return EnumActionResult.PASS;
     }
-    
+
     @Override
     public boolean canItemEditBlocks() {
         return true;
     }
-    
+
     @Override
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
         return true;

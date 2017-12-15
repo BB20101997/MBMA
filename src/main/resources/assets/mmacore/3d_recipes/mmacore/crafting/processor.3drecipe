@@ -1,13 +1,13 @@
 {
-  "Type":"BlocksOnly",
-  "Aisles":[["BBB","BBB","BBB"],["BAB","BFB","BWB"],["BBB","BBB","BBB"]],
-  "resultMap":[
-    {"pos":[1,1,1],"blockName":"mmacore:crafting_processor"}
+  "Type":      "BlocksOnly",
+  "Aisles":    [["BBB", "BBB", "BBB"], ["BAB", "BFB", "BWB"], ["BBB", "BBB", "BBB"]],
+  "resultMap": [
+    {"pos": [1, 1, 1], "blockName": "mmacore:crafting_processor"}
   ],
-  "blockMap":[
-    {"key":"A","value":"minecraft:anvil"},
-    {"key":"B","value":"minecraft:iron_bars"},
-    {"key":"F","value":"minecraft:furnace"},
-    {"key":"W","value":"minecraft:crafting_table"}
+  "blockMap":  [
+    {"key": "A", "value": "minecraft:anvil"},
+    {"key": "B", "value": "minecraft:iron_bars"},
+    {"key": "F", "value": "minecraft:furnace"},
+    {"key": "W", "value": "minecraft:crafting_table"}
   ]
 }

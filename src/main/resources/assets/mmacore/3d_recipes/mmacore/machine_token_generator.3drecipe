@@ -1,12 +1,12 @@
 {
-  "Type":"BlocksOnly",
-  "Aisles":[["BBB","BCB","BBB"],["BCB","CHC","BCB"],["BBB","BCB","BBB"]],
-  "resultMap":[
-    {"pos":[1,1,1],"blockName":"mmacore:tokengenerator"}
+  "Type":      "BlocksOnly",
+  "Aisles":    [["BBB", "BCB", "BBB"], ["BCB", "CHC", "BCB"], ["BBB", "BCB", "BBB"]],
+  "resultMap": [
+    {"pos": [1, 1, 1], "blockName": "mmacore:tokengenerator"}
   ],
-  "blockMap":[
-    {"key":"B","value":"minecraft:iron_bars"},
-    {"key":"C","value":"minecraft:chest"},
-    {"key":"H","value":"minecraft:hopper"}
+  "blockMap":  [
+    {"key": "B", "value": "minecraft:iron_bars"},
+    {"key": "C", "value": "minecraft:chest"},
+    {"key": "H", "value": "minecraft:hopper"}
   ]
 }

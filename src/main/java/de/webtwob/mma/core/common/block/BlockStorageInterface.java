@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 public class BlockStorageInterface extends MMABlock {
 
     public BlockStorageInterface(ResourceLocation rl) {
-        super(Material.IRON,rl);
+        super(Material.IRON, rl);
 
         IBlockState state = blockState.getBaseState();
         state = state.withProperty(MMAProperties.FACING, EnumFacing.UP);
@@ -40,18 +40,20 @@ public class BlockStorageInterface extends MMABlock {
 
     /**
      * @deprecated
-     * */
+     */
     @SuppressWarnings("deprecation")
     @Deprecated
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {//NOSONAR
-        return getDefaultState().withProperty(MMAProperties.FACING, EnumFacing.values()[meta >> 1]).withProperty(MMAProperties.CONNECTED, (meta & 1) != 0);
+        return getDefaultState().withProperty(MMAProperties.FACING, EnumFacing.values()[meta >> 1])
+                                .withProperty(MMAProperties.CONNECTED, (meta & 1) != 0);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return (state.getValue(MMAProperties.FACING).ordinal() << 1) | (state.getValue(MMAProperties.CONNECTED) ? 1 : 0);
+        return (state.getValue(MMAProperties.FACING).ordinal() << 1) | (state.getValue(
+                MMAProperties.CONNECTED) ? 1 : 0);
     }
 
     @Nonnull
@@ -63,7 +65,8 @@ public class BlockStorageInterface extends MMABlock {
     @Override
     public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         IBlockState state = world.getBlockState(pos);
-        state = state.withProperty(MMAProperties.CONNECTED, isConnected(world, pos, state.getValue(MMAProperties.FACING)));
+        state = state.withProperty(
+                MMAProperties.CONNECTED, isConnected(world, pos, state.getValue(MMAProperties.FACING)));
         if (world instanceof World) {
             ((World) world).setBlockState(pos, state);
         }
@@ -71,10 +74,11 @@ public class BlockStorageInterface extends MMABlock {
 
     @Nonnull
     @Override
-    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedFacing, float hitX, float hitY,
-                                            float hitZ, int meta, @Nonnull EntityLivingBase placer, EnumHand hand) {
-        IBlockState state = getDefaultState();
-        EnumFacing blockFacing = EnumFacing.getDirectionFromEntityLiving(pos, placer);
+    public IBlockState getStateForPlacement(
+            @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedFacing, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer, EnumHand hand
+    ) {
+        IBlockState state       = getDefaultState();
+        EnumFacing  blockFacing = EnumFacing.getDirectionFromEntityLiving(pos, placer);
         state = state.withProperty(MMAProperties.FACING, blockFacing);
         state = state.withProperty(MMAProperties.CONNECTED, isConnected(world, pos, blockFacing));
         return state;
@@ -84,12 +88,13 @@ public class BlockStorageInterface extends MMABlock {
      * @param world       the world the block is in
      * @param pos         the position the block is in
      * @param orientation the direction the block is facing
+     *
      * @return whether the block is connected to a block that has the Item_HANDLER_CAPABILITY
      */
     private boolean isConnected(IBlockAccess world, BlockPos pos, EnumFacing orientation) {
-        BlockPos dest = pos.offset(orientation);
+        BlockPos   dest = pos.offset(orientation);
         TileEntity te;
-        
+
         if (world instanceof ChunkCache) {
             ChunkCache chunk = (ChunkCache) world;
             te = chunk.getTileEntity(dest);

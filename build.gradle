@@ -78,23 +78,16 @@ processResources {
     }
     /**
      // replace stuff in mcmod.info, nothing else
-    from(sourceSets.api.resources.srcDirs) {
-        include 'mcmod.info'
+     from(sourceSets.api.resources.srcDirs) {include 'mcmod.info'
 
-        // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-    }
-
-    // copy everything else except the mcmod.info
-    from(sourceSets.api.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-     */
+     // replace version and mcversion
+     expand 'version': project.version, 'mcversion': project.minecraft.version}// copy everything else except the mcmod.info
+     from(sourceSets.api.resources.srcDirs) {exclude 'mcmod.info'}*/
 
 }
 
 processApiResources {
-     // this will ensure that this task is redone when the versions change.
+    // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
@@ -122,48 +115,48 @@ sourceSets {
 
 
 jar {
-    from (sourceSets.api.output){
+    from(sourceSets.api.output) {
         exclude 'mcmod.info'
     }
 }
 
-javadoc{
+javadoc {
     source += sourceSets.api.allJava
     options.encoding = 'UTF-8'
     options.charSet = 'UTF-8'
 }
 
-sourceJar{
+sourceJar {
     appendix "core"
     classifier "src"
 }
 
-task javadocJar(type: Jar,dependsOn: 'javadoc',group: 'mma') {
+task javadocJar(type: Jar, dependsOn: 'javadoc', group: 'mma') {
     from javadoc.destinationDir
     classifier "javadoc"
 }
 
-task apiSrcJar(type: Jar,dependsOn: 'sourceApiJava',group: 'mma'){
+task apiSrcJar(type: Jar, dependsOn: 'sourceApiJava', group: 'mma') {
     from sourceSets.api.allSource
     appendix "api"
     classifier "src"
 }
 
-task coreJar(type: Jar,dependsOn: 'reobfJar',group:  'mma'){
-    from(zipTree(jar.archivePath)){
-        includes.addAll(["assets/mmacore/**","de/webtwob/mma/core/**"])
+task coreJar(type: Jar, dependsOn: 'reobfJar', group: 'mma') {
+    from(zipTree(jar.archivePath)) {
+        includes.addAll(["assets/mmacore/**", "de/webtwob/mma/core/**"])
     }
-    from(sourceSets.main.output.resourcesDir){
+    from(sourceSets.main.output.resourcesDir) {
         include "mcmod.info"
     }
     appendix "core"
 }
 
-task apiJar(type:  Jar,dependsOn: 'reobfJar',group: 'mma'){
-    from(zipTree(jar.archivePath)){
-        includes.addAll(["assets/mmaapi/**","de/webtwob/mma/api/**"],)
+task apiJar(type: Jar, dependsOn: 'reobfJar', group: 'mma') {
+    from(zipTree(jar.archivePath)) {
+        includes.addAll(["assets/mmaapi/**", "de/webtwob/mma/api/**"],)
     }
-    from(sourceSets.api.output.resourcesDir){
+    from(sourceSets.api.output.resourcesDir) {
         include "mcmod.info"
     }
     appendix "api"

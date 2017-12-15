@@ -9,12 +9,12 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Created by BB20101997 on 10. Dez. 2017.
  */
-public abstract class MMAItem extends Item{
-    
-    public MMAItem(ResourceLocation rl){
+public abstract class MMAItem extends Item {
+
+    public MMAItem(ResourceLocation rl) {
         setCreativeTab(CoreCreativeTab.MMATab);
         setRegistryName(rl);
         setUnlocalizedName(ResourceLocationUtils.unlocalizedNameForResourceLocation(rl));
     }
-    
+
 }

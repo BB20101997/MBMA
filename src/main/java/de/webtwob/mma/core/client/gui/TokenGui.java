@@ -30,7 +30,7 @@ import static de.webtwob.mma.api.inventory.GhostSlot.adjustCount;
  * Created by bennet on 21.03.17.
  */
 public class TokenGui extends GuiContainer {
-    
+
     private static Capability<ICraftingRequest> requestCapability;
     private int amount = 1;
 
@@ -42,15 +42,28 @@ public class TokenGui extends GuiContainer {
         ySize = 56;
     }
 
+    @CapabilityInject(ICraftingRequest.class)
+    private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
+        TokenGui.requestCapability = requestCapability;
+    }
+
+    public static TokenGui tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
+        ItemStack held = player.getHeldItem(enumHand);
+        if (requestCapability != null && held.hasCapability(requestCapability, null)) {
+            return new TokenGui(player, enumHand);
+        }
+        return null;
+    }
+
     @Override
     public void initGui() {
         super.initGui();
 
-        GuiButton saveButton = new GuiButton(0, guiLeft + 10, guiTop + ySize + 5, xSize - 20, 20, "Save");
-        GuiButton itemCountUp10 = new GuiButton(3, guiLeft + 68, guiTop + 29, 20, 10, "++");
+        GuiButton saveButton      = new GuiButton(0, guiLeft + 10, guiTop + ySize + 5, xSize - 20, 20, "Save");
+        GuiButton itemCountUp10   = new GuiButton(3, guiLeft + 68, guiTop + 29, 20, 10, "++");
         GuiButton itemCountDown10 = new GuiButton(4, guiLeft + 68, guiTop + 41, 20, 10, "--");
-        GuiButton itemCountDown = new GuiButton(2, guiLeft + 90, guiTop + 41, 10, 10, "-");
-        GuiButton itemCountUp = new GuiButton(1, guiLeft + 90, guiTop + 29, 10, 10, "+");
+        GuiButton itemCountDown   = new GuiButton(2, guiLeft + 90, guiTop + 41, 10, 10, "-");
+        GuiButton itemCountUp     = new GuiButton(1, guiLeft + 90, guiTop + 29, 10, 10, "+");
 
         itemNameTextField = new GuiTextField(0, fontRenderer, guiLeft + 13, guiTop + 14, 104, 16);
         Keyboard.enableRepeatEvents(true);
@@ -102,20 +115,22 @@ public class TokenGui extends GuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         if (isPointInRegion(103, 32, 18, 18, mouseX, mouseY)) {
-            int old = amount;
+            int    old         = amount;
             String oldResource = itemNameTextField.getText();
-            adjustCount(i-> this.amount=i,this::setItem,getItemStackFromTextField(itemNameTextField),amount, mouseButton, this.mc.player);
-            if (old != amount||!oldResource.equals(itemNameTextField.getText())) {
+            adjustCount(i -> this.amount = i, this::setItem, getItemStackFromTextField(itemNameTextField), amount,
+                        mouseButton, this.mc.player
+            );
+            if (old != amount || !oldResource.equals(itemNameTextField.getText())) {
                 updateToken();
             }
         }
         itemNameTextField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    private void setItem(ItemStack itemStack){
-        Item item = itemStack.getItem();
+    private void setItem(ItemStack itemStack) {
+        Item             item             = itemStack.getItem();
         ResourceLocation resourceLocation = item.getRegistryName();
-        if(resourceLocation!=null){
+        if (resourceLocation != null) {
             itemNameTextField.setText(resourceLocation.toString());
         }
     }
@@ -132,7 +147,9 @@ public class TokenGui extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        GhostSlot.drawGhostSlot(this.mc.player, 103, 32, getItemStackFromTextField(itemNameTextField), amount, itemRender, fontRenderer);
+        GhostSlot.drawGhostSlot(this.mc.player, 103, 32, getItemStackFromTextField(itemNameTextField), amount,
+                                itemRender, fontRenderer
+        );
     }
 
     @Override
@@ -180,19 +197,7 @@ public class TokenGui extends GuiContainer {
     }
 
     private void updateToken() {
-        PacketHandler.INSTANCE.sendToServer(new TokenUpdatePacket(getItemStackFromTextField(itemNameTextField), amount));
-    }
-    
-     @CapabilityInject(ICraftingRequest.class)
-    private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
-        TokenGui.requestCapability = requestCapability;
-    }
-    
-    public static TokenGui tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
-        ItemStack held = player.getHeldItem(enumHand);
-                if (requestCapability != null && held.hasCapability(requestCapability, null)) {
-                    return new TokenGui(player, enumHand);
-                }
-        return null;
+        PacketHandler.INSTANCE.sendToServer(
+                new TokenUpdatePacket(getItemStackFromTextField(itemNameTextField), amount));
     }
 }

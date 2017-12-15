@@ -20,12 +20,13 @@ public interface IMultiBlockTile {
      * @param world the world the TileEntity is in
      * @param pos   the position of the TileEntity
      * @param type  what type of group to search for
+     *
      * @return the group the TileEntity is in or null if not in a Group of the type
      */
     @Nullable
     static MultiBlockGroup getGroup(World world, BlockPos pos, MultiBlockGroupType type) {
         MBGMWorldSaveData data;
-        if(world!=null) {
+        if (world != null) {
             data = MBGMWorldSaveData.get(world);
             if (data != null) {
                 return data.multiBlockGroupManager.getGroupForMember(new MultiBlockMember(world, pos), type);
@@ -46,11 +47,11 @@ public interface IMultiBlockTile {
     default void setGroup(MultiBlockGroup mbg, World world, BlockPos pos) {
         MultiBlockGroup group = getGroup(world, pos, getGroupType());
         if (group != mbg) {
-            MultiBlockMember mbm = new MultiBlockMember(world,pos);
-            if(group!=null) {
+            MultiBlockMember mbm = new MultiBlockMember(world, pos);
+            if (group != null) {
                 group.removeMember(mbm);
             }
-            if(mbg!=null){
+            if (mbg != null) {
                 mbg.addMember(mbm);
             }
         }
@@ -58,7 +59,7 @@ public interface IMultiBlockTile {
 
     /**
      * @param world the world the Block was broken in
-     * @param pos the position the Block was broken at
+     * @param pos   the position the Block was broken at
      */
     default void onBlockBreak(World world, BlockPos pos) {
         MultiBlockGroup group = getGroup(world, pos, getGroupType());

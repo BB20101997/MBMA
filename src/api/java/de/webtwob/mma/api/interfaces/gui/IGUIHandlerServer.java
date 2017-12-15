@@ -9,8 +9,8 @@ import javax.annotation.Nullable;
  * Created by BB20101997 on 11. Dez. 2017.
  */
 public interface IGUIHandlerServer {
-    
+
     @Nullable
-    Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) ;
-    
+    Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z);
+
 }

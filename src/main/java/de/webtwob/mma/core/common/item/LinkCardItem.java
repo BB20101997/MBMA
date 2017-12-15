@@ -105,7 +105,6 @@ public class LinkCardItem extends MMAItem {
         return true;
     }
 
-
     @Override
     public int getItemStackLimit(ItemStack stack) {
         return 8;

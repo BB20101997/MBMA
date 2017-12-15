@@ -14,8 +14,9 @@ public interface IBlockPosProvider {
 
     /**
      * @param stack the ItemStack this will perform on
-     * @return  the value getBlockPos on the IBlockPositionProvider Capability of the ItemStack returns if the ItemStack doesn't has that Capability returns null
-     * */
+     *
+     * @return the value getBlockPos on the IBlockPositionProvider Capability of the ItemStack returns if the ItemStack doesn't has that Capability returns null
+     */
     @Nullable
     static BlockPos getBlockPos(ItemStack stack) {
         IBlockPosProvider bpp = stack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null);

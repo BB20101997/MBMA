@@ -23,8 +23,9 @@ public class BlockPosStorage implements Capability.IStorage<IBlockPosProvider> {
     }
 
     @Override
-    public void readNBT(Capability<IBlockPosProvider> capability, IBlockPosProvider instance, EnumFacing side,
-                        NBTBase nbt) {
+    public void readNBT(
+            Capability<IBlockPosProvider> capability, IBlockPosProvider instance, EnumFacing side, NBTBase nbt
+    ) {
         if (nbt instanceof NBTTagIntArray) {
             int[] pos = ((NBTTagIntArray) nbt).getIntArray();
             instance.setBlockPos(pos.length >= 3 ? new BlockPos(pos[0], pos[1], pos[2]) : null);

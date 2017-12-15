@@ -12,8 +12,6 @@ public class TileEntityCraftingProcessor extends MultiBlockTileEntity {
     @GameRegistry.ObjectHolder("mmacore:crafting")
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
 
-
-
     @Override
     public MultiBlockGroupType getGroupType() {
         return MANAGER_CRAFTING;

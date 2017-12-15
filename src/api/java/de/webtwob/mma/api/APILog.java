@@ -25,7 +25,7 @@ public class APILog {
     public static void warn(String message, Object... data) {
         LOGGER.warn(message, data);
     }
-    
+
     public static void error(String message, Object... data) {
         LOGGER.error(message, data);
     }

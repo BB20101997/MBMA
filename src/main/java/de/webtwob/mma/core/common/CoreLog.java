@@ -1,8 +1,9 @@
 package de.webtwob.mma.core.common;
 
-import de.webtwob.mma.core.MMACore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import de.webtwob.mma.core.MMACore;
 
 /**
  * Created by BB20101997 on 16. Mär. 2017.

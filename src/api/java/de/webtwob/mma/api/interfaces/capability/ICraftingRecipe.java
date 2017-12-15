@@ -2,9 +2,9 @@ package de.webtwob.mma.api.interfaces.capability;
 
 import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.enums.NBTMatchType;
-import de.webtwob.mma.api.registries.RecipeType;
 import de.webtwob.mma.api.references.NBTKeys;
 import de.webtwob.mma.api.references.ResourceLocations;
+import de.webtwob.mma.api.registries.RecipeType;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagByte;
@@ -25,17 +25,18 @@ import java.util.Arrays;
  */
 public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
 
-    static ICraftingRecipe getRecipeForStack(ItemStack stack){
-        if(stack!=null){
-            return stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_RECIPE,null);
+    static ICraftingRecipe getRecipeForStack(ItemStack stack) {
+        if (stack != null) {
+            return stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_RECIPE, null);
         }
         return null;
     }
-    
+
     /**
      * Resize the the internal data structure to accommodate i ItemStacks for the input
      * this should defiantly extend the data structure if it can't currently accommodate at least i
      * this can truncate the data structure to i, dropping all indices larger or equal to i
+     *
      * @param i the amount of Inputs for this recipe
      */
     void resizeInputCount(int i);
@@ -44,24 +45,24 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
      * Resize the the internal data structure to accommodate i ItemStacks for the output
      * this should defiantly extend the data structure if it can't currently accommodate at least i
      * this can truncate the data structure to i, dropping all indices larger or equal to i
+     *
      * @param i the amount of Outputs for this recipe
      */
     void resizeOutputCount(int i);
 
-
     /**
-     * @param slot the index to change
-     * @param stack the stack to set at the index
-     * @param oreDict should the OreDictionary be used for this input
+     * @param slot      the index to change
+     * @param stack     the stack to set at the index
+     * @param oreDict   should the OreDictionary be used for this input
      * @param ignoreNBT the setting for matching NBT for this index
      */
     void setInput(int slot, @Nonnull ItemStack stack, boolean oreDict, @Nonnull NBTMatchType ignoreNBT);
 
     /**
-     * @param slot the index to change
-     * @param stack the stack to set at the index
-     * @param chance how likely is this output in range (0,1] , a valid recipe should contain at least one Output of chance 1,
-     *               0 is only a valid range value for Empty Outputs
+     * @param slot      the index to change
+     * @param stack     the stack to set at the index
+     * @param chance    how likely is this output in range (0,1] , a valid recipe should contain at least one Output of chance 1,
+     *                  0 is only a valid range value for Empty Outputs
      * @param ignoreNBT the setting for matching NBT for this index
      */
     void setOutput(int slot, @Nonnull ItemStack stack, double chance, @Nonnull NBTMatchType ignoreNBT);
@@ -101,41 +102,36 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     default NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
 
-        NBTTagList inputItems = new NBTTagList();
-        NBTTagList outputItems = new NBTTagList();
+        NBTTagList inputItems   = new NBTTagList();
+        NBTTagList outputItems  = new NBTTagList();
         NBTTagList oreDictInput = new NBTTagList();
         NBTTagList outputChange = new NBTTagList();
-        int[] matchesOrdinalInput;
-        int[] matchesOrdinalOutput;
-
+        int[]      matchesOrdinalInput;
+        int[]      matchesOrdinalOutput;
 
         boolean[] oreDictArray = isInputOrdict();
         for (boolean oreDict : oreDictArray) {
             oreDictInput.appendTag(new NBTTagByte((byte) (oreDict ? 1 : 0)));
         }
 
-
         double[] chance = getChance();
         for (double d : chance) {
             outputChange.appendTag(new NBTTagDouble(d));
         }
 
-
         NBTMatchType[] matchInput = shouldNBTBeIgnoredForInput();
         matchesOrdinalInput = new int[matchInput.length];
         Arrays.setAll(matchesOrdinalInput, i -> matchInput[i].ordinal());
-
 
         NBTMatchType[] matchOutput = shouldNBTBeIgnoredForOutput();
         matchesOrdinalOutput = new int[matchOutput.length];
         Arrays.setAll(matchesOrdinalOutput, i -> matchOutput[i].ordinal());
 
-
         //noinspection ConstantConditions
         ResourceLocation type = getRecipeType().getRegistryName();
-        if(type!=null) {
+        if (type != null) {
             compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, type.toString());
-        }else{
+        } else {
             compound.setString(NBTKeys.ICRAFT_RECIPE_TYPE, ResourceLocations.REG_RECIPE_CUSTOM.toString());
         }
         compound.setTag(NBTKeys.ICRAFT_RECIPE_STACKS_IN, inputItems);
@@ -153,9 +149,11 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     default void deserializeNBT(final NBTTagCompound nbt) {
         if (nbt != null) {
             if (nbt.hasKey(NBTKeys.ICRAFT_RECIPE_TYPE, Constants.NBT.TAG_STRING)) {
-                setRecipeType(GameRegistry.findRegistry(RecipeType.class).getValue(new ResourceLocation(nbt.getString(NBTKeys.ICRAFT_RECIPE_TYPE))));
+                setRecipeType(GameRegistry.findRegistry(RecipeType.class)
+                                          .getValue(new ResourceLocation(nbt.getString(NBTKeys.ICRAFT_RECIPE_TYPE))));
             } else {
-                setRecipeType(GameRegistry.findRegistry(RecipeType.class).getValue(ResourceLocations.REG_RECIPE_CUSTOM));
+                setRecipeType(
+                        GameRegistry.findRegistry(RecipeType.class).getValue(ResourceLocations.REG_RECIPE_CUSTOM));
             }
 
             deserializeInputs(nbt);
@@ -163,7 +161,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
         }
     }
 
-     /**
+    /**
      * Used to spilt the deserialization into smaller chunks
      * this one handles the deserialization of all the state that has to do with the Outputs of this Recipe
      *
@@ -171,8 +169,8 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
      */
     default void deserializeOutputs(NBTTagCompound nbt) {
         //Outputs
-        final ItemStack[] outputStacks;
-        final double[] chances;
+        final ItemStack[]    outputStacks;
+        final double[]       chances;
         final NBTMatchType[] nbtMatchOutput;
 
         int size;
@@ -189,8 +187,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
         nbtMatchOutput = new NBTMatchType[outputStacks.length];
 
         //Load the chance of each OutputItemStack or 1
-        NBTTagList chanceTagList = nbt.getTagList(NBTKeys
-                .ICRAFT_RECIPE_CHANCE_OUT, Constants.NBT.TAG_BYTE);
+        NBTTagList chanceTagList = nbt.getTagList(NBTKeys.ICRAFT_RECIPE_CHANCE_OUT, Constants.NBT.TAG_BYTE);
         size = Math.min(chanceTagList.tagCount(), outputStacks.length);
         for (int i = 0; i < size; i++) {
             chances[i] = chanceTagList.getDoubleAt(i);
@@ -229,8 +226,8 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     default void deserializeInputs(NBTTagCompound nbt) {
         //Inputs
 
-        final ItemStack[] inputStacks;
-        final boolean[] oreDict;
+        final ItemStack[]    inputStacks;
+        final boolean[]      oreDict;
         final NBTMatchType[] nbtMatchInput;
 
         //Load InputItemStacks
@@ -246,9 +243,8 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
         nbtMatchInput = new NBTMatchType[inputStacks.length];
 
         //Load if InputItemStacks are OreDict if missing default to false (as boolean default to false nothing needs to be done in that case)
-        NBTTagList ored = nbt.getTagList(NBTKeys
-                .ICRAFT_RECIPE_OREDICT_LIST, Constants.NBT.TAG_BYTE);
-        int size = Math.min(ored.tagCount(), inputStacks.length);
+        NBTTagList ored = nbt.getTagList(NBTKeys.ICRAFT_RECIPE_OREDICT_LIST, Constants.NBT.TAG_BYTE);
+        int        size = Math.min(ored.tagCount(), inputStacks.length);
         for (int i = 0; i < size; i++) {
             oreDict[i] = ((NBTTagByte) ored.get(i)).getByte() != 0;
         }

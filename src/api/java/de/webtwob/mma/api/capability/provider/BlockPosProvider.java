@@ -20,25 +20,29 @@ import static de.webtwob.mma.api.capability.APICapabilities.CAPABILITY_BLOCK_POS
  * Created by BB20101997 on 18. Mär. 2017.
  */
 public class BlockPosProvider implements ICapabilitySerializable {
-    
+
     private ItemStack item;
     private IBlockPosProvider provider = new IBlockPosProvider() {
-       //why do we directly store to NBT? instead of just relying on deserialize and serialize? //TODO test
+        //why do we directly store to NBT? instead of just relying on deserialize and serialize? //TODO test
         @Override
         public BlockPos getBlockPos() {
             NBTTagCompound compound = item.getTagCompound();
-            if (compound == null) return null;
+            if (compound == null) {
+                return null;
+            }
             int[] posA = compound.getIntArray(NBTKeys.LINK_SHARE_POS);
             if (posA.length >= 3) {
                 return new BlockPos(posA[0], posA[1], posA[2]);
             }
             return null;
         }
-        
+
         @Override
         public void setBlockPos(BlockPos pos) {
             NBTTagCompound compound = item.getTagCompound();
-            if (compound == null) compound = new NBTTagCompound();
+            if (compound == null) {
+                compound = new NBTTagCompound();
+            }
             if (pos != null) {
                 compound.setIntArray(NBTKeys.LINK_SHARE_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
             } else {
@@ -47,35 +51,33 @@ public class BlockPosProvider implements ICapabilitySerializable {
             item.setTagCompound(compound);
         }
     };
-    
+
     /**
      * @param stack the ItemStack for which to provide an instance of IBlockPosProvider
      */
     public BlockPosProvider(ItemStack stack) {
         item = stack;
     }
-    
+
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == CAPABILITY_BLOCK_POS;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         return hasCapability(capability, facing) ? (T) provider : null;
     }
-    
+
     @Override
     public NBTBase serializeNBT() {
-        return CAPABILITY_BLOCK_POS.getStorage().writeNBT(CAPABILITY_BLOCK_POS,
-                provider, null);
+        return CAPABILITY_BLOCK_POS.getStorage().writeNBT(CAPABILITY_BLOCK_POS, provider, null);
     }
-    
+
     @Override
     public void deserializeNBT(NBTBase nbt) {
-        CAPABILITY_BLOCK_POS.getStorage().readNBT(CAPABILITY_BLOCK_POS, provider,
-                null, nbt);
+        CAPABILITY_BLOCK_POS.getStorage().readNBT(CAPABILITY_BLOCK_POS, provider, null, nbt);
     }
 }

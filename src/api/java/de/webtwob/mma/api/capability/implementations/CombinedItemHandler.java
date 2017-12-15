@@ -33,7 +33,6 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
         itemHandlers = handlers;
     }
 
-
     private ItemStackHandler getItemHandlerForSlot(final int slot) {
         int slotOffset = slot;
         for (ItemStackHandler handler : itemHandlers) {
@@ -48,7 +47,9 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
     private int getHandlerOffset(IItemHandler handler) {
         int sum = 0;
         for (IItemHandler handler2 : itemHandlers) {
-            if (handler == handler2) return sum;
+            if (handler == handler2) {
+                return sum;
+            }
             sum += handler2.getSlots();
         }
         return -1;
@@ -72,8 +73,10 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
     @Override
     public ItemStack getStackInSlot(int slot) {
         IItemHandler handler = getItemHandlerForSlot(slot);
-        int offset = getHandlerOffset(handler);
-        if (offset == -1 || handler == null) return ItemStack.EMPTY;
+        int          offset  = getHandlerOffset(handler);
+        if (offset == -1 || handler == null) {
+            return ItemStack.EMPTY;
+        }
         return handler.getStackInSlot(slot - offset);
     }
 
@@ -81,8 +84,10 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         IItemHandler handler = getItemHandlerForSlot(slot);
-        int offset = getHandlerOffset(handler);
-        if (offset == -1 || handler == null) return stack;
+        int          offset  = getHandlerOffset(handler);
+        if (offset == -1 || handler == null) {
+            return stack;
+        }
         return handler.insertItem(slot - offset, stack, simulate);
     }
 
@@ -90,24 +95,30 @@ public class CombinedItemHandler extends ItemHandlerWrapper {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         IItemHandler handler = getItemHandlerForSlot(slot);
-        int offset = getHandlerOffset(handler);
-        if (offset == -1 || handler == null) return ItemStack.EMPTY;
+        int          offset  = getHandlerOffset(handler);
+        if (offset == -1 || handler == null) {
+            return ItemStack.EMPTY;
+        }
         return handler.extractItem(slot - offset, amount, simulate);
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         ItemStackHandler handler = getItemHandlerForSlot(slot);
-        int offset = getHandlerOffset(handler);
-        if (handler == null || offset == -1) return;
+        int              offset  = getHandlerOffset(handler);
+        if (handler == null || offset == -1) {
+            return;
+        }
         handler.setStackInSlot(slot - offset, stack);
     }
 
     @Override
     public int getSlotLimit(int slot) {
         IItemHandler handler = getItemHandlerForSlot(slot);
-        int offset = getHandlerOffset(handler);
-        if (offset == -1 || handler == null) return 0;
+        int          offset  = getHandlerOffset(handler);
+        if (offset == -1 || handler == null) {
+            return 0;
+        }
         return handler.getSlotLimit(slot - offset);
     }
 }

@@ -24,9 +24,9 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
 
     private final Set<MultiBlockMember> multiblockMemberSet = new HashSet<>();
     private final MultiBlockGroupManager manager;
-    private MultiBlockGroupType type;
+    private       MultiBlockGroupType    type;
     private MultiBlockGroupTypeInstance typeInstance = null;
-    private boolean isValid = true;
+    private boolean                     isValid      = true;
 
     /**
      * @param mbgm the MultiBlockGroupManager managing this MultiBlockGroup
@@ -38,17 +38,21 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     /**
      * @param mbgm the MultiBlockGroupManager managing this MultiBlockGroup
      * @param type the MultiBlockGrouptype of this MultiBlockGroup
-     * */
-    public MultiBlockGroup(MultiBlockGroupManager mbgm,MultiBlockGroupType type) {
+     */
+    public MultiBlockGroup(MultiBlockGroupManager mbgm, MultiBlockGroupType type) {
         this(mbgm);
         this.type = type;
         if (type instanceof InstantiatableGroupType) {
-            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this,()->{this.markDirty();return null;});
+            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this, () -> {
+                this.markDirty();
+                return null;
+            });
         }
     }
 
     /**
      * @param member the MultiBlockMember to addd
+     *
      * @throws IllegalStateException when called on an invalid group
      */
     public void addMember(MultiBlockMember member) {
@@ -62,6 +66,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     /**
      * Call this when leaving a group
      * This way the id's of empty and invalid groups can be reused
+     *
      * @param member the MultiBlockMember to remove from this group
      */
     public void removeMember(MultiBlockMember member) {
@@ -77,11 +82,15 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
      * the other group will be invalidated
      *
      * @param mbg the Group to join with this group
+     *
      * @return the joind group
+     *
      * @throws IllegalArgumentException if canGroupsBeJoined returns false
      */
     public MultiBlockGroup joinGroups(MultiBlockGroup mbg) {
-        if (this == mbg||mbg==null) return this;
+        if (this == mbg || mbg == null) {
+            return this;
+        }
         if (!canGroupsBeJoined(mbg)) {
             throw new IllegalArgumentException("Tried to join MultiBlockGroups that don't qualify to be joined!");
         }
@@ -110,6 +119,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
 
     /**
      * @param group the group to test for join-ability with this group
+     *
      * @return true if this can be joined with group
      */
     public boolean canGroupsBeJoined(@Nonnull MultiBlockGroup group) {
@@ -142,8 +152,9 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
 
     /**
      * @param member the member to chack for inclusion in this group
+     *
      * @return true if member is a Member of this group
-     * */
+     */
     public boolean isMemberOfGroup(MultiBlockMember member) {
         return multiblockMemberSet.contains(member);
     }
@@ -157,14 +168,15 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         NBTTagCompound compound = new NBTTagCompound();
         if (type != null) {
             ResourceLocation registryName = type.getRegistryName();
-            if (registryName != null)
+            if (registryName != null) {
                 compound.setString(NBTKeys.GROUP_TYPE, registryName.toString());
+            }
         }
         if (typeInstance instanceof INBTSerializable) {
             compound.setTag(NBTKeys.GROUP_TYPE_INSTANCE, ((INBTSerializable) typeInstance).serializeNBT());
         }
         NBTTagList memberList = new NBTTagList();
-        for(MultiBlockMember member:multiblockMemberSet){
+        for (MultiBlockMember member : multiblockMemberSet) {
             memberList.appendTag(member.serializeNBT());
         }
         compound.setTag(NBTKeys.MBG_MEMBERS, memberList);
@@ -175,18 +187,23 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(final NBTTagCompound compound) {
         if (compound.hasKey(NBTKeys.GROUP_TYPE, Constants.NBT.TAG_INT_ARRAY)) {
-            type = GameRegistry.findRegistry(MultiBlockGroupType.class).getValue(new ResourceLocation(compound.getString(NBTKeys.GROUP_TYPE)));
+            type = GameRegistry.findRegistry(MultiBlockGroupType.class)
+                               .getValue(new ResourceLocation(compound.getString(NBTKeys.GROUP_TYPE)));
         }
-        
+
         if (type instanceof InstantiatableGroupType) {
-            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this,()->{this.markDirty();return null;});
-            if (typeInstance != null && typeInstance instanceof INBTSerializable && compound.hasKey(NBTKeys.GROUP_TYPE_INSTANCE)) {
-                ((INBTSerializable)typeInstance).deserializeNBT(compound.getTag(NBTKeys.GROUP_TYPE_INSTANCE));
+            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this, () -> {
+                this.markDirty();
+                return null;
+            });
+            if (typeInstance != null && typeInstance instanceof INBTSerializable && compound.hasKey(
+                    NBTKeys.GROUP_TYPE_INSTANCE)) {
+                ((INBTSerializable) typeInstance).deserializeNBT(compound.getTag(NBTKeys.GROUP_TYPE_INSTANCE));
             }
         }
 
         if (compound.hasKey(NBTKeys.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY)) {
-            NBTTagList memberList = compound.getTagList(NBTKeys.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY);
+            NBTTagList       memberList = compound.getTagList(NBTKeys.MBG_MEMBERS, Constants.NBT.TAG_INT_ARRAY);
             MultiBlockMember member;
             for (NBTBase base2 : memberList) {
                 if (base2 instanceof NBTTagIntArray) {
@@ -198,11 +215,11 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         }
     }
 
-    private void markDirty(){
+    private void markDirty() {
         manager.data.markDirty();
     }
-    
-   public MultiBlockGroupTypeInstance getTypeInstance() {
+
+    public MultiBlockGroupTypeInstance getTypeInstance() {
         return typeInstance;
     }
 }

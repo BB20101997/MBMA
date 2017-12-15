@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class TokenGeneratorGui extends GuiContainer {
 
-    EntityPlayer player;
+    EntityPlayer               player;
     TileEntityRequestGenerator tileEntity;
     int pageScroll = 0;
 
@@ -25,17 +25,17 @@ public class TokenGeneratorGui extends GuiContainer {
         ySize = 168;
     }
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(ResourceLocations.Textures.TOKEN_GENERATOR_GUI);
-        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-    }
-    
     public static TokenGeneratorGui tryCreateInstance(final EntityPlayer player, final TileEntity tileEntity) {
         if (tileEntity instanceof TileEntityRequestGenerator) {
             return new TokenGeneratorGui(player, (TileEntityRequestGenerator) tileEntity);
         }
         return null;
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GlStateManager.color(1.0F, 1.0F, 1.0F);
+        mc.getTextureManager().bindTexture(ResourceLocations.Textures.TOKEN_GENERATOR_GUI);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 }

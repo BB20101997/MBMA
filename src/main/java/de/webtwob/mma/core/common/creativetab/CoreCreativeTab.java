@@ -14,7 +14,6 @@ import javax.annotation.Nonnull;
  */
 public class CoreCreativeTab extends CreativeTabs {
 
-
     public static final CreativeTabs MMATab = new CoreCreativeTab();
 
     private CoreCreativeTab() {

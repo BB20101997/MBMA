@@ -1,6 +1,5 @@
 package de.webtwob.mma.core.common.block;
 
-
 import de.webtwob.mma.core.common.tileentity.TileEntityStorageIndexer;
 
 import net.minecraft.block.material.Material;
@@ -17,10 +16,8 @@ import javax.annotation.Nullable;
  */
 public class BlockStorageIndexer extends MMABlock {
 
-
-
-    public BlockStorageIndexer(ResourceLocation rl){
-        super(Material.IRON,rl);
+    public BlockStorageIndexer(ResourceLocation rl) {
+        super(Material.IRON, rl);
     }
 
     @Override
@@ -33,6 +30,5 @@ public class BlockStorageIndexer extends MMABlock {
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityStorageIndexer();
     }
-
 
 }

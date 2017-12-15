@@ -1,8 +1,8 @@
 {
-  "parent": "block/cube_bottom_top",
+  "parent":   "block/cube_bottom_top",
   "textures": {
     "bottom": "mmacore:blocks/psi/psi_error_base",
-    "top": "mmacore:blocks/psi/psi_error_point",
-    "side": "mmacore:blocks/psi/psi_error_arrow"
+    "top":    "mmacore:blocks/psi/psi_error_point",
+    "side":   "mmacore:blocks/psi/psi_error_arrow"
   }
 }

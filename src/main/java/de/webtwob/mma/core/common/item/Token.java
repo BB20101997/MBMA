@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
-public class Token extends MMAItem implements IGUIHandlerBoth{
+public class Token extends MMAItem implements IGUIHandlerBoth {
 
     public Token(ResourceLocation rl) {
         super(rl);
@@ -43,7 +43,8 @@ public class Token extends MMAItem implements IGUIHandlerBoth{
         super.addInformation(stack, world, tooltip, advanced);
 
         ICraftingRequest icr;
-        if ((icr = stack.getCapability(APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null && !icr.isCompleted()) {
+        if ((icr = stack.getCapability(
+                APICapabilities.CAPABILITY_CRAFTING_REQUEST, null)) != null && !icr.isCompleted()) {
             tooltip.add(String.format("Request for %d %s", icr.getQuantity(), icr.getRequest().getDisplayName()));
         }
     }
@@ -54,10 +55,7 @@ public class Token extends MMAItem implements IGUIHandlerBoth{
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (!worldIn.isRemote) {
             BlockPos pos = playerIn.getPosition();
-            playerIn.openGui(
-                    ObjectHolders.apiInstance, handIn.ordinal(), worldIn, pos.getX(), pos.getY(),
-                    pos.getZ()
-            );
+            playerIn.openGui(ObjectHolders.apiInstance, handIn.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
@@ -85,14 +83,14 @@ public class Token extends MMAItem implements IGUIHandlerBoth{
     public int getItemStackLimit(ItemStack stack) {
         return 16;
     }
-    
+
     @SideOnly(Side.CLIENT)
     @Nullable
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return TokenGui.tryCreateInstance(player,EnumHand.values()[id]);
+        return TokenGui.tryCreateInstance(player, EnumHand.values()[id]);
     }
-    
+
     @Nullable
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {

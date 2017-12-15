@@ -11,19 +11,18 @@ import java.util.function.Predicate;
  * Created by bennet on 27.03.17.
  * This is an ItemStackHandler that can be filtered you can either pass
  * a NonNullList or an ItemStackHandler which will be used to store the Items
- * */
+ */
 public class FilteredItemHandler extends ItemHandlerWrapper {
 
-    protected ItemStackHandler handler;
     private final Predicate<ItemStack> filter;
-    private final int limit;
-
+    private final int                  limit;
+    protected     ItemStackHandler     handler;
 
     /**
-     * @param stack a NonNullList of ItemStacks for storing the Items will be wrapped in an ItemStackHandler
-     * @param filter a filter that returns true for all accepted Items
+     * @param stack        a NonNullList of ItemStacks for storing the Items will be wrapped in an ItemStackHandler
+     * @param filter       a filter that returns true for all accepted Items
      * @param maxStackSize the max stack size for a single Stack, the Sack size of Items still applies
-     * */
+     */
     public FilteredItemHandler(NonNullList<ItemStack> stack, Predicate<ItemStack> filter, int maxStackSize) {
         super(stack);
         limit = maxStackSize;
@@ -33,9 +32,9 @@ public class FilteredItemHandler extends ItemHandlerWrapper {
 
     /**
      * @param stackHandler an ItemStackHandler for storing the Items
-     * @param filter a filter that returns true for all accepted Items
+     * @param filter       a filter that returns true for all accepted Items
      * @param maxStackSize the max stack size for a single Stack, the Sack size of Items still applies
-     * */
+     */
     public FilteredItemHandler(ItemStackHandler stackHandler, Predicate<ItemStack> filter, int maxStackSize) {
         super();
         limit = maxStackSize;
@@ -63,9 +62,11 @@ public class FilteredItemHandler extends ItemHandlerWrapper {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         /*
-        * before letting the Wrapped ItemHandler decide if the item fits we test if it matches our filter
-        * */
-        if (!filter.test(stack)) return stack;
+         * before letting the Wrapped ItemHandler decide if the item fits we test if it matches our filter
+         * */
+        if (!filter.test(stack)) {
+            return stack;
+        }
         return handler.insertItem(slot, stack, simulate);
     }
 
@@ -83,10 +84,9 @@ public class FilteredItemHandler extends ItemHandlerWrapper {
     @Override
     public int getSlotLimit(int slot) {
         /*
-        * applying the maxStack limit by taking the lower of the Items limit and our limit
-        * */
+         * applying the maxStack limit by taking the lower of the Items limit and our limit
+         * */
         return Math.min(limit, handler.getSlotLimit(slot));
     }
-
 
 }

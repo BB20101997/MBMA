@@ -27,10 +27,12 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
     public void update() {
         if (!world.isRemote) {
             MultiBlockGroup oldGroup = group;
-            group = Arrays.stream(new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.east(), pos.west()})
-                    .map(pos -> IMultiBlockTile.getGroup(world, pos, getGroupType()))
-                    .filter(Objects::nonNull)
-                    .reduce(MultiBlockGroup::joinGroups).orElse(null);
+            group = Arrays.stream(
+                    new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.east(), pos.west()})
+                          .map(pos -> IMultiBlockTile.getGroup(world, pos, getGroupType()))
+                          .filter(Objects::nonNull)
+                          .reduce(MultiBlockGroup::joinGroups)
+                          .orElse(null);
             if (null == group) {
                 CoreLog.debug("Reduction concluded in null creating new Group!");
                 MultiBlockGroupManager manager = MultiBlockGroupManager.getInstance(world);
@@ -47,7 +49,7 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
     @Override
     public void performDebugOnTile(EntityPlayer player) {
         StringBuilder sb = new StringBuilder();
-        if(null != group) {
+        if (null != group) {
             sb.append("GroupType: ").append(group.getType().getRegistryName()).append('\n');
             MultiBlockGroupTypeInstance instance = group.getTypeInstance();
             if (null != instance) {
@@ -57,7 +59,7 @@ public abstract class MultiBlockTileEntity extends TileEntity implements IMultiB
             }
             sb.append("GroupHash: ").append(group.hashCode()).append('\n');
             sb.append("GroupSize: ").append(group.getMembers().size()).append('\n');
-        }else{
+        } else {
             sb.append("Group is null;\n");
         }
         player.sendStatusMessage(new TextComponentString(sb.toString()), false);

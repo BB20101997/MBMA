@@ -20,8 +20,9 @@ import javax.annotation.Nullable;
  * Created by BB20101997 on 28. Okt. 2017.
  */
 public class BlockCraftingProcessor extends MMABlock {
+
     public BlockCraftingProcessor(ResourceLocation rl) {
-        super(Material.IRON,rl);
+        super(Material.IRON, rl);
 
         IBlockState state = blockState.getBaseState();
         state = state.withProperty(MMAProperties.STATE, MachineState.IDLE);
@@ -38,6 +39,7 @@ public class BlockCraftingProcessor extends MMABlock {
     public int getMetaFromState(IBlockState state) {
         return 0;
     }
+
     @Override
     public boolean hasTileEntity(IBlockState state) {
         return true;
@@ -47,12 +49,14 @@ public class BlockCraftingProcessor extends MMABlock {
     @Override
     public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
         return new TileEntityCraftingProcessor();
-    }@Override
+    }
+
+    @Override
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity instanceof IMultiBlockTile) {
-            ((IMultiBlockTile) tileEntity).onBlockBreak(worldIn,pos);
+            ((IMultiBlockTile) tileEntity).onBlockBreak(worldIn, pos);
         }
 
         super.breakBlock(worldIn, pos, state);

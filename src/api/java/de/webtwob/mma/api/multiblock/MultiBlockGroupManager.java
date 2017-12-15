@@ -19,6 +19,7 @@ import java.util.Set;
  */
 
 public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
+
     WorldSavedData data;
     private Set<MultiBlockGroup> groupMap = new HashSet<>();
 
@@ -31,6 +32,7 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
 
     /**
      * @param world the world used to get access to the world Storage of the save
+     *
      * @return the saves MultiBlockGroupManager Instance
      */
     @Nullable
@@ -44,7 +46,9 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
 
     /**
      * I do not expect an integer overflow to happen in any some what likely scenario
+     *
      * @param type the type for which a new Group shall be created
+     *
      * @return the created MultiBlockGroup instance
      */
     public MultiBlockGroup createNewGroup(MultiBlockGroupType type) {
@@ -56,15 +60,17 @@ public class MultiBlockGroupManager implements INBTSerializable<NBTTagList> {
 
     /**
      * @param member the MultiBlockGroupMember for which to find the associated group
-     * @param type the type of group to search for
+     * @param type   the type of group to search for
+     *
      * @return any group containing member that is of the type type or null if none is found
      */
     public MultiBlockGroup getGroupForMember(final MultiBlockMember member, final MultiBlockGroupType type) {
         return groupMap.stream()
-                .filter(MultiBlockGroup::isValid)
-                .filter(g -> g.getType() == type)
-                .filter(e -> e.isMemberOfGroup(member))
-                .findAny().orElse(null);
+                       .filter(MultiBlockGroup::isValid)
+                       .filter(g -> g.getType() == type)
+                       .filter(e -> e.isMemberOfGroup(member))
+                       .findAny()
+                       .orElse(null);
     }
 
     /**

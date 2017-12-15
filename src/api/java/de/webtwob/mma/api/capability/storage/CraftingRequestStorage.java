@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  */
 public class CraftingRequestStorage implements Capability.IStorage<ICraftingRequest> {
 
-    public static final String REQ = "MMAAPI:ICRREQUEST";
+    public static final String REQ   = "MMAAPI:ICRREQUEST";
     public static final String QUANT = "MMAAPI:ICRQUANTITY";
 
     @Nullable
