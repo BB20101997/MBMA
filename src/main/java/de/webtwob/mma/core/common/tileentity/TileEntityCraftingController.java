@@ -160,6 +160,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
         return (patternLinkCards.stream()
                                 .map(IBlockPosProvider::getBlockPos)
                                 .filter(Objects::nonNull)
+                                .filter(world::isBlockLoaded) //only loaded Blocks may handle requests
                                 .map(world::getTileEntity)
                                 .map(IPatternProvider::getIPatternProviderForTileEntity)
                                 .filter(Objects::nonNull)
