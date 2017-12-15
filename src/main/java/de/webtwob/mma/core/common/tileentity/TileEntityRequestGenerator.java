@@ -50,7 +50,7 @@ public class TileEntityRequestGenerator extends TileEntity implements ITickable,
     private final NonNullList<ItemStack> westList  = NonNullList.withSize(1, ItemStack.EMPTY);
     
     @SuppressWarnings("unchecked")
-    private final NonNullList<ItemStack>[] dirLists = (NonNullList<ItemStack>[]) (new NonNullList[]{northList, eastList, southList, westList, upList});
+    private final NonNullList<ItemStack>[] dirLists = (NonNullList<ItemStack>[]) (new NonNullList[]{northList, eastList, southList, westList, upList});//NOSONAR
     
     private final ItemStackHandler muster = new FilteredItemHandler(musterList, MMAFilter.MUSTER_FILTER, 1);
     
