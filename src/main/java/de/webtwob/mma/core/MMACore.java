@@ -22,7 +22,6 @@ public class MMACore {
         CoreLog.info("ModInstance created!");
     }
 
-    @SuppressWarnings("unused")
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CoreLog.info("Starting PreInit!");
@@ -32,7 +31,6 @@ public class MMACore {
         CoreLog.info("Finished PreInit!");
     }
 
-    @SuppressWarnings("unused")
     @Mod.EventHandler
     public void inti(FMLInitializationEvent event) {
         CoreLog.info("Starting Init!");
