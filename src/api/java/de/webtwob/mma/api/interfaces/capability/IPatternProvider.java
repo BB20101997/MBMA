@@ -18,6 +18,6 @@ public interface IPatternProvider {
         return te.getCapability(APICapabilities.CAPABILITY_PATTERN_PROVIDER, null);
     }
 
-    public List<ICraftingRecipe> getPatternList();
+    List<ICraftingRecipe> getPatternList();
 
 }
