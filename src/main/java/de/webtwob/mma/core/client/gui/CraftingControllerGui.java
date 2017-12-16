@@ -81,7 +81,7 @@ public class CraftingControllerGui extends GuiContainer {
                 if (pos != null) {
                     text = String.format("%2d: X: %d Y: %d Z: %d", i, pos.getX(), pos.getY(), pos.getZ());
                 } else {
-                    text = i + ": " + stack.getDisplayName();
+                    text = String.format("%2d: %s " ,i, stack.getDisplayName());
                 }
                 GuiLabel label = new GuiLabel(fontRenderer, i, guiLeft + 10, guiTop + 31 + i * ELEMENT_HEIGHT - offset,
                                               144, 10, Color.WHITE.getRGB()
