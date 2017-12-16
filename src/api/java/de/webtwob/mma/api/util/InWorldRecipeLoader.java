@@ -105,6 +105,7 @@ public class InWorldRecipeLoader {
     private static class InWordRecipeDeserializer implements JsonDeserializer<InWorldRecipe> {
 
         @Override
+        @SuppressWarnings({"squid:RedundantThrowsDeclarationCheck","squid:S1301","squid:S1199"})
         public InWorldRecipe deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             if (!json.isJsonObject()) {
