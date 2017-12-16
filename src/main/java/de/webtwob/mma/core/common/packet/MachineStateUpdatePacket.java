@@ -33,7 +33,7 @@ public class MachineStateUpdatePacket implements IMessage {
 
     /**
      * @param pos   the position of the Machine to update
-     * @param state thet state to set the Machine to
+     * @param state the state to set the Machine to
      */
     public MachineStateUpdatePacket(BlockPos pos, MachineState state) {
         blockPos = pos;

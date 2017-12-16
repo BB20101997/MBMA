@@ -135,7 +135,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
             //do we have at least one linked queue
             if (!getRequestProviders().findAny().isPresent()) {
                 errorSolved.add(
-                        t -> !t.getRequestProviders().findAny().isPresent() ? "mmacor:error.desc.noqueues" : null);
+                        t -> !t.getRequestProviders().findAny().isPresent() ? "mmacore.error.desc.no_queues" : null);
                 setState(MachineState.PROBLEM);
                 return;
             }

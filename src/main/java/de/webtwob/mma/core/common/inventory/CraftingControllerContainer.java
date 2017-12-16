@@ -48,7 +48,7 @@ public class CraftingControllerContainer extends Container implements IInventory
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
+    public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
         return true;
     }
 
@@ -65,12 +65,63 @@ public class CraftingControllerContainer extends Container implements IInventory
         }
     }
 
+    /**
+     * This function is called when a Player shift-clicks a Slot in a Inventory
+     * returns the remaining ItemStack in the Shift-Clicked slot if the ItemStack has been partially transferred
+     * else it returns ItemStack.EMPTY
+     *
+     * @param playerIn the player that Shift-Clicked
+     * @param index    the index of the Slot that got Shift-Clicked
+     */
+    @Nonnull
+    @Override
+    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index) {
+        Slot slot = getSlot(index);
+
+        //Slot non-existent or Empty
+        //noinspection ConstantConditions
+        if (slot == null || !slot.getHasStack()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack stack          = slot.getStack();
+        int       originalAmount = stack.getCount();
+        if (36 <= index) {//this container displays 36 of the Players inventory slots(no Off-Hand)
+            //From Block to Player Inventory
+            if (!mergeItemStack(stack, 0, 36, false)) {
+                //could not merge into player inventory
+                return ItemStack.EMPTY;
+            }
+        } else {
+            //From Player to Block Inventory
+            if (getSlot(36).isItemValid(stack) && mergeItemStack(stack, 36, 37, false)) {
+                if (stack.isEmpty()) {
+                    slot.putStack(ItemStack.EMPTY);
+                }
+                slot.onSlotChanged();
+                slot.onTake(player, stack);
+            }
+        }
+        if (stack.getCount() != originalAmount) {
+            //slot contant changed
+            if (stack.isEmpty()) {
+                slot.putStack(ItemStack.EMPTY);
+            }
+            slot.onSlotChanged();
+            slot.onTake(player, stack);
+        }
+
+        return ItemStack.EMPTY;
+
+    }
+
     @Override
     public void onInventoryChanged(@Nonnull IInventory invBasic) {
         ItemStack stack = invBasic.getStackInSlot(0);
         if (!stack.isEmpty() && tileEntityCraftingController.canAddLinkCard()) {
             stack = invBasic.removeStackFromSlot(0);
             tileEntityCraftingController.addLinkCard(stack);
+            tileEntityCraftingController.markDirty();
         }
     }
 

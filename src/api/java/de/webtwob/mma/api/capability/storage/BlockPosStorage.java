@@ -1,6 +1,7 @@
 package de.webtwob.mma.api.capability.storage;
 
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
+import de.webtwob.mma.api.references.NBTKeys;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,15 +20,23 @@ public class BlockPosStorage implements Capability.IStorage<IBlockPosProvider> {
     @Nullable
     @Override
     public NBTBase writeNBT(Capability<IBlockPosProvider> capability, IBlockPosProvider instance, EnumFacing side) {
-        BlockPos pos = instance.getBlockPos();
-        return pos != null ? NBTUtil.createPosTag(instance.getBlockPos()) : new NBTTagCompound();
+        BlockPos       pos      = instance.getBlockPos();
+        NBTTagCompound compound = new NBTTagCompound();
+        if (pos != null) {
+            compound.setTag(NBTKeys.LINK_SHARE_POS, NBTUtil.createPosTag(pos));
+        }
+        return compound;
     }
 
     @Override
     public void readNBT(Capability<IBlockPosProvider> capability, IBlockPosProvider instance, EnumFacing side, NBTBase nbt) {
-        if (nbt instanceof NBTTagCompound && !nbt.hasNoTags()) {
-            instance.setBlockPos(NBTUtil.getPosFromTag((NBTTagCompound) nbt));
+        if (nbt instanceof NBTTagCompound) {
+            NBTTagCompound compound = (NBTTagCompound) nbt;
+            if (compound.hasKey(NBTKeys.LINK_SHARE_POS)){
+                instance.setBlockPos(NBTUtil.getPosFromTag(compound.getCompoundTag(NBTKeys.LINK_SHARE_POS)));
+            }else{
+                instance.setBlockPos(null);
+            }
         }
-        instance.setBlockPos(null);
     }
 }

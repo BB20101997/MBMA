@@ -188,8 +188,8 @@ public class TokenGui extends GuiContainer {
         updateItemStack();
     }
 
-    private ItemStack getItemStackFromTextField(GuiTextField fiel) {
-        Item item = Item.getByNameOrId(fiel.getText());
+    private ItemStack getItemStackFromTextField(GuiTextField field) {
+        Item item = Item.getByNameOrId(field.getText());
         if (item == null) {
             return ItemStack.EMPTY;
         } else {

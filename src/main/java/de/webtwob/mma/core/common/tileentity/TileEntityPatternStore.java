@@ -42,7 +42,7 @@ public class TileEntityPatternStore extends MultiBlockTileEntity {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == capabilityPatternProvider) {
+        if (capabilityPatternProvider!=null&&capability == capabilityPatternProvider) {
             IPatternProvider patternProvider = () -> patternList.stream()
                                                                 .map(ICraftingRecipe::getRecipeForStack)
                                                                 .collect(Collectors.toList());

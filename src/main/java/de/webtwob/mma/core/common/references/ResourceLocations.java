@@ -43,7 +43,7 @@ public class ResourceLocations {
     public static class Blocks {
 
         public static final ResourceLocation TOKEN_GENERATOR_REGISTRY_NAME = new ResourceLocation(
-                MODID, "tokengenerator");
+                MODID, "token_generator");
 
         public static final ResourceLocation PATTERN_STORAGE_REGISTRY_NAME = new ResourceLocation(
                 MODID, "pattern_storage");
@@ -68,7 +68,7 @@ public class ResourceLocations {
         public static final ResourceLocation RECIPE_PATTERN_REGISTRY_NAME   = new ResourceLocation(
                 MODID, "recipe_pattern");
         public static final ResourceLocation LINKED                         = new ResourceLocation(MODID, "islinked");
-        public static final ResourceLocation DEBUG_WAND_REGISTRY_NAME       = new ResourceLocation(MODID, "debugWand");
+        public static final ResourceLocation DEBUG_WAND_REGISTRY_NAME       = new ResourceLocation(MODID, "debug_wand");
         public static final ResourceLocation IN_WORLD_CRAFTER_REGISTRY_NAME = new ResourceLocation(MODID,
                                                                                                    "inWorldCrafter"
         );

@@ -44,7 +44,7 @@ public class BlockPosProvider implements ICapabilitySerializable {
             }
             if (pos != null) {
                 compound.setTag(NBTKeys.LINK_SHARE_POS, NBTUtil.createPosTag(pos));
-            }else {
+            } else {
                 compound.removeTag(NBTKeys.LINK_SHARE_POS);
             }
             item.setTagCompound(compound);
@@ -72,11 +72,11 @@ public class BlockPosProvider implements ICapabilitySerializable {
 
     @Override
     public NBTBase serializeNBT() {
-        return provider.serializeNBT();
+        return CAPABILITY_BLOCK_POS.getStorage().writeNBT(CAPABILITY_BLOCK_POS, provider, null);
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
-        provider.deserializeNBT(nbt);
+        CAPABILITY_BLOCK_POS.getStorage().readNBT(CAPABILITY_BLOCK_POS, provider, null, nbt);
     }
 }

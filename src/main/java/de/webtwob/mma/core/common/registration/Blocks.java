@@ -58,6 +58,7 @@ public class Blocks {
 
         IForgeRegistry<Block> registry = event.getRegistry();
         registry.registerAll(BLOCKS);
+
         Tiles.registerTileEntities();
     }
 }

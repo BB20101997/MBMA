@@ -26,8 +26,24 @@ public class LinkCardItem extends MMAItem {
 
     public LinkCardItem(ResourceLocation rl) {
         super(rl);
-        setCreativeTab(CoreCreativeTab.MMATab);
         addPropertyOverride(ResourceLocations.Items.LINKED, IsLinkedItemPropertyGetter.INSTANCE);
+    }
+
+    @Override
+    public boolean getShareTag() {
+        return true;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        BlockPos link = IBlockPosProvider.getBlockPos(stack);
+        if (link != null) {
+            tooltip.add(String.format("Linked to Block at: X:%d Y:%d Z:%d", link.getX(), link.getY(), link.getZ()));
+        } else {
+            tooltip.add("Not Linked");
+        }
     }
 
     @Nonnull
@@ -55,7 +71,7 @@ public class LinkCardItem extends MMAItem {
             IBlockPosProvider.setBlockPos(stack, null);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        return super.onItemRightClick(worldIn, playerIn, handIn);
+        return new ActionResult<>(EnumActionResult.SUCCESS,stack);
     }
 
     @Nonnull
@@ -67,23 +83,6 @@ public class LinkCardItem extends MMAItem {
         } else {
             return getUnlocalizedName() + MMAUnlocalizedNames.UNLINKED_SUFFIX;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced) {
-        super.addInformation(stack, world, tooltip, advanced);
-        BlockPos link = IBlockPosProvider.getBlockPos(stack);
-        if (link != null) {
-            tooltip.add(String.format("Linked to Block at: X:%d Y:%d Z:%d", link.getX(), link.getY(), link.getZ()));
-        } else {
-            tooltip.add("Not Linked");
-        }
-    }
-
-    @Override
-    public boolean getShareTag() {
-        return true;
     }
 
     @Override

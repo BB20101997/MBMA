@@ -3,16 +3,14 @@ package de.webtwob.mma.api.interfaces.capability;
 import de.webtwob.mma.api.capability.APICapabilities;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 
 /**
  * Created by BB20101997 on 18. Mär. 2017.
  */
-public interface IBlockPosProvider extends INBTSerializable {
+public interface IBlockPosProvider {
 
     /**
      * @param stack the ItemStack this will perform on
@@ -37,13 +35,4 @@ public interface IBlockPosProvider extends INBTSerializable {
 
     void setBlockPos(@Nullable BlockPos pos);
 
-    @Override
-    default void deserializeNBT(NBTBase nbt) {
-        APICapabilities.CAPABILITY_BLOCK_POS.getStorage().readNBT(APICapabilities.CAPABILITY_BLOCK_POS,this,null,nbt);
-    }
-
-    @Override
-    default NBTBase serializeNBT() {
-        return APICapabilities.CAPABILITY_BLOCK_POS.getStorage().writeNBT(APICapabilities.CAPABILITY_BLOCK_POS,this,null);
-    }
 }
