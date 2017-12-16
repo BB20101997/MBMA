@@ -153,6 +153,7 @@ public class TokenGui extends GuiContainer {
     }
 
     @Override
+    @SuppressWarnings("squid:S1199")
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
         switch (button.id) {
