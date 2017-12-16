@@ -72,7 +72,6 @@ public class CraftingControllerContainer extends Container implements IInventory
             stack = invBasic.removeStackFromSlot(0);
             tileEntityCraftingController.addLinkCard(stack);
         }
-        //TODO Drop link on inventory closed
     }
 
     @Override
