@@ -45,8 +45,8 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
 
     private static final int                                                  WAIT_TIME                 = 20;
     private static       Capability<ICraftingRequestProvider>                 capabilityRequestProvider = null;
-    private final        List<Function<TileEntityCraftingController, String>> ERROR_SOLVED              = new LinkedList<>();
-    private final        List<Function<TileEntityCraftingController, String>> WAIT_CONDITION            = new LinkedList<>();
+    private final        List<Function<TileEntityCraftingController, String>> errorSolved               = new LinkedList<>();
+    private final        List<Function<TileEntityCraftingController, String>> waitCondition             = new LinkedList<>();
     private final        List<String>                                         errors                    = new LinkedList<>();
     private final        List<String>                                         waiting                   = new LinkedList<>();
 
@@ -98,10 +98,10 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
                     //continue active planning
                     break;
                 case WAITING:
-                    waitOrError(waiting, WAIT_CONDITION);
+                    waitOrError(waiting, waitCondition);
                     break;
                 case PROBLEM:
-                    waitOrError(errors, ERROR_SOLVED);
+                    waitOrError(errors, errorSolved);
                     break;
             }
         } else {
@@ -134,7 +134,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
 
             //do we have at least one linked queue
             if (!getRequestProviders().findAny().isPresent()) {
-                ERROR_SOLVED.add(
+                errorSolved.add(
                         t -> !t.getRequestProviders().findAny().isPresent() ? "mmacor:error.desc.noqueues" : null);
                 setState(MachineState.PROBLEM);
                 return;
