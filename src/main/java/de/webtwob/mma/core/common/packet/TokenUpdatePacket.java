@@ -27,6 +27,7 @@ public class TokenUpdatePacket implements IMessage {
     /**
      * Used to generate TokenUpdatePackets from an incoming ByteStream
      */
+    @SuppressWarnings("unused")
     public TokenUpdatePacket() {
     }
 
