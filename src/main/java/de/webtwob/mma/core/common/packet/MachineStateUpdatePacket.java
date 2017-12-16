@@ -27,6 +27,7 @@ public class MachineStateUpdatePacket implements IMessage {
     /**
      * Used when generating Packets from the ByteStream from the Network
      */
+    @SuppressWarnings("unused")
     public MachineStateUpdatePacket() {
     }
 
