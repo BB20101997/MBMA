@@ -51,7 +51,7 @@ public class QueueContainer extends Container implements IInventoryChangedListen
         capabilityCraftingRequest = handler;
     }
 
-    public static QueueContainer tryCreateInstance(int id, EntityPlayer player, World world, int x, int y, int z) {
+    public static QueueContainer tryCreateInstance(EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
         if (te instanceof TileEntityQueue) {
             return new QueueContainer((TileEntityQueue) te, player);

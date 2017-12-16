@@ -1,6 +1,5 @@
 package de.webtwob.mma.core.common.item;
 
-import de.webtwob.mma.api.capability.APICapabilities;
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.property.IsLinkedItemPropertyGetter;
 import de.webtwob.mma.core.common.creativetab.CoreCreativeTab;
@@ -31,48 +30,30 @@ public class LinkCardItem extends MMAItem {
         addPropertyOverride(ResourceLocations.Items.LINKED, IsLinkedItemPropertyGetter.INSTANCE);
     }
 
-    private BlockPos getLinked(ItemStack stack) {
-        IBlockPosProvider ibpp;
-        if ((ibpp = stack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null)) != null) {
-            return ibpp.getBlockPos();
-        }
-
-        return null;
-    }
-
-    private void setLink(ItemStack stack, BlockPos pos, World world) {
-        if (!world.isRemote) {
-            IBlockPosProvider posProvider;
-            if ((posProvider = stack.getCapability(APICapabilities.CAPABILITY_BLOCK_POS, null)) != null) {
-                posProvider.setBlockPos(pos);
-            }
-        }
-    }
-
     @Nonnull
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getHeldItem(hand);
-        if (player.isSneaking()) {
-            if (!worldIn.isRemote) {
-                setLink(itemStack, pos, worldIn);
-            }
-            return EnumActionResult.SUCCESS;
-
+        if (!player.isSneaking()) {
+            return EnumActionResult.PASS;
         }
-        return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+        if (!worldIn.isRemote) {
+            IBlockPosProvider.setBlockPos(itemStack, pos);
+            return EnumActionResult.SUCCESS;
+        }
+        return EnumActionResult.SUCCESS;
     }
 
     @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
-        if (playerIn.isSneaking()) {
-            if (!worldIn.isRemote) {
-                setLink(stack, null, worldIn);
-            }
+        if(!playerIn.isSneaking()){
+            return new ActionResult<>(EnumActionResult.PASS,stack);
+        }
+        if (!worldIn.isRemote) {
+            IBlockPosProvider.setBlockPos(stack, null);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-
         }
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
@@ -81,7 +62,7 @@ public class LinkCardItem extends MMAItem {
     @SuppressWarnings("StringConcatenationMissingWhitespace")
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        if (getLinked(stack) != null) {
+        if (IBlockPosProvider.getBlockPos(stack) != null) {
             return getUnlocalizedName() + MMAUnlocalizedNames.LINKED_SUFFIX;
         } else {
             return getUnlocalizedName() + MMAUnlocalizedNames.UNLINKED_SUFFIX;
@@ -92,12 +73,17 @@ public class LinkCardItem extends MMAItem {
     @Override
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced) {
         super.addInformation(stack, world, tooltip, advanced);
-        BlockPos link = getLinked(stack);
+        BlockPos link = IBlockPosProvider.getBlockPos(stack);
         if (link != null) {
             tooltip.add(String.format("Linked to Block at: X:%d Y:%d Z:%d", link.getX(), link.getY(), link.getZ()));
         } else {
             tooltip.add("Not Linked");
         }
+    }
+
+    @Override
+    public boolean getShareTag() {
+        return true;
     }
 
     @Override

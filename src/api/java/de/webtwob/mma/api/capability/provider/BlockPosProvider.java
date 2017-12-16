@@ -6,10 +6,12 @@ import de.webtwob.mma.api.references.NBTKeys;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,29 +25,26 @@ public class BlockPosProvider implements ICapabilitySerializable {
 
     private ItemStack item;
     private IBlockPosProvider provider = new IBlockPosProvider() {
-        //why do we directly store to NBT? instead of just relying on deserialize and serialize? //TODO test
+
         @Override
         public BlockPos getBlockPos() {
             NBTTagCompound compound = item.getTagCompound();
-            if (compound == null) {
+            if (compound == null || !compound.hasKey(NBTKeys.LINK_SHARE_POS, Constants.NBT.TAG_COMPOUND)) {
                 return null;
+            } else {
+                return NBTUtil.getPosFromTag(compound.getCompoundTag(NBTKeys.LINK_SHARE_POS));
             }
-            int[] posA = compound.getIntArray(NBTKeys.LINK_SHARE_POS);
-            if (posA.length >= 3) {
-                return new BlockPos(posA[0], posA[1], posA[2]);
-            }
-            return null;
         }
 
         @Override
-        public void setBlockPos(BlockPos pos) {
+        public void setBlockPos(final BlockPos pos) {
             NBTTagCompound compound = item.getTagCompound();
             if (compound == null) {
                 compound = new NBTTagCompound();
             }
             if (pos != null) {
-                compound.setIntArray(NBTKeys.LINK_SHARE_POS, new int[]{pos.getX(), pos.getY(), pos.getZ()});
-            } else {
+                compound.setTag(NBTKeys.LINK_SHARE_POS, NBTUtil.createPosTag(pos));
+            }else {
                 compound.removeTag(NBTKeys.LINK_SHARE_POS);
             }
             item.setTagCompound(compound);
@@ -73,11 +72,11 @@ public class BlockPosProvider implements ICapabilitySerializable {
 
     @Override
     public NBTBase serializeNBT() {
-        return CAPABILITY_BLOCK_POS.getStorage().writeNBT(CAPABILITY_BLOCK_POS, provider, null);
+        return provider.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
-        CAPABILITY_BLOCK_POS.getStorage().readNBT(CAPABILITY_BLOCK_POS, provider, null, nbt);
+        provider.deserializeNBT(nbt);
     }
 }

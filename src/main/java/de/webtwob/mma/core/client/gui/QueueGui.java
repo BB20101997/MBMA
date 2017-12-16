@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class QueueGui extends GuiContainer {
         ySize = 220;
     }
 
-    public static QueueGui tryCreateInstance(int id, EntityPlayer player, World world, int x, int y, int z) {
+    public static QueueGui tryCreateInstance(EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
         if (te instanceof TileEntityQueue) {
             return new QueueGui((TileEntityQueue) te, player);
@@ -59,7 +60,9 @@ public class QueueGui extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(ResourceLocations.Textures.QUEUES_GUI);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        List<ItemStackContainer> queue = entityQueue.getCurrentRequests();
+
+        List<ItemStackContainer> queue = new ArrayList<>(entityQueue.getCurrentRequests());
+
         listLength = queue.size();
         if (selected >= queue.size()) {
             selected = -1;

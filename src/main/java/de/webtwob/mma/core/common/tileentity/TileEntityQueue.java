@@ -12,6 +12,7 @@ import de.webtwob.mma.core.client.gui.QueueGui;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
 import de.webtwob.mma.core.common.inventory.QueueContainer;
 import de.webtwob.mma.core.common.multiblockgroups.QueueGroupType;
+import de.webtwob.mma.core.common.references.LogMessages;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
 import net.minecraft.entity.item.EntityItem;
@@ -31,10 +32,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -141,16 +139,15 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
      * @return an Array containing the currently enqueued Requests
      */
     @Nonnull
-    public List<ItemStackContainer> getCurrentRequests() {
+    public Queue<ItemStackContainer> getCurrentRequests() {
         MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
         if (null != group) {
             MultiBlockGroupTypeInstance instance = group.getTypeInstance();
             if (instance instanceof QueueGroupType.Instance) {
                 return ((QueueGroupType.Instance) instance).getQueue();
             }
-        } else {
-            System.out.println("Goup was null!");
         }
+
         return new LinkedList<>();
     }
 
@@ -162,7 +159,9 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
         if (null == group) {
             return ItemStack.EMPTY;
         }
-        List<ItemStackContainer> queue = getCurrentRequests();
+
+        Queue<ItemStackContainer> queue = getCurrentRequests();
+
         return queue.stream().filter(isc -> requirement.test(isc.getItemStack())).findFirst().map(isc -> {
             ItemStack request = isc.getItemStack();
             queue.remove(isc);
@@ -276,23 +275,22 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     @Nullable
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return QueueGui.tryCreateInstance(id, player, world, x, y, z);
+        return QueueGui.tryCreateInstance(player, world, x, y, z);
     }
 
     @Nullable
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        return QueueContainer.tryCreateInstance(id, player, world, x, y, z);
+        return QueueContainer.tryCreateInstance(player, world, x, y, z);
     }
 
     @Override
     public void performDebugOnTile(EntityPlayer player) {
         super.performDebugOnTile(player);
         player.sendStatusMessage(
-                new TextComponentString(
-                        String.format("%d out of %d Queue length in use!\n", inUseRequestContainer.size(),
-                                      MMAConfiguration.queueLength
-                        )), false);
+                new TextComponentString(String.format(LogMessages.TE_Q_DEBUG, inUseRequestContainer.size(),
+                                                      MMAConfiguration.queueLength
+                )), false);
     }
 
     public void addStackToQueue(final ItemStack stack) {

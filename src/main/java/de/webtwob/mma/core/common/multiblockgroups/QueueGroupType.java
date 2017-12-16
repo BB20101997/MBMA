@@ -7,6 +7,7 @@ import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.function.Supplier;
 
 /**
@@ -35,7 +36,7 @@ public class QueueGroupType extends InstantiatableGroupType {
             //NO-OP
         }
 
-        public LinkedList<ItemStackContainer> getQueue() {
+        public Queue<ItemStackContainer> getQueue() {
             return containers;
         }
 
