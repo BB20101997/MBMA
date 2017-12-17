@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -28,24 +29,21 @@ public class InWorldCrafterItem extends MMAItem {
     @Override
     @Nonnull
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (worldIn != null && pos != null && facing != null) {
-            if (!worldIn.isRemote) {
-                IForgeRegistry<InWorldRecipe> registry = GameRegistry.findRegistry(InWorldRecipe.class);
-                if (registry != null) {
-                    return tryFindRecipe(registry, worldIn, pos, facing);
-                }
-                return EnumActionResult.PASS;
+        if (worldIn != null && pos != null && facing != null && !worldIn.isRemote) {
+            IForgeRegistry<InWorldRecipe> registry = GameRegistry.findRegistry(InWorldRecipe.class);
+            if (registry != null) {
+                return tryFindRecipe(registry, worldIn, pos, facing);
             }
-            return EnumActionResult.SUCCESS;
+            return EnumActionResult.PASS;
         }
-        return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+        return EnumActionResult.SUCCESS;
     }
 
     @Nonnull
     private EnumActionResult tryFindRecipe(@Nonnull IForgeRegistry<InWorldRecipe> registry, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull EnumFacing facing) {
         for (InWorldRecipe recipe : registry.getValues()) {
             BlockPattern               pattern = recipe.getBlockPattern();
-            BlockPattern.PatternHelper helper  = pattern.match(worldIn, pos.offset(facing.getOpposite()));
+            BlockPattern.PatternHelper helper  = pattern.match(worldIn, pos);
             if (helper != null) {
                 recipe.executeRecipe(worldIn, helper);
                 return EnumActionResult.SUCCESS;

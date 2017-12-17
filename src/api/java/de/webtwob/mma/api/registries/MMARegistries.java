@@ -1,20 +1,15 @@
 package de.webtwob.mma.api.registries;
 
 import de.webtwob.mma.api.APILog;
+import de.webtwob.mma.api.crafting.DummyInWorldRecipe;
+import de.webtwob.mma.api.crafting.MissingInWorldRecipe;
 import de.webtwob.mma.api.references.ResourceLocations;
 
-import net.minecraft.block.state.pattern.BlockPattern;
-import net.minecraft.block.state.pattern.FactoryBlockPattern;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by BB20101997 on 25. Okt. 2017.
@@ -55,29 +50,8 @@ public class MMARegistries {
 
         new RegistryBuilder<InWorldRecipe>().setName(ResourceLocations.REG_IN_WORLD_RECIPE)
                                             .setType(InWorldRecipe.class)
-                                            .set(key -> new InWorldRecipe() {
-
-                                                     @Override
-                                                     public Map<BlockPos, Object> determinResult(World world, BlockPattern.PatternHelper patternHelper) {
-                                                         return new HashMap<>();
-                                                     }
-
-                                                     @Override
-                                                     public void clearArea(World world, BlockPattern.PatternHelper patternHelper) {
-                                                         //NOOP this is a dummy
-                                                     }
-
-                                                     @Override
-                                                     public BlockPattern getBlockPattern() {
-                                                         //Always failing as this is a dummy
-                                                         return FactoryBlockPattern.start()
-                                                                                   .aisle("A")
-                                                                                   .where('A', o -> false)
-                                                                                   .build();
-                                                     }
-                                                 }
-
-                                            )
+                                            .set(DummyInWorldRecipe::new)
+                                            .set(MissingInWorldRecipe::new)
                                             .add((owner, stage, id, obj, oldObj) -> APILog.info(
                                                     "Adding InWorldRecipe:" + obj.getRegistryName()))
                                             .allowModification()

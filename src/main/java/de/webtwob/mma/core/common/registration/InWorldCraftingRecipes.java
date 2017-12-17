@@ -55,7 +55,7 @@ public class InWorldCraftingRecipes {
             pathIterator = Files.walk(folderPath);
             for (Iterator<Path> it = pathIterator.iterator(); it.hasNext(); ) {
                 Path path = it.next();
-                if ("3drecipe".equals(FilenameUtils.getExtension(path.toString()))) {
+                if ("3d_recipe".equals(FilenameUtils.getExtension(path.toString()))) {
                     tryLoadingRecipe(registry, folderPath, path);
                 }
             }

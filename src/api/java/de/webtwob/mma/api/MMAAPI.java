@@ -38,6 +38,6 @@ public class MMAAPI {
     public void init(FMLInitializationEvent event) {
         APILog.info("Starting Init!");
         NetworkRegistry.INSTANCE.registerGuiHandler(MODID, proxy);
-        APILog.info("Finished PreInit!");
+        APILog.info("Finished Init!");
     }
 }

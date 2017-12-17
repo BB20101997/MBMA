@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import de.webtwob.mma.api.APILog;
+import de.webtwob.mma.api.MMAAPI;
 import de.webtwob.mma.api.crafting.BasicInWorldRecipe;
 import de.webtwob.mma.api.registries.InWorldRecipe;
 
@@ -36,25 +37,21 @@ import static com.google.common.io.Files.newReader;
 /**
  * Created by BB20101997 on 10. Dez. 2017.
  */
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = MMAAPI.MODID)
 public class InWorldRecipeLoader {
-
-    private static File location;
 
     private InWorldRecipeLoader() {}
 
-    private static void loadCustomRecipes(IForgeRegistry<InWorldRecipe> registry) {
-        if (location != null && (location.mkdirs() || location.exists())) {
-            //noinspection ResultOfMethodCallIgnored
-            for (File file : FileUtils.listFiles(location, new String[]{"3drecipe"}, true)) {
-
-                String   s           = FilenameUtils.removeExtension(
-                        location.toURI().relativize(file.toURI()).toString());
+    private static void loadCustomRecipes(@Nonnull final IForgeRegistry<InWorldRecipe> registry, @Nonnull final File fromLocation) {
+        if (fromLocation.mkdirs() || fromLocation.exists()) {
+            for (File file : FileUtils.listFiles(fromLocation, new String[]{"3d_recipe"}, true)) {
+                String s = FilenameUtils.removeExtension(fromLocation.toURI().relativize(file.toURI()).toString());
                 String[] domainSplit = s.split("/", 2);
 
                 if (domainSplit.length == 2) {
                     ResourceLocation recipeRL = new ResourceLocation(domainSplit[0], domainSplit[1]);
                     try {
+                        //Loader.instance().setActiveModContainer(null);//<--tried to get rid of warning, but did not work!
                         InWorldRecipe recipe = loadRecipeFromFile(file);
                         recipe.setRegistryName(recipeRL);
                         registry.register(recipe);
@@ -62,29 +59,31 @@ public class InWorldRecipeLoader {
                         APILog.LOGGER.error(
                                 "Couldn't read custom InWorldRecipe " + recipeRL + " from " + file, exception);
                     }
+                } else {
+                    APILog.error("Failed to load {} it's missing a domain!", file);
                 }
 
             }
         }
     }
 
-    public static void setLocation(File location) {
-        InWorldRecipeLoader.location = location;
-    }
-
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load loadEvent) {
-        InWorldRecipeLoader.setLocation(
-                new File(new File(DimensionManager.getCurrentSaveRootDirectory(), "data"), "3d_recipes"));
+        if (loadEvent.getWorld().provider.getDimension() != 0) {
+            return;
+        }
+        File location = new File(new File(DimensionManager.getCurrentSaveRootDirectory(), "data"), "3d_recipes");
         IForgeRegistry<InWorldRecipe> registry = GameRegistry.findRegistry(InWorldRecipe.class);
         if (registry != null) {
             boolean relock = false;
             if (registry instanceof ForgeRegistry) {
-                //TODO find a way that doesn't require unfreezing the registry
                 relock = ((ForgeRegistry) registry).isLocked();
                 ((ForgeRegistry) registry).unfreeze();
             }
-            loadCustomRecipes(registry);
+            APILog.warn(String.format("Loading CustomRecipes!%s",
+                                      relock ? " Had to unfreeze registry! Will refreeze again" : ""));
+
+            loadCustomRecipes(registry, location);
             if (relock) {
                 ((ForgeRegistry) registry).freeze();
             }
@@ -105,7 +104,7 @@ public class InWorldRecipeLoader {
     private static class InWordRecipeDeserializer implements JsonDeserializer<InWorldRecipe> {
 
         @Override
-        @SuppressWarnings({"squid:RedundantThrowsDeclarationCheck","squid:S1301","squid:S1199"})
+        @SuppressWarnings({"squid:RedundantThrowsDeclarationCheck", "squid:S1301", "squid:S1199"})
         public InWorldRecipe deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             if (!json.isJsonObject()) {
