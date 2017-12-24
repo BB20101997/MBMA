@@ -7,7 +7,9 @@ import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.multiblock.MultiBlockGroup;
 import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
+import de.webtwob.mma.api.multiblock.MultiBlockMember;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
+import de.webtwob.mma.api.util.MMAFilter;
 import de.webtwob.mma.core.client.gui.QueueGui;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
 import de.webtwob.mma.core.common.inventory.QueueContainer;
@@ -32,7 +34,9 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -260,16 +264,21 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     }
 
     public boolean canStackBeAddedToQueue(ItemStack stack) {
-        //do we have room, is there even some thing to insert and does crafting exists
-        if (freeRequestContainer.isEmpty() || stack.isEmpty() || null == capabilityCraftingRequest) {
+
+        if (!MMAFilter.MUSTER_FILTER.test(stack) || stack.isEmpty()) {
             return false;
         }
 
-        //is the ItemStack a Request and is it uncompleted
-        ICraftingRequest request = stack.getCapability(capabilityCraftingRequest, null);
+        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
 
-        return null != request && !request.isCompleted();
-
+        return group != null && group.getMembers()
+                                     .stream()
+                                     .map(MultiBlockMember::getPos)
+                                     .filter(world::isBlockLoaded)
+                                     .map(world::getTileEntity)
+                                     .filter(TileEntityQueue.class::isInstance)
+                                     .map(TileEntityQueue.class::cast)
+                                     .anyMatch(q -> !q.freeRequestContainer.isEmpty());
     }
 
     @Nullable
@@ -294,13 +303,25 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     }
 
     public void addStackToQueue(final ItemStack stack) {
-        ItemStackContainer isc = freeRequestContainer.poll();
-        if (null == isc) {
+        MultiBlockGroup group = getGroup();
+        TileEntityQueue queue = group.getMembers()
+             .stream()
+             .map(MultiBlockMember::getPos)
+             .filter(world::isBlockLoaded)
+             .map(world::getTileEntity)
+             .filter(TileEntityQueue.class::isInstance)
+             .map(TileEntityQueue.class::cast)
+             .filter(q->!q.freeRequestContainer.isEmpty())
+             .findFirst().orElse(null);
+
+        if (null == queue) {
             throw new IllegalStateException(
                     "No free ISC! You need to make sure to test if an ItemStack can be added first befor adding it!");
         }
+
+        ItemStackContainer isc = queue.freeRequestContainer.poll();
         isc.setItemStack(stack);
-        inUseRequestContainer.add(isc);
+        queue.inUseRequestContainer.add(isc);
         addToQueue(isc);
     }
 
@@ -344,7 +365,6 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
                 }
             }
 
-            //TODO check if other queues in the MultiBlock have ISC's left and use those if we are out
             if (!canStackBeAddedToQueue(stack)) {
                 return stack;
             }

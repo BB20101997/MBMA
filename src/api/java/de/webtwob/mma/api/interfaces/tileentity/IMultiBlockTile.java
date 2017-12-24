@@ -35,6 +35,14 @@ public interface IMultiBlockTile {
         return null;
     }
 
+    default MultiBlockGroup getGroup(){
+        return getGroup(getWorld(),getPos(),getGroupType());
+    }
+
+    BlockPos getPos();
+
+    World getWorld();
+
     MultiBlockGroupType getGroupType();
 
     /**
