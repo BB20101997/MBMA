@@ -2,7 +2,6 @@ package de.webtwob.mma.core.common.item;
 
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.property.IsLinkedItemPropertyGetter;
-import de.webtwob.mma.core.common.creativetab.CoreCreativeTab;
 import de.webtwob.mma.core.common.references.MMAUnlocalizedNames;
 import de.webtwob.mma.core.common.references.ResourceLocations;
 
