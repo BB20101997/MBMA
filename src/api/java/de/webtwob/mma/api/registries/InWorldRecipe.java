@@ -20,12 +20,12 @@ import java.util.Map;
 public abstract class InWorldRecipe extends IForgeRegistryEntry.Impl<InWorldRecipe> {
 
     public final void executeRecipe(World world, BlockPattern.PatternHelper patternHelper) {
-        Map<BlockPos, Object> resultMap = determinResult(world, patternHelper);
+        Map<BlockPos, Object> resultMap = determineResult(world, patternHelper);
         clearArea(world, patternHelper);
         spawnResult(world, patternHelper, resultMap);
     }
 
-    public abstract Map<BlockPos, Object> determinResult(World world, BlockPattern.PatternHelper patternHelper);
+    public abstract Map<BlockPos, Object> determineResult(World world, BlockPattern.PatternHelper patternHelper);
 
     public abstract void clearArea(World world, BlockPattern.PatternHelper patternHelper);
 

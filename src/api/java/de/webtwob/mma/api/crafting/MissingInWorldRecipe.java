@@ -23,12 +23,15 @@ public class MissingInWorldRecipe extends InWorldRecipe {
         NEVER_MATCH = FactoryBlockPattern.start().aisle("F").where('F', e -> false).build();
     }
 
-    public MissingInWorldRecipe(ResourceLocation key, boolean networked) {
+    /**
+     * @param networked is necessary as it makes the difference between a DummyFactory and a MissingFactory!
+     * */
+    public MissingInWorldRecipe(ResourceLocation key, @SuppressWarnings("unused") boolean networked) {
         setRegistryName(key);
     }
 
     @Override
-    public Map<BlockPos, Object> determinResult(final World world, final BlockPattern.PatternHelper patternHelper) {
+    public Map<BlockPos, Object> determineResult(final World world, final BlockPattern.PatternHelper patternHelper) {
         return MISSING_RESULT;
     }
 

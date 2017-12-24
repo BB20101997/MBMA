@@ -42,7 +42,7 @@ public class BasicInWorldRecipe extends InWorldRecipe {
     }
 
     @Override
-    public Map<BlockPos, Object> determinResult(World world, BlockPattern.PatternHelper patternHelper) {
+    public Map<BlockPos, Object> determineResult(World world, BlockPattern.PatternHelper patternHelper) {
         return resultMap;
     }
 
