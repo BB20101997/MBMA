@@ -102,7 +102,7 @@ public class DefaultCraftingRecipe implements ICraftingRecipe {
     }
 
     @Override
-    public void setRecipeType(@Nonnull RecipeType r) {
+    public void setRecipeType(@Nullable RecipeType r) {
         type = r;
     }
 }

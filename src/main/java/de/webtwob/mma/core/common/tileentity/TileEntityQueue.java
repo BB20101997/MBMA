@@ -1,7 +1,6 @@
 package de.webtwob.mma.core.common.tileentity;
 
 import de.webtwob.mma.api.crafting.ItemStackContainer;
-import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequestProvider;
 import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
@@ -14,6 +13,7 @@ import de.webtwob.mma.core.client.gui.QueueGui;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
 import de.webtwob.mma.core.common.inventory.QueueContainer;
 import de.webtwob.mma.core.common.multiblockgroups.QueueGroupType;
+import de.webtwob.mma.core.common.references.CapabilityInjections;
 import de.webtwob.mma.core.common.references.LogMessages;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
@@ -28,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 
@@ -49,10 +48,6 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     @ObjectHolder("mmacore:queue")
     private static final MultiBlockGroupType MANAGER_QUEUE = null;
 
-    private static Capability<IItemHandler>             capabilityItemHandler;
-    private static Capability<ICraftingRequest>         capabilityCraftingRequest;
-    private static Capability<ICraftingRequestProvider> capabilityCraftingRequestProvider;
-
     private final LinkedList<ItemStackContainer> freeRequestContainer  = new LinkedList<>();
     private final LinkedList<ItemStackContainer> inUseRequestContainer = new LinkedList<>();
 
@@ -64,21 +59,6 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
         for (int i = 0; i < MMAConfiguration.queueLength; i++) {
             freeRequestContainer.add(createItemStackContainer());
         }
-    }
-
-    @CapabilityInject(IItemHandler.class)
-    private static void injectItemHandler(Capability<IItemHandler> handler) {
-        capabilityItemHandler = handler;
-    }
-
-    @CapabilityInject(ICraftingRequest.class)
-    private static void injectCraftingRequest(Capability<ICraftingRequest> handler) {
-        capabilityCraftingRequest = handler;
-    }
-
-    @CapabilityInject(ICraftingRequestProvider.class)
-    private static void injectCraftingRequestProvider(Capability<ICraftingRequestProvider> handler) {
-        capabilityCraftingRequestProvider = handler;
     }
 
     public MultiBlockGroupType getGroupType() {
@@ -94,9 +74,12 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (null != TileEntityQueue.capabilityItemHandler && TileEntityQueue.capabilityItemHandler == capability) {
+        Capability<IItemHandler>             itemHandlerCapability             = CapabilityInjections.getCapabilityItemHandler();
+        Capability<ICraftingRequestProvider> craftingRequestProviderCapability = CapabilityInjections.getCapabilityRequestProvider();
+
+        if (null != itemHandlerCapability && itemHandlerCapability == capability) {
             return (T) handler;
-        } else if (null != capabilityCraftingRequestProvider && capabilityCraftingRequestProvider == capability) {
+        } else if (null != craftingRequestProviderCapability && craftingRequestProviderCapability == capability) {
             return (T) (ICraftingRequestProvider) this::groupGetRequestIfRequirementHolds;
         }
         return super.getCapability(capability, facing);

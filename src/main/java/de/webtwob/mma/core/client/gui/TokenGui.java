@@ -7,6 +7,7 @@ import de.webtwob.mma.api.inventory.GhostSlot;
 import de.webtwob.mma.core.common.CoreLog;
 import de.webtwob.mma.core.common.inventory.TokenContainer;
 import de.webtwob.mma.core.common.packet.TokenUpdatePacket;
+import de.webtwob.mma.core.common.references.CapabilityInjections;
 import de.webtwob.mma.core.common.references.ResourceLocations;
 import de.webtwob.mma.core.common.registration.PacketHandler;
 
@@ -19,8 +20,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import java.io.IOException;
 
@@ -31,7 +32,6 @@ import static de.webtwob.mma.api.inventory.GhostSlot.adjustCount;
  */
 public class TokenGui extends GuiContainer {
 
-    private static Capability<ICraftingRequest> requestCapability;
     private int amount = 1;
 
     private GuiTextField itemNameTextField;
@@ -42,14 +42,10 @@ public class TokenGui extends GuiContainer {
         ySize = 56;
     }
 
-    @CapabilityInject(ICraftingRequest.class)
-    private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
-        TokenGui.requestCapability = requestCapability;
-    }
-
     public static TokenGui tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
-        ItemStack held = player.getHeldItem(enumHand);
-        if (requestCapability != null && held.hasCapability(requestCapability, null)) {
+        ItemStack                    held              = player.getHeldItem(enumHand);
+        Capability<ICraftingRequest> requestCapability = CapabilityInjections.getCapabilityRequest();
+        if (null != requestCapability && held.hasCapability(requestCapability, null)) {
             return new TokenGui(player, enumHand);
         }
         return null;

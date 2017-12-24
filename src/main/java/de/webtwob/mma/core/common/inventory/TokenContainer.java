@@ -10,24 +10,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import javax.annotation.Nonnull;
+
+import static de.webtwob.mma.core.common.references.CapabilityInjections.getCapabilityRequest;
 
 /**
  * Created by bennet on 21.03.17.
  */
 public class TokenContainer extends Container {
 
-    private static Capability<ICraftingRequest> requestCapability;
     @Nonnull
-    public final   ItemStack                    stack;
-    private final  EnumHand                     hand;
+    public final  ItemStack stack;
+    private final EnumHand  hand;
     private ItemStackContainer container = new ItemStackContainer();
 
     public TokenContainer(@Nonnull EntityPlayer player, EnumHand enumHand) {
         stack = player.getHeldItem(enumHand);
         hand = enumHand;
+        Capability<ICraftingRequest> requestCapability = getCapabilityRequest();
         if (requestCapability != null) {
             ICraftingRequest request = stack.getCapability(requestCapability, null);
             if (request != null) {
@@ -36,13 +37,9 @@ public class TokenContainer extends Container {
         }
     }
 
-    @CapabilityInject(ICraftingRequest.class)
-    private static void injectRequest(Capability<ICraftingRequest> requestCapability) {
-        TokenContainer.requestCapability = requestCapability;
-    }
-
     public static TokenContainer tryCreateInstance(final EntityPlayer player, final EnumHand enumHand) {
-        ItemStack held = player.getHeldItem(enumHand);
+        ItemStack                    held              = player.getHeldItem(enumHand);
+        Capability<ICraftingRequest> requestCapability = getCapabilityRequest();
         if (requestCapability != null && held.hasCapability(requestCapability, null)) {
             return new TokenContainer(player, enumHand);
         }
@@ -55,6 +52,7 @@ public class TokenContainer extends Container {
 
     @Override
     public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
+        Capability<ICraftingRequest> requestCapability = getCapabilityRequest();
         return stack.equals(playerIn.getHeldItem(hand)) && requestCapability != null && stack.getCapability(
                 requestCapability, null) != null;
     }

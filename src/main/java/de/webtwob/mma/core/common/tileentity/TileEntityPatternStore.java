@@ -3,11 +3,11 @@ package de.webtwob.mma.core.common.tileentity;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRecipe;
 import de.webtwob.mma.api.interfaces.capability.IPatternProvider;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
+import de.webtwob.mma.core.common.references.CapabilityInjections;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,15 +23,9 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class TileEntityPatternStore extends MultiBlockTileEntity {
 
     @ObjectHolder("mmacore:recipes")
-    public static final MultiBlockGroupType          MANAGER_RECIPES           = null;
-    private static      Capability<IPatternProvider> capabilityPatternProvider = null;
+    public static final MultiBlockGroupType MANAGER_RECIPES = null;
     @Nonnull
-    private             List<ItemStack>              patternList               = new ArrayList<>();
-
-    @CapabilityInject(IPatternProvider.class)
-    private static void setCapabilityPatternProvider(Capability<IPatternProvider> capabilityPatternProvider) {
-        TileEntityPatternStore.capabilityPatternProvider = capabilityPatternProvider;
-    }
+    private             List<ItemStack>     patternList     = new ArrayList<>();
 
     @Override
     public MultiBlockGroupType getGroupType() {
@@ -42,7 +36,8 @@ public class TileEntityPatternStore extends MultiBlockTileEntity {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capabilityPatternProvider!=null&&capability == capabilityPatternProvider) {
+        Capability<IPatternProvider> patternProviderCapability = CapabilityInjections.getCapabilityPatternProvider();
+        if (patternProviderCapability != null && capability == patternProviderCapability) {
             IPatternProvider patternProvider = () -> patternList.stream()
                                                                 .map(ICraftingRecipe::getRecipeForStack)
                                                                 .collect(Collectors.toList());

@@ -96,7 +96,7 @@ public interface ICraftingRecipe extends INBTSerializable<NBTTagCompound> {
     @Nullable
     RecipeType getRecipeType();
 
-    void setRecipeType(@Nonnull RecipeType r);
+    void setRecipeType(@Nullable RecipeType r);
 
     @Override
     default NBTTagCompound serializeNBT() {

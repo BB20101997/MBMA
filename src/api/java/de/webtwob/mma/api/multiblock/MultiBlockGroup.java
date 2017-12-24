@@ -43,10 +43,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         this(mbgm);
         this.type = type;
         if (type instanceof InstantiatableGroupType) {
-            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this, () -> {
-                this.markDirty();
-                return null;
-            });
+            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this, this::markDirty);
         }
     }
 
@@ -192,10 +189,7 @@ public class MultiBlockGroup implements INBTSerializable<NBTTagCompound> {
         }
 
         if (type instanceof InstantiatableGroupType) {
-            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this, () -> {
-                this.markDirty();
-                return null;
-            });
+            typeInstance = ((InstantiatableGroupType) type).createGroupTypeInstance(this, this::markDirty);
             if (typeInstance != null && typeInstance instanceof INBTSerializable && compound.hasKey(
                     NBTKeys.GROUP_TYPE_INSTANCE)) {
                 ((INBTSerializable) typeInstance).deserializeNBT(compound.getTag(NBTKeys.GROUP_TYPE_INSTANCE));

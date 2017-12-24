@@ -7,6 +7,7 @@ import de.webtwob.mma.api.registries.MultiBlockGroupType;
 import de.webtwob.mma.core.client.gui.CraftingControllerGui;
 import de.webtwob.mma.core.common.config.MMAConfiguration;
 import de.webtwob.mma.core.common.inventory.CraftingControllerContainer;
+import de.webtwob.mma.core.common.references.CapabilityInjections;
 import de.webtwob.mma.core.common.references.NBTKeys;
 
 import net.minecraft.entity.item.EntityItem;
@@ -19,7 +20,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.relauncher.Side;
@@ -44,7 +44,6 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
     public static final MultiBlockGroupType MANAGER_CRAFTING = null;
 
     private static final int                                                  WAIT_TIME                 = 20;
-    private static       Capability<ICraftingRequestProvider>                 capabilityRequestProvider = null;
     private final        List<Function<TileEntityCraftingController, String>> errorSolved               = new LinkedList<>();
     private final        List<Function<TileEntityCraftingController, String>> waitCondition             = new LinkedList<>();
     private final        List<String>                                         errors                    = new LinkedList<>();
@@ -58,11 +57,6 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
 
     @Nonnull
     private ItemStack currentRequest = ItemStack.EMPTY;
-
-    @CapabilityInject(ICraftingRequestProvider.class)
-    private static void setRequestProviderCapability(Capability<ICraftingRequestProvider> requestProviderCapability) {
-        capabilityRequestProvider = requestProviderCapability;
-    }
 
     @Nonnull
     public MachineState getState() {
@@ -175,7 +169,8 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
     }
 
     private Stream<ICraftingRequestProvider> getRequestProviders() {
-        if (null == capabilityRequestProvider) {
+        Capability<ICraftingRequestProvider> craftingRequestProviderCapability = CapabilityInjections.getCapabilityRequestProvider();
+        if (null == craftingRequestProviderCapability) {
             return Stream.empty();
         }
         return queueLinkCards.stream()
@@ -183,7 +178,7 @@ public class TileEntityCraftingController extends MultiBlockTileEntity implement
                              .filter(Objects::nonNull)
                              .map(world::getTileEntity)
                              .filter(Objects::nonNull)
-                             .map(te -> te.getCapability(capabilityRequestProvider, null))
+                             .map(te -> te.getCapability(craftingRequestProviderCapability, null))
                              .filter(Objects::nonNull);
     }
 

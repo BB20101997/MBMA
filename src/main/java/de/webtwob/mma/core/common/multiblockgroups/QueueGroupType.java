@@ -8,7 +8,6 @@ import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.function.Supplier;
 
 /**
  * Created by BB20101997 on 10. Dez. 2017.
@@ -16,7 +15,7 @@ import java.util.function.Supplier;
 public class QueueGroupType extends InstantiatableGroupType {
 
     @Override
-    public MultiBlockGroupTypeInstance createGroupTypeInstance(MultiBlockGroup group, Supplier markDirtyCallback) {
+    public MultiBlockGroupTypeInstance createGroupTypeInstance(MultiBlockGroup group, Runnable markDirtyCallback) {
         return new QueueGroupType.Instance();
     }
 

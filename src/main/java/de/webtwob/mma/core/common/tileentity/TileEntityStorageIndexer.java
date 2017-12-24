@@ -5,6 +5,7 @@ import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.interfaces.tileentity.IItemMoveRequest;
 import de.webtwob.mma.api.property.MMAProperties;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
+import de.webtwob.mma.core.common.references.CapabilityInjections;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -13,7 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -31,21 +31,19 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class TileEntityStorageIndexer extends MultiBlockTileEntity {
 
     @ObjectHolder("mmacore:storage")
-    private static final MultiBlockGroupType          MANAGER_STORAGE       = null;
-    private static       Capability<IItemHandler>     capabilityItemHandler = null;
-    private              LinkedList<IItemMoveRequest> requests              = new LinkedList<>();
-    private              NonNullList<ItemStack>       storageLinks          = NonNullList.create();
-
-    @CapabilityInject(IItemHandler.class)
-    private static void setCapabilityItemHandler(Capability<IItemHandler> itemHandlerCapability) {
-        capabilityItemHandler = itemHandlerCapability;
-    }
+    private static final MultiBlockGroupType          MANAGER_STORAGE = null;
+    private              LinkedList<IItemMoveRequest> requests        = new LinkedList<>();
+    private              NonNullList<ItemStack>       storageLinks    = NonNullList.create();
 
     private static IItemHandler getItemHandlerForTileEntity(TileEntity tileEntity, EnumFacing facing) {
         if (tileEntity == null) {
             return null;
         }
-        return tileEntity.getCapability(capabilityItemHandler, facing);
+        Capability<IItemHandler> capabilityItemHandler = CapabilityInjections.getCapabilityItemHandler();
+        if (capabilityItemHandler != null) {
+            return tileEntity.getCapability(capabilityItemHandler, facing);
+        }
+        return null;
     }
 
     @Override
@@ -126,8 +124,9 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
     }
 
     private List<IItemHandler> getInventories() {
-        List<IItemHandler> handlerList = new ArrayList<>();
-        if (capabilityItemHandler == null) {
+        List<IItemHandler>       handlerList           = new ArrayList<>();
+        Capability<IItemHandler> itemHandlerCapability = CapabilityInjections.getCapabilityItemHandler();
+        if (itemHandlerCapability == null) {
             return handlerList;
         }
         return storageLinks.stream()
