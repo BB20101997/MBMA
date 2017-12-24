@@ -276,7 +276,7 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
                                      .map(MultiBlockMember::getPos)
                                      .filter(world::isBlockLoaded)
                                      .map(world::getTileEntity)
-                                     .filter(TileEntityQueue.class::isInstance)
+                                     .filter(TileEntityQueue.class::isInstance)//TODO replace hardcoded TEQ
                                      .map(TileEntityQueue.class::cast)
                                      .anyMatch(q -> !q.freeRequestContainer.isEmpty());
     }
@@ -305,14 +305,15 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     public void addStackToQueue(final ItemStack stack) {
         MultiBlockGroup group = getGroup();
         TileEntityQueue queue = group.getMembers()
-             .stream()
-             .map(MultiBlockMember::getPos)
-             .filter(world::isBlockLoaded)
-             .map(world::getTileEntity)
-             .filter(TileEntityQueue.class::isInstance)
-             .map(TileEntityQueue.class::cast)
-             .filter(q->!q.freeRequestContainer.isEmpty())
-             .findFirst().orElse(null);
+                                     .stream()
+                                     .map(MultiBlockMember::getPos)
+                                     .filter(world::isBlockLoaded)
+                                     .map(world::getTileEntity)
+                                     .filter(TileEntityQueue.class::isInstance)//TODO replace hardcoded TEQ
+                                     .map(TileEntityQueue.class::cast)
+                                     .filter(q -> !q.freeRequestContainer.isEmpty())
+                                     .findFirst()
+                                     .orElse(null);
 
         if (null == queue) {
             throw new IllegalStateException(
