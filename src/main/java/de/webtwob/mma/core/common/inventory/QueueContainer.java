@@ -10,8 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import javax.annotation.Nonnull;
 
@@ -20,7 +18,6 @@ import javax.annotation.Nonnull;
  */
 public class QueueContainer extends Container implements IInventoryChangedListener {
 
-    private static Capability<ICraftingRequest> capabilityCraftingRequest;
     int xSize = 176;
     int ySize = 220;
     private TileEntityQueue entityQueue;
@@ -43,11 +40,6 @@ public class QueueContainer extends Container implements IInventoryChangedListen
                 return MMAFilter.checkIfNotNull(ICraftingRequest.getCraftingRequest(stack), MMAFilter.REQUEST_NOT_DONE);
             }
         });
-    }
-
-    @CapabilityInject(ICraftingRequest.class)
-    private static void injectCraftingRequest(Capability<ICraftingRequest> handler) {
-        capabilityCraftingRequest = handler;
     }
 
     public static QueueContainer tryCreateInstance(EntityPlayer player, World world, int x, int y, int z) {
