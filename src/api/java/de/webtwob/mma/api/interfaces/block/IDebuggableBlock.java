@@ -12,12 +12,10 @@ public interface IDebuggableBlock {
 
     /**
      * This method is called on Blocks that implement this Interface when the DebugWand is right-clicked on it
-     *
-     * @param world  the world this block is in
+     *  @param world  the world this block is in
      * @param pos    the position this block is at
      * @param player the player that caused this interaction
-     * @param flag   don't remember what this is for, apparently 0?//TODO find out why or remove
      */
-    void performDebugOnBlock(World world, BlockPos pos, EntityPlayer player, int flag);
+    void performDebugOnBlock(World world, BlockPos pos, EntityPlayer player);
 
 }

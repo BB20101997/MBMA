@@ -65,7 +65,7 @@ public class DebugWand extends MMAItem {
         if (block instanceof IDebuggableBlock) {
             player.sendStatusMessage(
                     new TextComponentString("Debug Information for Block " + block.getLocalizedName()), false);
-            ((IDebuggableBlock) block).performDebugOnBlock(world, pos, player, 0);
+            ((IDebuggableBlock) block).performDebugOnBlock(world, pos, player);
             return true;
         }
         return false;
