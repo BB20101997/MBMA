@@ -5,7 +5,6 @@ import de.webtwob.mma.api.interfaces.capability.ICraftingRequestProvider;
 import de.webtwob.mma.api.interfaces.gui.IGUIHandlerBoth;
 import de.webtwob.mma.api.interfaces.tileentity.IMultiBlockTile;
 import de.webtwob.mma.api.multiblock.MultiBlockGroup;
-import de.webtwob.mma.api.multiblock.MultiBlockGroupTypeInstance;
 import de.webtwob.mma.api.multiblock.MultiBlockMember;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
 import de.webtwob.mma.api.util.MMAFilter;
@@ -127,12 +126,9 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
      */
     @Nonnull
     public Queue<ItemStackContainer> getCurrentRequests() {
-        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
-        if (null != group) {
-            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-            if (instance instanceof QueueGroupType.Instance) {
-                return ((QueueGroupType.Instance) instance).getQueue();
-            }
+        QueueGroupType.Instance instance = QueueGroupType.getInstance(this);
+        if (instance != null) {
+            return instance.getQueue();
         }
 
         return new LinkedList<>();
@@ -187,18 +183,14 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     }
 
     private void freeItemStackContainer(ItemStackContainer container) {
-        if (inUseRequestContainer.contains(container)) {
-            //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
-            inUseRequestContainer.remove(container);
-            freeRequestContainer.add(container);
-        }
+        //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
+        inUseRequestContainer.remove(container);
+        freeRequestContainer.add(container);
     }
 
     private void disposeItemStackContainer(ItemStackContainer container) {
-        if (inUseRequestContainer.contains(container)) {
-            //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
-            inUseRequestContainer.remove(container);
-        }
+        //containers here should be all empty returning the Request containing Item is task of who ever handel's the request
+        inUseRequestContainer.remove(container);
     }
 
     @Override
@@ -208,39 +200,30 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
     }
 
     private void removeAllFromQueue(Collection<ItemStackContainer> itemStackContainer) {
-        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
-        if (null != group) {
-            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-            if (instance instanceof QueueGroupType.Instance) {
-                Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
-                queue.removeAll(itemStackContainer);
-                return;
-            }
+        QueueGroupType.Instance instance = QueueGroupType.getInstance(this);
+        if (instance != null) {
+            Queue<ItemStackContainer> queue = instance.getQueue();
+            queue.removeAll(itemStackContainer);
+            return;
         }
         resync = true;
     }
 
     private void addToQueue(ItemStackContainer itemStackContainer) {
-        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
-        if (null != group) {
-            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-            if (instance instanceof QueueGroupType.Instance) {
-                Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
-                queue.add(itemStackContainer);
-                return;
-            }
+        QueueGroupType.Instance instance = QueueGroupType.getInstance(this);
+        if (instance != null) {
+            Queue<ItemStackContainer> queue = instance.getQueue();
+            queue.add(itemStackContainer);
+            return;
         }
         resync = true;
     }
 
     private void addAllToQueue(Collection<ItemStackContainer> itemStackContainerCollection) {
-        MultiBlockGroup group = IMultiBlockTile.getGroup(world, pos, getGroupType());
-        if (null != group) {
-            MultiBlockGroupTypeInstance instance = group.getTypeInstance();
-            if (instance instanceof QueueGroupType.Instance) {
-                Queue<ItemStackContainer> queue = ((QueueGroupType.Instance) instance).getQueue();
-                queue.addAll(itemStackContainerCollection);
-            }
+        QueueGroupType.Instance instance = QueueGroupType.getInstance(this);
+        if (instance != null) {
+            Queue<ItemStackContainer> queue = instance.getQueue();
+            queue.addAll(itemStackContainerCollection);
         }
 
         resync = true;
@@ -259,7 +242,7 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
                                      .map(MultiBlockMember::getPos)
                                      .filter(world::isBlockLoaded)
                                      .map(world::getTileEntity)
-                                     .filter(TileEntityQueue.class::isInstance)//TODO replace hardcoded TEQ
+                                     .filter(TileEntityQueue.class::isInstance)//TODO replace hardcoded TEQ by Capability
                                      .map(TileEntityQueue.class::cast)
                                      .anyMatch(q -> !q.freeRequestContainer.isEmpty());
     }
@@ -292,7 +275,7 @@ public class TileEntityQueue extends MultiBlockTileEntity implements IGUIHandler
                                      .map(MultiBlockMember::getPos)
                                      .filter(world::isBlockLoaded)
                                      .map(world::getTileEntity)
-                                     .filter(TileEntityQueue.class::isInstance)//TODO replace hardcoded TEQ
+                                     .filter(TileEntityQueue.class::isInstance)//TODO replace hardcoded TEQ by Capability
                                      .map(TileEntityQueue.class::cast)
                                      .filter(q -> !q.freeRequestContainer.isEmpty())
                                      .findFirst()

@@ -2,6 +2,7 @@ package de.webtwob.mma.core.common.registration;
 
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
 import de.webtwob.mma.core.common.CoreLog;
+import de.webtwob.mma.core.common.multiblockgroups.CraftingGroupType;
 import de.webtwob.mma.core.common.multiblockgroups.QueueGroupType;
 
 import net.minecraftforge.event.RegistryEvent;
@@ -16,8 +17,8 @@ import static de.webtwob.mma.core.common.references.ResourceLocations.MultiBlock
 @Mod.EventBusSubscriber(modid = "mmacore")
 public class MultiBlockGroupTypes {
 
+    public static final MultiBlockGroupType CRAFTING = new CraftingGroupType();
     public static final MultiBlockGroupType STORAGE  = new MultiBlockGroupType();
-    public static final MultiBlockGroupType CRAFTING = new MultiBlockGroupType();
     public static final MultiBlockGroupType RECIPES  = new MultiBlockGroupType();
     public static final MultiBlockGroupType QUEUE    = new QueueGroupType();
 
@@ -28,8 +29,8 @@ public class MultiBlockGroupTypes {
     public static void registerMBGT(RegistryEvent.Register<MultiBlockGroupType> event) {
         CoreLog.info("Registering MultiBlockGroupTypes");
 
-        STORAGE.setRegistryName(MBGM_STORAGE);
         CRAFTING.setRegistryName(MBGM_CRAFTING);
+        STORAGE.setRegistryName(MBGM_STORAGE);
         RECIPES.setRegistryName(MBGM_RECIPE);
         QUEUE.setRegistryName(MBGM_QUEUE);
 

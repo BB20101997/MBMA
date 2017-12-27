@@ -4,6 +4,7 @@ import de.webtwob.mma.api.interfaces.capability.ICraftingRecipe;
 import de.webtwob.mma.api.interfaces.capability.IPatternProvider;
 import de.webtwob.mma.api.registries.MultiBlockGroupType;
 import de.webtwob.mma.core.common.references.CapabilityInjections;
+import de.webtwob.mma.core.common.references.ObjectHolders;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -15,21 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
 public class TileEntityPatternStore extends MultiBlockTileEntity {
 
-    @ObjectHolder("mmacore:recipes")
-    public static final MultiBlockGroupType MANAGER_RECIPES = null;
     @Nonnull
     private             List<ItemStack>     patternList     = new ArrayList<>();
 
     @Override
     public MultiBlockGroupType getGroupType() {
-        return MANAGER_RECIPES;
+        return ObjectHolders.MANAGER_RECIPES;
     }
 
     @SuppressWarnings("unchecked")

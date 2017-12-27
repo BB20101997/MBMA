@@ -6,6 +6,8 @@ import de.webtwob.mma.api.capability.implementations.DefaultCraftingRecipe;
 import de.webtwob.mma.api.capability.implementations.DefaultCraftingRequest;
 import de.webtwob.mma.api.capability.storage.*;
 import de.webtwob.mma.api.interfaces.capability.*;
+import de.webtwob.mma.api.interfaces.tileentity.IItemMoveRequest;
+import de.webtwob.mma.api.interfaces.tileentity.IMoveRequestProcessor;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -19,13 +21,15 @@ import java.util.ArrayList;
 public class APICapabilities {
 
     @CapabilityInject(IBlockPosProvider.class)
-    public static final Capability<IBlockPosProvider> CAPABILITY_BLOCK_POS = null;
+    public static final Capability<IBlockPosProvider>     CAPABILITY_BLOCK_POS         = null;
     @CapabilityInject(ICraftingRequest.class)
-    public static final Capability<ICraftingRequest>  CAPABILITY_CRAFTING_REQUEST = null;
+    public static final Capability<ICraftingRequest>      CAPABILITY_CRAFTING_REQUEST  = null;
     @CapabilityInject(ICraftingRecipe.class)
-    public static final Capability<ICraftingRecipe>   CAPABILITY_CRAFTING_RECIPE = null;
+    public static final Capability<ICraftingRecipe>       CAPABILITY_CRAFTING_RECIPE   = null;
     @CapabilityInject(IPatternProvider.class)
-    public static final Capability<IPatternProvider>  CAPABILITY_PATTERN_PROVIDER = null;
+    public static final Capability<IPatternProvider>      CAPABILITY_PATTERN_PROVIDER  = null;
+    @CapabilityInject(IMoveRequestProcessor.class)
+    public static final Capability<IMoveRequestProcessor> CAPABILITY_REQUEST_PROCESSOR = null;
 
     private static boolean registered = false;
 
@@ -49,6 +53,9 @@ public class APICapabilities {
                     ICraftingRequestProvider.class, new ICraftingRequestProviderIStorage(), () -> require -> null);
             CapabilityManager.INSTANCE.register(IPatternProvider.class, new IPatternProviderStorage(),
                                                 () -> ArrayList::new
+            );
+            CapabilityManager.INSTANCE.register(IMoveRequestProcessor.class, new IMoveRequestProcessorStorage(),
+                                                () -> (IMoveRequestProcessor) IItemMoveRequest::passOnRequest
             );
         }
     }

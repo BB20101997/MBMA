@@ -69,30 +69,8 @@ public class QueueGui extends GuiContainer {
         }
         int offset = slider.sliderPositionToRange(0, getMaxOffset());
         for (int i = offset / ELEMENT_HEIGHT; i < listLength; i++) {
-            if (104 > i * ELEMENT_HEIGHT - offset) {
-                mc.getTextureManager().bindTexture(de.webtwob.mma.api.references.ResourceLocations.GUI_COMPONENTS);
-                if (selected != i) {
-                    //not selected
-                    drawTexturedModalRect(
-                            guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 18, 147, ELEMENT_HEIGHT);
-                } else {
-                    //selected
-                    drawTexturedModalRect(
-                            guiLeft + 8, guiTop + 29 + i * ELEMENT_HEIGHT - offset, 0, 30, 147, ELEMENT_HEIGHT);
-                }
-                ItemStack stack = queue.get(i).getItemStack();
-                BlockPos  pos   = IBlockPosProvider.getBlockPos(stack);
-                String    text;
-                if (null != pos) {
-                    text = String.format("%2d: X: %d Y: %d Z: %d", i, pos.getX(), pos.getY(), pos.getZ());
-                } else {
-                    text = i + ": " + stack.getDisplayName();
-                }
-                GuiLabel label = new GuiLabel(fontRenderer, i, guiLeft + 10, guiTop + 31 + i * ELEMENT_HEIGHT - offset,
-                                              144, 10, Color.WHITE.getRGB()
-                );
-                label.addLine(text);
-                label.drawLabel(mc, mouseX, mouseY);
+            if (104 > i * ELEMENT_HEIGHT - offset) {//is this element visible?
+                drawScrollPaneElementAt(i, offset, queue.get(i), mouseX, mouseY);
             }
         }
         //we may have drawn over some parts of the gui so we redraw those
@@ -100,6 +78,27 @@ public class QueueGui extends GuiContainer {
         drawTexturedModalRect(guiLeft, guiTop + 132, 0, 132, xSize, ELEMENT_HEIGHT);
         drawTexturedModalRect(guiLeft, guiTop + 17, 0, 17, xSize, ELEMENT_HEIGHT);
         slider.setEnabled(9 <= queue.size());
+    }
+
+    private void drawScrollPaneElementAt(int id, int yOffset, ItemStackContainer isc, final int mouseX, final int mouseY) {
+        mc.getTextureManager().bindTexture(de.webtwob.mma.api.references.ResourceLocations.GUI_COMPONENTS);
+        int backGroundY = selected == id ? 30 : 18;
+
+        drawTexturedModalRect(guiLeft + 8, guiTop + 29 + id * ELEMENT_HEIGHT - yOffset, 0, backGroundY, 147, ELEMENT_HEIGHT);
+
+        ItemStack stack = isc.getItemStack();
+        BlockPos  pos   = IBlockPosProvider.getBlockPos(stack);
+        String    text;
+        if (null != pos) {
+            text = String.format("%2d: X: %d Y: %d Z: %d", id, pos.getX(), pos.getY(), pos.getZ());
+        } else {
+            text = id + ": " + stack.getDisplayName();
+        }
+        GuiLabel label = new GuiLabel(fontRenderer, id, guiLeft + 10, guiTop + 31 + id * ELEMENT_HEIGHT - yOffset, 144,
+                                      10, Color.WHITE.getRGB()
+        );
+        label.addLine(text);
+        label.drawLabel(mc, mouseX, mouseY);
     }
 
     @Override

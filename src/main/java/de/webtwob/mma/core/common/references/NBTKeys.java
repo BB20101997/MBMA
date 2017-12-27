@@ -11,9 +11,10 @@ public class NBTKeys {
     public static final String TOKEN_GENERATOR_MUSTER   = MODID + ":TokenGeneratorMuster";
     public static final String TOKEN_GENERATOR_COMBINED = MODID + ":TokenGeneratorCombined";
 
-    public static final String CRAFTING_STORAGE_LIST           = MODID + ":cslist";
-    public static final String QUEUE_STACKS                    = MODID + ":queueStacks";
+    public static final String CRAFTING_STORAGE_ITEM_LIST      = MODID + ":cslist";
+    public static final String CRAFTING_STORAGE_LINK_LIST      = MODID + ":cslinks";
     public static final String CRAFTING_CONTROLLER_QUEUE_LINKS = MODID + ":queueLinks";
+    public static final String QUEUE_STACKS                    = MODID + ":queueStacks";
 
     private NBTKeys() {
     }

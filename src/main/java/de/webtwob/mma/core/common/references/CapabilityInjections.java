@@ -3,6 +3,7 @@ package de.webtwob.mma.core.common.references;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequest;
 import de.webtwob.mma.api.interfaces.capability.ICraftingRequestProvider;
 import de.webtwob.mma.api.interfaces.capability.IPatternProvider;
+import de.webtwob.mma.api.interfaces.tileentity.IMoveRequestProcessor;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -14,6 +15,7 @@ public class CapabilityInjections {
     private static Capability<ICraftingRequestProvider> capabilityRequestProvider;
     private static Capability<IPatternProvider>         capabilityPatternProvider;
     private static Capability<ICraftingRequest>         capabilityRequest;
+    private static Capability<IMoveRequestProcessor>    capabilityRequestProcessor;
 
     private CapabilityInjections() {}
 
@@ -31,6 +33,10 @@ public class CapabilityInjections {
 
     public static Capability<IPatternProvider> getCapabilityPatternProvider() {
         return capabilityPatternProvider;
+    }
+
+    public static Capability<IMoveRequestProcessor> getCapabilityRequestProcessor() {
+        return capabilityRequestProcessor;
     }
 
     @CapabilityInject(IPatternProvider.class)
@@ -51,5 +57,10 @@ public class CapabilityInjections {
     @CapabilityInject(ICraftingRequestProvider.class)
     private static void injectCraftingRequestProvider(Capability<ICraftingRequestProvider> handler) {
         capabilityRequestProvider = handler;
+    }
+
+    @CapabilityInject(IMoveRequestProcessor.class)
+    public static void injectRequestProcessor(Capability<IMoveRequestProcessor> handler) {
+        capabilityRequestProcessor = handler;
     }
 }

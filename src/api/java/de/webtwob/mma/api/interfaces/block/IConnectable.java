@@ -1,4 +1,4 @@
-package de.webtwob.mma.api.interfaces;
+package de.webtwob.mma.api.interfaces.block;
 
 /**
  * Created by BB20101997 on 19. Mär. 2017.

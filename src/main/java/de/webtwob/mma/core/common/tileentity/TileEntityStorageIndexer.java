@@ -1,6 +1,7 @@
 package de.webtwob.mma.core.common.tileentity;
 
 import de.webtwob.mma.api.crafting.ItemStackContainer;
+import de.webtwob.mma.api.interfaces.tileentity.IMoveRequestProcessor;
 import de.webtwob.mma.api.interfaces.capability.IBlockPosProvider;
 import de.webtwob.mma.api.interfaces.tileentity.IItemMoveRequest;
 import de.webtwob.mma.api.property.MMAProperties;
@@ -17,6 +18,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +31,7 @@ import static net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 /**
  * Created by BB20101997 on 25. Okt. 2017.
  */
-public class TileEntityStorageIndexer extends MultiBlockTileEntity {
+public class TileEntityStorageIndexer extends MultiBlockTileEntity implements IMoveRequestProcessor {
 
     @ObjectHolder("mmacore:storage")
     private static final MultiBlockGroupType          MANAGER_STORAGE = null;
@@ -71,6 +74,23 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
             request.passOnRequest();
         }
 
+    }
+
+    @Override
+    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing) {
+        if(capability==CapabilityInjections.getCapabilityRequestProcessor()){
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Nullable
+    @Override
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing) {
+        if(capability == CapabilityInjections.getCapabilityRequestProcessor()){
+            return (T) this;
+        }
+        return super.getCapability(capability, facing);
     }
 
     private void handleDeposit(final IItemMoveRequest request) {
@@ -160,6 +180,7 @@ public class TileEntityStorageIndexer extends MultiBlockTileEntity {
      *
      * @param request the request to add
      */
+    @Override
     public void addItemMoveRequest(IItemMoveRequest request) {
         requests.add(request);
     }

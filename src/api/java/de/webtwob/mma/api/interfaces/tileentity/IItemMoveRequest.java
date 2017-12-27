@@ -17,7 +17,7 @@ public interface IItemMoveRequest {
     /**
      * The Container to store the result in
      * or the Container storing the Items to dump
-     * Even for requests this may not be empty as some other Entitsy might have already tried to gather this
+     * Even for requests this may not be empty as some other Entity's might have already tried to gather this
      * then try to get what is missing
      */
     ItemStackContainer getItemContainer();
